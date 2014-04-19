@@ -1,0 +1,16 @@
+startup_message off
+shell "/bin/zsh"
+#term screen-256color
+term xterm-256color
+
+# Display a caption string below, appearing like tabs and
+# displaying the window number and application name (by default).
+caption always
+caption string "%{kw}%-w%{wr}%n %t%{-}%+w"
+
+termcapinfo xterm* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+defhstatus "screen ^E (^Et) | $USER@^EH"
+hardstatus off
+
+# Select first screen
+select 0

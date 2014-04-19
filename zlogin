@@ -1,0 +1,2 @@
+archey
+cat ~/.loginquote
