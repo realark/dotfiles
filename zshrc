@@ -165,8 +165,16 @@ PROMPT='%B%m%~%b$(git_super_status) %# '
 function listMavenCompletions { reply=(cli:execute cli:execute-phase archetype:generate compile clean install test test-compile deploy package cobertura:cobertura jetty:run -Dmaven.test.skip=true -DarchetypeCatalog=http://tapestry.formos.com/maven-snapshot-repository -Dtest= `if [ -d ./src ] ; then find ./src -type f | grep -v svn | sed 's?.*/\([^/]*\)\..*?-Dtest=\1?' ; fi`); }
 compctl -K listMavenCompletions mvn
 
+#cd to a file's directory (works on symlinks)
+function follow() {
+    file=$(readlink $1 || echo $1)
+    #inode=$(ls -lai $file | grep -E "\s$file/?$" | awk '{print $1}')
+    #find . -inum $inode
+    cd $(dirname $file)
+}
+
 # Launch sqlplus
-launch_sqlplus() {                                                                                                                                                                      
+function launch_sqlplus() {
     prev_dir=`pwd`
     cd $ORACLE_HOME/sqlplus/admin/
     rlwrap -c -H ~/.sqlplus_history -pgreen sqlplus $@
@@ -175,7 +183,7 @@ launch_sqlplus() {
 
 
 # Show 'dots' if a tab completion stalls
-expand-or-complete-with-dots() {
+function expand-or-complete-with-dots() {
   echo -n "\e[31m......\e[0m"
   zle expand-or-complete
   zle redisplay
@@ -201,7 +209,7 @@ function settitle() {
 }
 
 #Use google to say things!
-gsay() {
+function gsay() {
 	if [[ "${1}" =~ -[a-z]{2} ]]; then
 		local lang=${1#-}
 		local text="${*#$1}"
