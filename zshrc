@@ -49,10 +49,6 @@ setopt SH_WORD_SPLIT
 setopt nohup
 setopt print_exit_value
 
-# PS1 and PS2
-export PS1="$(print '%{\e[1;34m%}%n%{\e[0m%}'@%M):$(print '%{\e[0;34m%}%~%{\e[0m%}')$ "
-export PS2="$(print '%{\e[0;34m%}>%{\e[0m%}')"
-
 # Vars used later on by Zsh
 export EDITOR="vim"
 export BROWSER="links"
@@ -113,13 +109,11 @@ bindkey -v
 ##################################################################
 # Some aliases
 alias ls='ls --color=auto -F'
-alias f='find | grep -i'
 alias top='htop'
-alias wbfs_gtk='sudo wbfs_gtk'
 alias minicom='sudo minicom'
 alias open='xdg-open'
 
-alias hist="grep '$1' /home/ark/.zsh_history"
+alias histgrep="grep '$1' /home/ark/.zsh_history"
 
 #alias engage="play -n -c1 synth whitenoise band -n 100 20 band -n 50 20 gain +25 fade h 1 864000 1"
 alias engage="mplayer -loop 0 ~/.sounds/enterprise_engine_sound.mp3"
@@ -128,7 +122,6 @@ alias rsync="rsync -rh --partial --progress"
 alias se="sync && exit"
 alias minecraft="cd ~/minecraft && ./play_minecraft &"
 alias k="konqueror . >/dev/null 2>&1 & disown"
-alias n="nautilus . >/dev/null 2>&1 & disown"
 alias wake_gc="ssh emergence './wake_gc'"
 alias kill9="kill -9"
 alias apt-get="sudo apt-get"
@@ -157,8 +150,11 @@ PATH=~/scripts:$PATH
 
 #Git Prompt
 source ~/.zsh/git-prompt/zshrc.sh
-# an example prompt
-PROMPT='%B%m%~%b$(git_super_status) %# '
+username_prompt='%n'
+if [ `whoami` = "root" ]; then
+        username_prompt='$fg[red]'$username_prompt'$reset_color'
+fi
+PROMPT=$username_prompt'@%B%m%~%b$(git_super_status) %# '
 
 ##############Custom Functions
 
