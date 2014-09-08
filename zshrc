@@ -148,6 +148,9 @@ alias diff='colordiff'
 
 PATH=~/scripts:$PATH
 
+#zsh-syntax-highlighting
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
 #Git Prompt
 source ~/.zsh/git-prompt/zshrc.sh
 username_prompt='%n'
