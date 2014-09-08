@@ -185,6 +185,7 @@
 (require 'flymake-cursor)
 ;(add-to-list 'auto-mode-alist '("\\.lisp$" . common-lisp-mode))
 ;(add-hook 'lisp-mode-hook 'flymake-lisp-load)
+(add-hook 'yaml-mode-hook 'flymake-yaml-load)
 
 (autoload 'php-mode "php-mode" "Major mode for editing php code." t)
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -193,3 +194,8 @@
 (add-hook 'php-mode-hook 'flymake-php-load)
 
 (setq mumamo-background-colors nil) 
+
+;nXhtml for web stuff
+(load "~/.emacs.d/nxhtml/autostart")
+(autoload 'nxhtml-mode "nxhtml-mode" "Major mode for editing html and templates." t)
+(add-to-list 'auto-mode-alist '("\\.jsp$" . nxhtml-mode))
