@@ -82,6 +82,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
+ '(custom-safe-themes (quote ("fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
  '(desktop-enable t nil (desktop))
  '(ecb-auto-activate nil)
  '(ecb-compile-window-height 6)
