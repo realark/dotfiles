@@ -142,11 +142,12 @@ alias cliemacs='emacs -nw'
 alias idemacs='emacs >/dev/null 2>&1 &'
 alias vimacs='emacs --no-desktop'
 alias less='less -R'
+alias cless='isMore'
 alias yaourt='sudo yaourt --noconfirm'
 alias telnet='rlwrap nc'
 alias diff='colordiff'
 
-PATH=~/scripts:$PATH
+export PATH=~/scripts:$PATH
 
 #zsh-syntax-highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -218,4 +219,31 @@ function gsay() {
 	mplayer "http://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&q=${text}" &> /dev/null
 }
 
-. ~/.custom
+function formatxml(){
+    for file in $@; do
+        tmpfile="/tmp/$file.tmp"
+        xmllint --format $file > $tmpfile
+        mv $tmpfile $file
+    done
+}
+
+#Use ccze to colorize log files
+function isMore() {
+    FILE=$(readlink -f $1)
+    DIR=$(dirname $FILE)
+    COLOR_CLONE="$HOME/tmp/colors/$FILE.color"
+    if [ -f "$COLOR_CLONE" -a "$(stat -c %Y $FILE)" = "$(stat -c %Y $COLOR_CLONE 2>/dev/null)"  ]; then
+        less -R $COLOR_CLONE
+    else
+        #TODO: Do something clever with diff
+        echo "Generating color log file..." >&2
+        mkdir -p "$HOME/tmp/colors/$DIR" 2>/dev/null
+        rm -f $COLOR_CLONE 2>/dev/null
+        stamp=$(stat -c %Y $FILE)
+        ccze -A < $FILE > $COLOR_CLONE
+        touch -m -d "$(date --date="@$stamp")" $COLOR_CLONE
+        less -R $COLOR_CLONE
+    fi
+}
+
+source  ~/.custom
