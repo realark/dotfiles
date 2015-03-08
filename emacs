@@ -67,7 +67,7 @@
 (require 'magit)
 
 (if window-system
- (load-theme 'solarized-dark t))
+ (load-theme 'deeper-blue t))
 
 ;;Turn off tabs. I don't really give a shit about tabs vs spaces, but most people I meet seem to think tabs are the spawn of Satan.
 (setq-default indent-tabs-mode nil)
@@ -83,7 +83,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(custom-safe-themes (quote ("fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
  '(desktop-enable t nil (desktop))
  '(ecb-auto-activate nil)
  '(ecb-compile-window-height 6)
