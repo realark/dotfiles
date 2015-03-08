@@ -114,6 +114,7 @@ alias minicom='sudo minicom'
 alias open='xdg-open'
 
 alias histgrep="grep '$1' /home/ark/.zsh_history"
+alias grep="grep --color=auto"
 
 #alias engage="play -n -c1 synth whitenoise band -n 100 20 band -n 50 20 gain +25 fade h 1 864000 1"
 alias engage="mplayer -loop 0 ~/.sounds/enterprise_engine_sound.mp3"
@@ -143,9 +144,11 @@ alias idemacs='emacs >/dev/null 2>&1 &'
 alias vimacs='emacs --no-desktop'
 alias less='less -R'
 alias cless='isMore'
-alias yaourt='sudo yaourt --noconfirm'
+alias yaourt='yaourt --noconfirm'
 alias telnet='rlwrap nc'
 alias diff='colordiff'
+GRADLE_BIN="/usr/bin/gradle"
+alias gradle='runGradle'
 
 export PATH=~/scripts:$PATH
 
@@ -160,10 +163,38 @@ if [ `whoami` = "root" ]; then
 fi
 PROMPT=$username_prompt'@%B%m%~%b$(git_super_status) %# '
 
+#Smartcd
+#source $HOME/.smartcd/lib/core/smartcd
+source $HOME/.smartcd_config
+
 ##############Custom Functions
+
+function lecho() {
+    echo > $1 && less $1
+}
 
 function listMavenCompletions { reply=(cli:execute cli:execute-phase archetype:generate compile clean install test test-compile deploy package cobertura:cobertura jetty:run -Dmaven.test.skip=true -DarchetypeCatalog=http://tapestry.formos.com/maven-snapshot-repository -Dtest= `if [ -d ./src ] ; then find ./src -type f | grep -v svn | sed 's?.*/\([^/]*\)\..*?-Dtest=\1?' ; fi`); }
 compctl -K listMavenCompletions mvn
+
+function runGradle() {
+    gradleTasks=""
+    if [ -d "$1" ]; then
+        #Passed a dir as arg1. This means it's a gradle subproject
+        gradleSubproject=$(echo $1 | sed -r 's/\//:/g' | sed -r 's/^:*(.*):*$/:\1:/g')
+        for arg in "${@:2}"; do
+            gradleTasks="$gradleTasks ${gradleSubproject}${arg}"
+        done
+    else
+        gradleTasks=$@
+    fi
+    if [ -f ./gradlew ]; then
+        echo "RUNNING: gradle $gradleTasks"
+        ./gradlew $gradleTasks
+    else
+        echo "RUNNING: gradle $gradleTasks"
+        $GRADLE_BIN $gradleTasks
+    fi
+}
 
 #cd to a file's directory (works on symlinks)
 function follow() {
