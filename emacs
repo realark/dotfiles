@@ -1,3 +1,4 @@
+;; -*- emacs-lisp -*-
 ; Text and the such
 ;; Use colors to highlight commands, etc.
 (global-font-lock-mode t) 
@@ -45,8 +46,8 @@
 (setq inferior-lisp-program "/usr/bin/sbcl --noinform")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
 (require 'slime)
-(global-set-key (kbd "C-c C-c") 'slime-compile-defun)
-(global-set-key (kbd "C-c C-k") 'slime-compile-and-load-file)
+;(global-set-key (kbd "C-c C-c") 'slime-compile-defun)
+;(global-set-key (kbd "C-c C-k") 'slime-compile-and-load-file)
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
@@ -177,9 +178,9 @@
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
 (require 'rainbow-delimiters)
-(global-rainbow-delimiters-mode)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
-(global-auto-complete-mode t)
+;(global-auto-complete-mode t)
 ;Flymake: on the fly code checking
 (require 'flymake-easy)
 (require 'flymake-cursor)
@@ -193,9 +194,52 @@
 ;(add-hook 'php-mode-hook 'flymake-phpcs-load)
 (add-hook 'php-mode-hook 'flymake-php-load)
 
+(require 'flymake-shell)
+(add-hook 'sh-mode-hook 'flymake-shell-load)
+
 (setq mumamo-background-colors nil) 
 
 ;nXhtml for web stuff
 (load "~/.emacs.d/nxhtml/autostart")
 (autoload 'nxhtml-mode "nxhtml-mode" "Major mode for editing html and templates." t)
 (add-to-list 'auto-mode-alist '("\\.jsp$" . nxhtml-mode))
+
+
+;(load "~/.emacs.d/tkj-java.el")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interface to eclipse via eclim
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'eclim)
+(global-eclim-mode)
+
+;; Variables
+(setq eclim-auto-save t
+;;      eclim-executable "/opt/eclipse/eclim"
+;;      eclimd-executable "/opt/eclipse/eclimd"
+      eclimd-wait-for-process nil
+      eclimd-default-workspace "~/src/workspace-eclim"
+      eclim-use-yasnippet nil
+      help-at-pt-display-when-idle t
+      help-at-pt-timer-delay 0.1
+      )
+
+;; Call the help framework with the settings above & activate
+;; eclim-mode
+(help-at-pt-set-timer)
+
+;; Hook eclim up with auto complete mode
+(require 'auto-complete-config)
+(ac-config-default)
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
+
+;; Groovy and Gradle
+(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
+(add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
+
+;; Clojure
+(require 'ac-nrepl)
+(add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
+(add-hook 'cider-mode-hook 'ac-nrepl-setup)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'cider-repl-mode))
