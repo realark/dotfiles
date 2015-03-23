@@ -32,7 +32,8 @@
 (show-paren-mode 1) ; turn on paren match highlighting
 ;(setq show-paren-style 'expression) ; highlight entire bracket expression
 
-
+;Maximize emacs window
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;;Marmalade Package Archive
 (require 'package)
