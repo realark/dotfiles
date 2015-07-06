@@ -66,6 +66,7 @@
 ;;(add-to-list 'load-path "~/.emacs.d/elpa/git-emacs")
 ;;(require 'git-emacs)
 (require 'magit)
+(setq magit-last-seen-setup-instructions "1.4.0")
 
 (if window-system
  (load-theme 'deeper-blue t))

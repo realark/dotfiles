@@ -126,7 +126,7 @@ alias k="konqueror . >/dev/null 2>&1 & disown"
 alias wake_gc="ssh emergence './wake_gc'"
 alias kill9="kill -9"
 alias apt-get="sudo apt-get"
-alias pacman="sudo powerpill"
+alias pacman="sudo pacman"
 alias ll="ls -l"
 alias fswebcam="fswebcam -r 960x720"
 alias blank="xset dpms force off"
@@ -149,6 +149,7 @@ alias telnet='rlwrap nc'
 alias diff='colordiff'
 GRADLE_BIN="/usr/bin/gradle"
 alias gradle='runGradle'
+alias follow='. $HOME/scripts/follow'
 
 export PATH=~/scripts:$PATH
 
@@ -196,23 +197,6 @@ function runGradle() {
     fi
 }
 
-#cd to a file's directory (works on symlinks)
-function follow() {
-    file=$(readlink $1 || echo $1)
-    #inode=$(ls -lai $file | grep -E "\s$file/?$" | awk '{print $1}')
-    #find . -inum $inode
-    cd $(dirname $file)
-}
-
-# Launch sqlplus
-function launch_sqlplus() {
-    prev_dir=`pwd`
-    cd $ORACLE_HOME/sqlplus/admin/
-    rlwrap -c -H ~/.sqlplus_history -pgreen sqlplus $@
-    cd $prev_dir
-}
-
-
 # Show 'dots' if a tab completion stalls
 function expand-or-complete-with-dots() {
   echo -n "\e[31m......\e[0m"
@@ -239,42 +223,12 @@ function settitle() {
  fi
 }
 
-#Use google to say things!
-function gsay() {
-	if [[ "${1}" =~ -[a-z]{2} ]]; then
-		local lang=${1#-}
-		local text="${*#$1}"
-		else local lang=${LANG%_*}
-		local text="$*";
-	fi
-	mplayer "http://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&q=${text}" &> /dev/null
-}
-
 function formatxml(){
     for file in $@; do
         tmpfile="/tmp/$file.tmp"
         xmllint --format $file > $tmpfile
         mv $tmpfile $file
     done
-}
-
-#Use ccze to colorize log files
-function isMore() {
-    FILE=$(readlink -f $1)
-    DIR=$(dirname $FILE)
-    COLOR_CLONE="$HOME/tmp/colors/$FILE.color"
-    if [ -f "$COLOR_CLONE" -a "$(stat -c %Y $FILE)" = "$(stat -c %Y $COLOR_CLONE 2>/dev/null)"  ]; then
-        less -R $COLOR_CLONE
-    else
-        #TODO: Do something clever with diff
-        echo "Generating color log file..." >&2
-        mkdir -p "$HOME/tmp/colors/$DIR" 2>/dev/null
-        rm -f $COLOR_CLONE 2>/dev/null
-        stamp=$(stat -c %Y $FILE)
-        ccze -A < $FILE > $COLOR_CLONE
-        touch -m -d "$(date --date="@$stamp")" $COLOR_CLONE
-        less -R $COLOR_CLONE
-    fi
 }
 
 source  ~/.custom
