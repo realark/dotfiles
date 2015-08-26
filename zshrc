@@ -231,4 +231,21 @@ function formatxml(){
     done
 }
 
+#TODO
+function cleanmerge(){
+    echo "Not done yet"
+    exit 1
+    commitsha=$1
+    git format-patch $commitsha --stdout | git apply --check -
+#    git checkout -b mycrazybranch
+#    [change some stuff...]
+#    git add .
+#    git commit -m "changed some stuff"
+#    git format-patch master --stdout > crazy.patch
+#    git checkout master
+#    git apply crazy.patch --check
+#    [all good! cleanup...]
+#    rm crazy.patch
+}
+
 source  ~/.custom
