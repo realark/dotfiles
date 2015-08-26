@@ -41,6 +41,18 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (package-initialize)
 
+;;Evil (extensible vi layer for Emacs)
+(require 'evil)
+(evil-mode 1)
+;;; esc quits
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+
 ;;Slime
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
@@ -52,10 +64,6 @@
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
-;;Evil (extensible vi layer for Emacs)
-(require 'evil)
-(evil-mode 1)
-
 ;(defun slime-repl-bol-insert ()
 ;  (interactive)
 ;  (slime-repl-bol)
@@ -63,15 +71,15 @@
 ;(define-key evil-normal-state-map "I" 'slime-repl-bol-insert)
 
 ;;Git
-;;(add-to-list 'load-path "~/.emacs.d/elpa/git-emacs")
-;;(require 'git-emacs)
 (require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
+(global-set-key (kbd "C-x g s") 'magit-status)
+
 
 (if window-system
  (load-theme 'deeper-blue t))
 
-;;Turn off tabs. I don't really give a shit about tabs vs spaces, but most people I meet seem to think tabs are the spawn of Satan.
+;;Turn off tabs
 (setq-default indent-tabs-mode nil)
 (setq tab-width 4)
 
@@ -202,9 +210,9 @@
 (setq mumamo-background-colors nil) 
 
 ;nXhtml for web stuff
-(load "~/.emacs.d/nxhtml/autostart")
-(autoload 'nxhtml-mode "nxhtml-mode" "Major mode for editing html and templates." t)
-(add-to-list 'auto-mode-alist '("\\.jsp$" . nxhtml-mode))
+;(load "~/.emacs.d/nxhtml/autostart")
+;(autoload 'nxhtml-mode "nxhtml-mode" "Major mode for editing html and templates." t)
+;(add-to-list 'auto-mode-alist '("\\.jsp$" . nxhtml-mode))
 
 
 ;(load "~/.emacs.d/tkj-java.el")
@@ -245,3 +253,6 @@
 (add-hook 'cider-mode-hook 'ac-nrepl-setup)
 (eval-after-load "auto-complete"
   '(add-to-list 'ac-modes 'cider-repl-mode))
+
+;; Scala
+(add-to-list 'auto-mode-alist '("\.scala$" . scala-mode))
