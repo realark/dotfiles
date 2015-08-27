@@ -75,6 +75,28 @@
 (setq magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-x g") 'magit-status)
 
+;;multi-term
+(require 'multi-term)
+(setq multi-term-program "/bin/zsh")
+(defun last-term-buffer (l)
+  "Return most recently used term buffer."
+  (when l
+    (if (eq 'term-mode (with-current-buffer (car l) major-mode))
+        (car l) (last-term-buffer (cdr l)))))
+(defun get-term ()
+        "Switch to the term buffer last used, or create a new one if
+    none exists, or if the current buffer is already a term."
+        (interactive)
+        (let ((b (last-term-buffer (buffer-list))))
+          (if (or (not b) (eq 'term-mode major-mode))
+              (multi-term)
+                (switch-to-buffer b))))
+(global-set-key (kbd "C-x t") 'get-term)
+(add-hook 'term-mode-hook
+          (lambda ()
+            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
+            (add-to-list 'term-bind-key-alist '("C-d" . term-send-eof))))
+
 
 (if window-system
  (load-theme 'deeper-blue t))
