@@ -52,6 +52,16 @@
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(cl-loop for (mode . state) in '((inferior-emacs-lisp-mode . emacs)
+                          (nrepl-mode . insert)
+                          (comint-mode . normal)
+                          (shell-mode . insert)
+                          (git-commit-mode . insert)
+                          (git-rebase-mode . emacs)
+                          (term-mode . emacs)
+                          (grep-mode . emacs)
+                          (magit-branch-manager-mode . emacs))
+  do (evil-set-initial-state mode state))
 
 ;;Slime
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
@@ -92,10 +102,10 @@
               (multi-term)
                 (switch-to-buffer b))))
 (global-set-key (kbd "C-x t") 'get-term)
-(add-hook 'term-mode-hook
-          (lambda ()
-            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
-            (add-to-list 'term-bind-key-alist '("C-d" . term-send-eof))))
+;(add-hook 'term-mode-hook
+;          (lambda ()
+;            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
+;            (add-to-list 'term-bind-key-alist '("C-d" . term-send-eof))))
 
 
 (if window-system
