@@ -153,21 +153,24 @@
                                                  from-this-list))
       (crs-delete-these (cdr delete-these) from-this-list)))
    (t from-this-list)))
-; this is the list of buffers I never want to see
+; buffer patterns to skip while cycling
 (defvar crs-hated-buffers
-  '("KILL" "*Compile-Log*" "*Completions*" "*inferior-lisp*" "*slime-repl sbcl*"))
-; might as well use this for both
-(setq iswitchb-buffer-ignore (append '("^ " "*Buffer") crs-hated-buffers))
+  '("^\*.*\*$"
+    "help"
+    "KILL"
+    "^ .*"))
+;(setq iswitchb-buffer-ignore crs-hated-buffers)
 (defun crs-hated-buffers ()
   "List of buffers I never want to see, converted from names to buffers."
   (delete nil
           (append
-           (mapcar 'get-buffer crs-hated-buffers)
            (mapcar (lambda (this-buffer)
-                     (if (string-match "^ " (buffer-name this-buffer))
-                         this-buffer))
+                     (let (badbuffer)
+                       (dolist (hated-buffer-regex crs-hated-buffers badbuffer)
+                         (if (string-match hated-buffer-regex (buffer-name this-buffer))
+                             (setq badbuffer this-buffer)))))
                    (buffer-list)))))
-; I'm sick of switching buffers only to find KILL right in front of me
+
 (defun crs-bury-buffer (&optional n)
   (interactive)
   (unless n
@@ -184,11 +187,6 @@
 (global-set-key [(control meta tab)] (lambda ()
                                        (interactive)
                                        (crs-bury-buffer -1)))
-(add-to-list 'crs-hated-buffers "*Messages*")
-(add-to-list 'crs-hated-buffers "*scratch*")
-(add-to-list 'crs-hated-buffers "*slime-events*")
-(add-to-list 'crs-hated-buffers "*inferior-lisp*")
-(add-to-list 'crs-hated-buffers "help")
 
 ;Buffer nav keys
 (global-set-key (kbd "C-x l") 'next-buffer)
