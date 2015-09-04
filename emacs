@@ -239,29 +239,24 @@
 
 (setq mumamo-background-colors nil) 
 
-;nXhtml for web stuff
-;(load "~/.emacs.d/nxhtml/autostart")
-;(autoload 'nxhtml-mode "nxhtml-mode" "Major mode for editing html and templates." t)
-;(add-to-list 'auto-mode-alist '("\\.jsp$" . nxhtml-mode))
-
-
-;(load "~/.emacs.d/tkj-java.el")
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface to eclipse via eclim
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'eclimd)
 (require 'eclim)
 (global-eclim-mode)
 
-;; Variables
 (setq eclim-auto-save t
-;;      eclim-executable "/opt/eclipse/eclim"
-;;      eclimd-executable "/opt/eclipse/eclimd"
+      eclim-executable "~/.eclipse/org.eclipse.platform_4.5.0_155965261_linux_gtk_x86_64/eclim"
+      eclimd-executable "~/.eclipse/org.eclipse.platform_4.5.0_155965261_linux_gtk_x86_64/eclimd"
       eclimd-wait-for-process nil
-      eclimd-default-workspace "~/src/workspace-eclim"
+      eclimd-default-workspace "~/workspace"
       eclim-use-yasnippet nil
       help-at-pt-display-when-idle t
-      help-at-pt-timer-delay 0.1
-      )
+      help-at-pt-timer-delay 0.1)
+(add-hook 'eclim-mode-hook
+          (lambda ()
+            (local-set-key (kbd "<f4>") #'eclim-java-hierarchy)
+            (local-set-key (kbd "C-M-h") #'eclim-java-call-hierarchy)
+            (local-set-key (kbd "<f3>") #'eclim-java-find-declaration)))
 
 ;; Call the help framework with the settings above & activate
 ;; eclim-mode
