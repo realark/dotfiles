@@ -153,13 +153,12 @@
                                                  from-this-list))
       (crs-delete-these (cdr delete-these) from-this-list)))
    (t from-this-list)))
-; buffer patterns to skip while cycling
+; buffer regexes to skip while cycling
 (defvar crs-hated-buffers
   '("^\*.*\*$"
     "help"
     "KILL"
     "^ .*"))
-;(setq iswitchb-buffer-ignore crs-hated-buffers)
 (defun crs-hated-buffers ()
   "List of buffers I never want to see, converted from names to buffers."
   (delete nil
@@ -183,16 +182,9 @@
               my-buffer-list)
        (bury-buffer)
        (nth n my-buffer-list)))))
-(global-set-key [(control tab)] 'crs-bury-buffer)
-(global-set-key [(control meta tab)] (lambda ()
-                                       (interactive)
-                                       (crs-bury-buffer -1)))
-
 ;Buffer nav keys
-(global-set-key (kbd "C-x l") 'next-buffer)
-(global-set-key (kbd "C-x h") 'previous-buffer)
-(global-set-key [C-tab] 'crs-bury-buffer)
-(global-set-key [C-S-iso-lefttab] (lambda () (interactive) (crs-bury-buffer -1)))
+(define-key evil-normal-state-map "gT" 'crs-bury-buffer)
+(define-key evil-normal-state-map "gt" (lambda () (interactive) (crs-bury-buffer -1)))
 
 ;Backup files
 (setq backup-directory-alist `(("." . "~/.emacs_saves")))
