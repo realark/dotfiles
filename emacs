@@ -208,6 +208,10 @@
       desktop-load-locked-desktop nil)
 (desktop-save-mode 1)
 
+;Org mode
+(require 'org)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
 ;Dired options
 (diredp-toggle-find-file-reuse-dir 1)
 
