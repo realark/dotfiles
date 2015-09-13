@@ -32,6 +32,9 @@
 (show-paren-mode 1) ; turn on paren match highlighting
 ;(setq show-paren-style 'expression) ; highlight entire bracket expression
 
+(if window-system
+ (load-theme 'tango-dark t))
+
 ;Maximize emacs window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -74,12 +77,6 @@
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
-;(defun slime-repl-bol-insert ()
-;  (interactive)
-;  (slime-repl-bol)
-;  (evil-insert 1))
-;(define-key evil-normal-state-map "I" 'slime-repl-bol-insert)
-
 ;;Git
 (require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
@@ -107,9 +104,6 @@
 ;            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
 ;            (add-to-list 'term-bind-key-alist '("C-d" . term-send-eof))))
 
-
-(if window-system
- (load-theme 'deeper-blue t))
 
 ;;Turn off tabs
 (setq-default indent-tabs-mode nil)
@@ -158,6 +152,7 @@
   '("^\*.*\*$"
     "help"
     "KILL"
+    "TAGS"
     "^ .*"))
 (defun crs-hated-buffers ()
   "List of buffers I never want to see, converted from names to buffers."
@@ -218,11 +213,19 @@
 ;(add-hook 'lisp-mode-hook 'flymake-lisp-load)
 (add-hook 'yaml-mode-hook 'flymake-yaml-load)
 
-(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
-;(add-hook 'php-mode-hook 'flymake-phpcs-load)
-(add-hook 'php-mode-hook 'flymake-php-load)
+;; ctags
+(setq path-to-ctags "/usr/bin/ctags")
+
+(defun create-tags (dir-name)
+  "Create tags file."
+  (interactive "DDirectory: ")
+  (shell-command
+   (format "ctags -f %s -e -R %s" path-to-ctags (directory-file-name dir-name))))
+
+(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
+(add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode)
+
+;;;;;;;;;;;;;;
 
 (require 'flymake-shell)
 (add-hook 'sh-mode-hook 'flymake-shell-load)
