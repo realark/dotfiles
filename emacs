@@ -31,6 +31,7 @@
 (electric-pair-mode 1)
 (show-paren-mode 1) ; turn on paren match highlighting
 ;(setq show-paren-style 'expression) ; highlight entire bracket expression
+(setq large-file-warning-threshold 100000000) ;100mb
 
 (if window-system
  (load-theme 'tango-dark t))
