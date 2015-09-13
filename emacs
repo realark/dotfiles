@@ -181,6 +181,49 @@
 (define-key evil-normal-state-map "gT" 'crs-bury-buffer)
 (define-key evil-normal-state-map "gt" (lambda () (interactive) (crs-bury-buffer -1)))
 
+;(require 'icicle)
+;(icy-mode 1)
+;(setq icicle-show-Completions-initially-flag t)
+;(setq icicle-top-level-when-sole-completion-flag t)
+
+;(require 'helm)
+;(require 'helm-config)
+;(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+;(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+;(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+;(helm-mode 1)
+
+(require 'etags-select)
+(require 'ido)
+(ido-mode t)
+;(defun my-ido-find-tag ()
+;  "Find a tag using ido"
+;  (interactive)
+;  (let (tag-names)
+;    (map (lambda (x)
+;           (push (prin1-to-string x t) tag-names))
+;         (tags-completion-at-point-function)) ; not working
+;    (find-tag (ido-completing-read "Tag: " tag-names))))
+
+;(defun find-tag-no-prompt ()
+;  "Jump to the tag at point without prompting"
+;  (interactive)
+;  (find-tag (find-tag-default)))
+
+(defun ido-find-file-in-tag-files ()
+  (interactive)
+  (save-excursion
+    (let ((enable-recursive-minibuffers t))
+      (visit-tags-table-buffer))
+    (find-file
+     (expand-file-name
+      (ido-completing-read
+       "Project file: " (tags-table-files) nil t)))))
+
+(global-set-key (kbd "<f3>") #'etags-select-find-tag-at-point)
+(global-set-key (kbd "C-<f3>") #'tags-search)
+(global-set-key (kbd "C-S-T") #'ido-find-file-in-tag-files)
+
 ;Backup files
 (setq backup-directory-alist `(("." . "~/.emacs_saves")))
 (setq backup-by-copying t)
