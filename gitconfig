@@ -47,3 +47,5 @@
   autosetuprebase = always
 [remote "origin"]
 	prune = true
+[core]
+	excludesfile = ~/.gitignore
