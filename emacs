@@ -16,15 +16,14 @@
 ;; Flash instead of that annoying bell
 (setq visible-bell t)
 ;; Remove icons toolbar
-(if (> emacs-major-version 20)
-(tool-bar-mode -1))
+(tool-bar-mode nil)
 ;; Use y or n instead of yes or not
 (fset 'yes-or-no-p 'y-or-n-p)
 ;;Show line numbers
 (global-linum-mode t)
 (column-number-mode t)
 (line-number-mode t)
-(setq linum-format "%d ")
+(setq linum-format "%d")
 ;Standard copy+pate keys
 (cua-mode 1)
 ;Insert closing bracket
@@ -82,6 +81,7 @@
 (require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-x g") 'magit-status)
+(setq magit-push-always-verify nil)
 
 ;;multi-term
 (require 'multi-term)
@@ -123,13 +123,24 @@
  '(desktop-enable t nil (desktop))
  '(ecb-auto-activate nil)
  '(ecb-compile-window-height 6)
- '(ecb-layout-window-sizes (quote (("left-analyse" (ecb-directories-buffer-name 0.1694915254237288 . 0.25862068965517243) (ecb-sources-buffer-name 0.1694915254237288 . 0.4827586206896552) (ecb-methods-buffer-name 0.1694915254237288 . 0.10344827586206896) (ecb-analyse-buffer-name 0.1694915254237288 . 0.13793103448275862)) ("left8" (ecb-directories-buffer-name 0.225531914893617 . 0.3103448275862069) (ecb-sources-buffer-name 0.225531914893617 . 0.22413793103448276) (ecb-methods-buffer-name 0.225531914893617 . 0.27586206896551724) (ecb-history-buffer-name 0.225531914893617 . 0.1724137931034483)))))
+ '(ecb-layout-window-sizes
+   (quote
+    (("left-analyse"
+      (ecb-directories-buffer-name 0.1694915254237288 . 0.25862068965517243)
+      (ecb-sources-buffer-name 0.1694915254237288 . 0.4827586206896552)
+      (ecb-methods-buffer-name 0.1694915254237288 . 0.10344827586206896)
+      (ecb-analyse-buffer-name 0.1694915254237288 . 0.13793103448275862))
+     ("left8"
+      (ecb-directories-buffer-name 0.225531914893617 . 0.3103448275862069)
+      (ecb-sources-buffer-name 0.225531914893617 . 0.22413793103448276)
+      (ecb-methods-buffer-name 0.225531914893617 . 0.27586206896551724)
+      (ecb-history-buffer-name 0.225531914893617 . 0.1724137931034483)))))
  '(ecb-options-version "2.40")
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
  '(ecb-tip-of-the-day nil)
  '(inhibit-startup-screen t)
  '(safe-local-variable-values (quote ((Base . 10) (Syntax . ANSI-Common-Lisp))))
- '(tool-bar-mode nil))
+ '(vc-follow-symlinks nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -195,6 +206,9 @@
 ;(helm-mode 1)
 
 (require 'etags-select)
+(setq etags-select-go-if-unambiguous t)
+(setq etags-select-highlight-delay 5.0)
+(setq etags-select-use-short-name-completion t)
 (require 'ido)
 (ido-mode t)
 ;(defun my-ido-find-tag ()
