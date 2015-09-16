@@ -44,6 +44,16 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (package-initialize)
 
+;; Options for M-x rgrep
+(eval-after-load 'grep
+  '(when (boundp 'grep-find-ignored-files)
+     (add-to-list 'grep-find-ignored-files "*.class")))
+(eval-after-load 'grep
+  '(when (boundp 'grep-find-ignored-directories)
+     (add-to-list 'grep-find-ignored-directories "target")
+     (add-to-list 'grep-find-ignored-directories "build")
+     (add-to-list 'grep-find-ignored-directories "bin")))
+
 ;;Evil (extensible vi layer for Emacs)
 (require 'evil)
 (evil-mode 1)
