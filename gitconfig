@@ -14,6 +14,7 @@
 	spush = !git-svn dcommit
 	co = checkout
 	diffword = diff --color-words
+	ctags = !.git/hooks/ctags
 [log]
 	decorate = full
 [push]
@@ -49,3 +50,5 @@
 	prune = true
 [core]
 	excludesfile = ~/.gitignore
+[init]
+	templatedir = ~/.git_template

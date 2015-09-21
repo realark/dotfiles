@@ -1,0 +1,4 @@
+#!/bin/sh
+root_dir="`git rev-parse --git-dir`/.."
+cd $root_dir
+git ls-files | ctags -e -L -
