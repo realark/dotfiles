@@ -16,7 +16,7 @@
 ;; Flash instead of that annoying bell
 (setq visible-bell t)
 ;; Remove icons toolbar
-(tool-bar-mode nil)
+(tool-bar-mode -1)
 ;; Use y or n instead of yes or not
 (fset 'yes-or-no-p 'y-or-n-p)
 ;;Show line numbers
