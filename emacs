@@ -219,6 +219,7 @@
 (setq etags-select-go-if-unambiguous t)
 (setq etags-select-highlight-delay 5.0)
 (setq etags-select-use-short-name-completion t)
+(setq tags-revert-without-query 1)
 (require 'ido)
 (ido-mode t)
 ;(defun my-ido-find-tag ()
