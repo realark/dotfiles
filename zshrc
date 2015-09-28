@@ -150,6 +150,7 @@ alias diff='colordiff'
 GRADLE_BIN="/usr/bin/gradle"
 alias gradle='runGradle'
 alias follow='. $HOME/scripts/follow'
+alias journalctl='journalctl --pager-end --since "1 day ago"'
 
 export PATH=~/scripts:$PATH
 
