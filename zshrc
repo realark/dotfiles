@@ -180,8 +180,8 @@ compctl -K listMavenCompletions mvn
 
 function runGradle() {
     gradleTasks=""
-    if [ -d "$1" ]; then
-        #Passed a dir as arg1. This means it's a gradle subproject
+    if [ -d "$1" -a $# -gt 1 ]; then
+        #Passed a dir as arg1. We'll assume it's a gradle subproject
         gradleSubproject=$(echo $1 | sed -r 's/\//:/g' | sed -r 's/^:*(.*):*$/:\1:/g')
         for arg in "${@:2}"; do
             gradleTasks="$gradleTasks ${gradleSubproject}${arg}"
