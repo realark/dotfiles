@@ -230,6 +230,18 @@ function formatxml(){
     done
 }
 
+# In general, I'd like to only capture complicatated commands or commands which changed the state of the machine.
+declare -a history_exclude_regexes=('^ls.*' '^tree.*$' '^(h)?top$' '^pwd.*' 'screen' '^echo.*$' '^whoami.*' 'su -' 'cd' '^idemacs$' '^git (status|log|ls|ll|show).*$' '^(sudo )?poweroff$' )
+
+function zshaddhistory() {
+    emulate -L zsh
+    for regex in "${history_exclude_regexes[@]}"; do
+        if echo $1 2>/dev/null | grep -E $regex >/dev/null 2>&1 ; then
+            return 1
+        fi
+    done
+}
+
 #TODO
 function cleanmerge(){
     echo "Not done yet"
