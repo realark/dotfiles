@@ -222,6 +222,12 @@
 (setq tags-revert-without-query 1)
 (require 'ido)
 (ido-mode t)
+(ido-everywhere)
+(require 'ido-ubiquitous)
+(ido-ubiquitous-mode)
+(require 'ido-vertical-mode)
+(ido-vertical-mode)
+(setq magit-completing-read-function #'magit-ido-completing-read)
 ;(defun my-ido-find-tag ()
 ;  "Find a tag using ido"
 ;  (interactive)
