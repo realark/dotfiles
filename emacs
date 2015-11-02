@@ -55,6 +55,14 @@
      (add-to-list 'grep-find-ignored-directories "bin")))
 
 ;;Evil (extensible vi layer for Emacs)
+(global-evil-leader-mode) ; evil-leader must load first
+(evil-leader/set-leader "<SPC>")
+(evil-leader/set-key
+  "l"  'whitespace-mode
+  "g"  'magit-status
+  "B"  'magit-blame
+  "b"  'magit-blame-toggle)
+
 (require 'evil)
 (evil-mode 1)
 ;;; esc quits
@@ -92,6 +100,13 @@
 (setq magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-x g") 'magit-status)
 (setq magit-push-always-verify nil)
+
+(defun magit-blame-toggle ()
+  "Toggle magit-blame-mode on and off interactively."
+  (interactive)
+  (if (and (boundp 'magit-blame-mode) magit-blame-mode)
+      (magit-blame-quit)
+    (call-interactively 'magit-blame)))
 
 ;;multi-term
 (require 'multi-term)
