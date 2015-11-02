@@ -58,10 +58,12 @@
 (global-evil-leader-mode) ; evil-leader must load first
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
-  "l"  'whitespace-mode
-  "g"  'magit-status
-  "B"  'magit-blame
-  "b"  'magit-blame-toggle)
+  "l"      'whitespace-mode
+  "f"      'indent-region
+  "<tab>"  'hs-toggle-hiding
+  "g"      'magit-status
+  "B"      'magit-blame
+  "b"      'magit-blame-toggle)
 
 (require 'evil)
 (evil-mode 1)
@@ -107,6 +109,13 @@
   (if (and (boundp 'magit-blame-mode) magit-blame-mode)
       (magit-blame-quit)
     (call-interactively 'magit-blame)))
+
+;; Code folding
+(load-library "hideshow")
+(add-hook 'c-mode-common-hook   'hs-minor-mode)
+(add-hook 'java-mode-hook       'hs-minor-mode)
+(add-hook 'lisp-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
 
 ;;multi-term
 (require 'multi-term)
