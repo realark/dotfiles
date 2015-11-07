@@ -372,4 +372,6 @@
   '(add-to-list 'ac-modes 'cider-repl-mode))
 
 ;; Scala
-(add-to-list 'auto-mode-alist '("\.scala$" . scala-mode))
+; (add-to-list 'auto-mode-alist '("\.scala$" . scala-mode))
+(require 'ensime)
+(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
