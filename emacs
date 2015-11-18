@@ -83,12 +83,17 @@
                           (git-rebase-mode . emacs)
                           (term-mode . emacs)
                           (grep-mode . emacs)
-                          (eclim-problems-mode . insert)
                           (magit-branch-manager-mode . emacs))
   do (evil-set-initial-state mode state))
 
 ;; keybindings for eclim
-; (evil-define-key 'normal eclim-problems-mode (kbd "RET") 'eclim-problems-open-current)
+(evil-define-key 'normal eclim-problems-mode-map
+  (kbd "e") 'eclim-problems-show-errors
+  (kbd "w") 'eclim-problems-show-warnings
+  (kbd "a") 'eclim-problems-show-all
+  (kbd "g") 'eclim-problems-buffer-refresh
+  (kbd "q") 'eclim-quit-window
+  (kbd "RET") 'eclim-problems-open-current)
 
 ;;Slime
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
@@ -118,6 +123,7 @@
 (load-library "hideshow")
 (add-hook 'c-mode-common-hook   'hs-minor-mode)
 (add-hook 'java-mode-hook       'hs-minor-mode)
+(add-hook 'scala-mode-hook      'hs-minor-mode)
 (add-hook 'lisp-mode-hook       'hs-minor-mode)
 (add-hook 'sh-mode-hook         'hs-minor-mode)
 
