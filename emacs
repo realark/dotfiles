@@ -83,8 +83,12 @@
                           (git-rebase-mode . emacs)
                           (term-mode . emacs)
                           (grep-mode . emacs)
+                          (eclim-problems-mode . insert)
                           (magit-branch-manager-mode . emacs))
   do (evil-set-initial-state mode state))
+
+;; keybindings for eclim
+; (evil-define-key 'normal eclim-problems-mode (kbd "RET") 'eclim-problems-open-current)
 
 ;;Slime
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
@@ -143,6 +147,10 @@
 ;;Turn off tabs
 (setq-default indent-tabs-mode nil)
 (setq tab-width 4)
+
+;; Adapt to the whitespace style of the file we're editing
+(require 'fuzzy-format)
+(fuzzy-format-mode t)
 
 ;;Emacs Code Browser
 (require 'ecb)
@@ -337,8 +345,8 @@
 (global-eclim-mode)
 
 (setq eclim-auto-save t
-      eclim-executable "~/.eclipse/org.eclipse.platform_4.5.0_155965261_linux_gtk_x86_64/eclim"
-      eclimd-executable "~/.eclipse/org.eclipse.platform_4.5.0_155965261_linux_gtk_x86_64/eclimd"
+      eclim-executable "/usr/lib/eclipse/eclim"
+      eclimd-executable "/usr/lib/eclipse/eclimd"
       eclimd-wait-for-process nil
       eclimd-default-workspace "~/workspace"
       eclim-use-yasnippet nil
