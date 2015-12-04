@@ -326,6 +326,9 @@
 ;(add-hook 'lisp-mode-hook 'flymake-lisp-load)
 (add-hook 'yaml-mode-hook 'flymake-yaml-load)
 
+; spellcheck
+(add-hook 'java-mode-hook (lambda () (flyspell-prog-mode)))
+
 ;; ctags
 (setq path-to-ctags "/usr/bin/ctags")
 
