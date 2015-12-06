@@ -311,6 +311,8 @@
 ;Org mode
 (require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+;; fontify code in code blocks
+(setq org-src-fontify-natively t)
 
 ;Dired options
 (diredp-toggle-find-file-reuse-dir 1)
