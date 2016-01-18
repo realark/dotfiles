@@ -190,6 +190,7 @@
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
  '(ecb-tip-of-the-day nil)
  '(inhibit-startup-screen t)
+ '(magit-log-arguments (quote ("--graph" "--color" "--decorate" "-n256")))
  '(safe-local-variable-values (quote ((Base . 10) (Syntax . ANSI-Common-Lisp))))
  '(vc-follow-symlinks nil))
 (custom-set-faces
@@ -383,8 +384,17 @@
 (ac-emacs-eclim-config)
 
 ;; Groovy and Gradle
+
+(require 'groovy-mode)
+(require 'inf-groovy)
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
+(add-hook 'groovy-mode-hook
+          '(lambda ()
+             (inf-groovy-keys)))
+(setq inferior-groovy-mode-hook
+      '(lambda()
+         (setq groovy-home "/usr/share/groovy")))
 
 ;; Clojure
 (require 'ac-nrepl)
