@@ -29,7 +29,7 @@
 ;Insert closing bracket
 (electric-pair-mode 1)
 (show-paren-mode 1) ; turn on paren match highlighting
-;(setq show-paren-style 'expression) ; highlight entire bracket expression
+(setq show-paren-style 'expression) ; highlight entire bracket expression
 (setq large-file-warning-threshold 100000000) ;100mb
 
 (if window-system
@@ -61,6 +61,9 @@
   "l"      'whitespace-mode
   "f"      'indent-region
   "<tab>"  'hs-toggle-hiding
+  "e b"    'eclim-project-build
+  "e p"    'eclim-problems
+  "e c"    'eclim-problems-correct
   "g"      'magit-status
   "B"      'magit-blame
   "b"      'magit-blame-toggle)
