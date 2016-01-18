@@ -150,6 +150,9 @@ alias gradle='runGradle'
 alias follow='. $HOME/scripts/follow'
 alias journalctl='journalctl --pager-end --since "1 day ago"'
 
+# I don't want to set LC_ALL but perl and locale complain if I don't
+export LC_ALL="$LANG"
+
 export PATH=~/scripts:$PATH
 
 #zsh-syntax-highlighting
@@ -258,5 +261,19 @@ function cleanmerge(){
 #    [all good! cleanup...]
 #    rm crazy.patch
 }
+
+## ssh-agent. Manage keys through ksshaskpass
+export SSH_ASKPASS="/usr/bin/ksshaskpass"
+SSH_AGENT_FILE=/tmp/ssh-agent.sh
+if [ ! -f $SSH_AGENT_FILE ]; then
+    ssh-agent > $SSH_AGENT_FILE
+    . $SSH_AGENT_FILE >/dev/null
+    ssh-add </dev/null
+    for file in $(find ~/.ssh -name id_rsa) ; do
+        ssh-add $file </dev/null
+    done
+else
+    . $SSH_AGENT_FILE >/dev/null
+fi
 
 source  ~/.custom
