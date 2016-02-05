@@ -90,6 +90,7 @@
 (global-evil-leader-mode) ; evil-leader must load first
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
+  "<SPC>"  'execute-extended-command
   "3"      'toggle-window-split
   "l"      'whitespace-mode
   "f"      'indent-region
