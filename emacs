@@ -37,6 +37,10 @@
 (if window-system
  (load-theme 'tango-dark t))
 
+; change the minbuffer startup message
+(defun display-startup-echo-area-message ()
+  (message "This too shall pass."))
+
 ;Maximize emacs window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
