@@ -224,6 +224,7 @@
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
  '(ecb-tip-of-the-day nil)
  '(inhibit-startup-screen t)
+ '(magit-fetch-arguments (quote ("--prune")))
  '(magit-log-arguments (quote ("--graph" "--color" "--decorate" "-n256")))
  '(safe-local-variable-values (quote ((Base . 10) (Syntax . ANSI-Common-Lisp))))
  '(vc-follow-symlinks nil))
