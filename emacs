@@ -32,6 +32,7 @@
 (setq show-paren-style 'expression) ; highlight entire bracket expression
 (setq large-file-warning-threshold 100000000) ;100mb
 (setq create-lockfiles nil) ; Don't create # lock files
+(blink-cursor-mode -1)
 
 (if window-system
  (load-theme 'tango-dark t))
