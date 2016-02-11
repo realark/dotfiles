@@ -44,8 +44,15 @@
 ;Maximize emacs window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+;; Require-install Macro
+(defmacro require-install (PCK)
+  "Require package PCK, install via package-install if missing"
+  `(unless (require ,PCK nil t)
+     (package-install ,PCK)
+     (require ,PCK)))
+
 ;;Marmalade Package Archive
-(require 'package)
+(require-install 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (package-initialize)
@@ -102,7 +109,7 @@
   "B"      'magit-blame
   "b"      'magit-blame-toggle)
 
-(require 'evil)
+(require-install 'evil)
 (evil-mode 1)
 ;;; esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
@@ -137,14 +144,14 @@
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "/usr/bin/sbcl --noinform")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
-(require 'slime)
+(require-install 'slime)
 ;(global-set-key (kbd "C-c C-c") 'slime-compile-defun)
 ;(global-set-key (kbd "C-c C-k") 'slime-compile-and-load-file)
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
 ;;Git
-(require 'magit)
+(require-install 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-x g") 'magit-status)
 (setq magit-push-always-verify nil)
@@ -165,7 +172,7 @@
 (add-hook 'sh-mode-hook         'hs-minor-mode)
 
 ;;multi-term
-(require 'multi-term)
+(require-install 'multi-term)
 (setq multi-term-program "/bin/zsh")
 (defun last-term-buffer (l)
   "Return most recently used term buffer."
@@ -192,11 +199,11 @@
 (setq tab-width 4)
 
 ;; Adapt to the whitespace style of the file we're editing
-(require 'fuzzy-format)
+(require-install 'fuzzy-format)
 (fuzzy-format-mode t)
 
 ;;Emacs Code Browser
-(require 'ecb)
+(require-install 'ecb)
 (global-set-key (kbd "C-c . t") 'ecb-toggle-ecb-windows)
 
 (custom-set-variables
@@ -292,17 +299,17 @@
 ;(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 ;(helm-mode 1)
 
-(require 'etags-select)
+(require-install 'etags-select)
 (setq etags-select-go-if-unambiguous t)
 (setq etags-select-highlight-delay 5.0)
 (setq etags-select-use-short-name-completion t)
 (setq tags-revert-without-query 1)
-(require 'ido)
+(require-install 'ido)
 (ido-mode t)
 (ido-everywhere)
-(require 'ido-ubiquitous)
+(require-install 'ido-ubiquitous)
 (ido-ubiquitous-mode)
-(require 'ido-vertical-mode)
+(require-install 'ido-vertical-mode)
 (ido-vertical-mode)
 (setq magit-completing-read-function #'magit-ido-completing-read)
 ;(defun my-ido-find-tag ()
@@ -348,7 +355,7 @@
 (desktop-save-mode 1)
 
 ;Org mode
-(require 'org)
+(require-install 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 ;; fontify code in code blocks
 (setq org-src-fontify-natively t)
@@ -356,13 +363,13 @@
 ;Dired options
 (diredp-toggle-find-file-reuse-dir 1)
 
-(require 'rainbow-delimiters)
+(require-install 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 ;(global-auto-complete-mode t)
 ;Flymake: on the fly code checking
-(require 'flymake-easy)
-(require 'flymake-cursor)
+(require-install 'flymake-easy)
+(require-install 'flymake-cursor)
 ;(add-to-list 'auto-mode-alist '("\\.lisp$" . common-lisp-mode))
 ;(add-hook 'lisp-mode-hook 'flymake-lisp-load)
 (add-hook 'yaml-mode-hook 'flymake-yaml-load)
@@ -384,14 +391,14 @@
 
 ;;;;;;;;;;;;;;
 
-(require 'flymake-shell)
+(require-install 'flymake-shell)
 (add-hook 'sh-mode-hook 'flymake-shell-load)
 
 (setq mumamo-background-colors nil) 
 
 ;; Interface to eclipse via eclim
-(require 'eclimd)
-(require 'eclim)
+(require-install 'eclimd)
+(require-install 'eclim)
 (global-eclim-mode)
 
 (setq eclim-auto-save t
@@ -413,15 +420,15 @@
 (help-at-pt-set-timer)
 
 ;; Hook eclim up with auto complete mode
-(require 'auto-complete-config)
+(require-install 'auto-complete-config)
 (ac-config-default)
-(require 'ac-emacs-eclim-source)
+(require-install 'ac-emacs-eclim-source)
 (ac-emacs-eclim-config)
 
 ;; Groovy and Gradle
 
-(require 'groovy-mode)
-(require 'inf-groovy)
+(require-install 'groovy-mode)
+(require-install 'inf-groovy)
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
 (add-hook 'groovy-mode-hook
@@ -432,7 +439,7 @@
          (setq groovy-home "/usr/share/groovy")))
 
 ;; Clojure
-(require 'ac-nrepl)
+(require-install 'ac-nrepl)
 (add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
 (add-hook 'cider-mode-hook 'ac-nrepl-setup)
 (eval-after-load "auto-complete"
@@ -440,5 +447,5 @@
 
 ;; Scala
 ; (add-to-list 'auto-mode-alist '("\.scala$" . scala-mode))
-(require 'ensime)
+(require-install 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
