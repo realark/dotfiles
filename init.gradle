@@ -1,0 +1,30 @@
+apply plugin:AddDepPlugin
+
+class AddDepPlugin  implements Plugin<Gradle> {
+  def addDeps = ["org.ensime.gradle": "gradle.plugin.net.coacoas.gradle:ensime-gradle:0.2.2"]
+  def addRepos = ["https://plugins.gradle.org/m2/"]
+
+  void apply(Gradle gradle) {
+    def add = 0
+    gradle.allprojects { project ->
+      plugins.whenPluginAdded { t ->
+        if (++add == 1) {
+          project.getBuildScriptSource()
+          def bs = project.getBuildscript()
+          bs.getDependencies()
+          def repo = bs.getRepositories()
+          def ccf = bs.class.getDeclaredField("classpathConfiguration")
+          ccf.setAccessible(true)
+          def cc = ccf.get(bs)
+          addDeps.each { k,v-> cc.dependencies.add(project.dependencies.create(v))}
+          addRepos.each { k-> repo.maven { -> setUrl(k) } }
+        }
+        if (add >= 8) // allow built-in plugins to configure first
+          addDeps.each { k,v ->
+            // System.out.println("Applying from int: "+project+" -- "+k)
+            if (!k.startsWith("x")) project.apply([plugin: k])
+          }
+      }
+    }
+  }
+}
