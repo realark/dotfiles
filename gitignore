@@ -3,3 +3,4 @@ workbench.xmi
 .lock
 .recommenders
 *#*#
+.ensime*
