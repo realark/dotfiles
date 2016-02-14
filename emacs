@@ -83,6 +83,19 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
+(defun select-current-line ()
+  "Select the current line"
+  (interactive)
+  (end-of-line) ; move to end of line
+  (set-mark (line-beginning-position)))
+
+(defun toggle-comment-region-or-line ()
+  "Comment or uncomment the selected region. If no region is selected use the current line."
+  (interactive)
+  (if (not mark-active)
+      (select-current-line))
+  (comment-or-uncomment-region (region-beginning) (region-end)))
+
 ;; Options for M-x rgrep
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-files)
@@ -101,6 +114,7 @@
   "3"      'toggle-window-split
   "l"      'whitespace-mode
   "f"      'indent-region
+  ";"      'toggle-comment-region-or-line
   "<tab>"  'hs-toggle-hiding
   "e b"    'eclim-project-build
   "e p"    'eclim-problems
