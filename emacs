@@ -125,6 +125,7 @@
 
 (require-install 'evil)
 (evil-mode 1)
+(require-install 'evil-magit)
 ;;; esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
@@ -138,10 +139,8 @@
                           (comint-mode . normal)
                           (shell-mode . insert)
                           (git-commit-mode . insert)
-                          (git-rebase-mode . emacs)
                           (term-mode . emacs)
-                          (grep-mode . emacs)
-                          (magit-branch-manager-mode . emacs))
+                          (grep-mode . emacs))
   do (evil-set-initial-state mode state))
 
 ;; keybindings for eclim
