@@ -116,9 +116,6 @@
   "f"      'indent-region
   ";"      'toggle-comment-region-or-line
   "<tab>"  'hs-toggle-hiding
-  "e b"    'eclim-project-build
-  "e p"    'eclim-problems
-  "e c"    'eclim-problems-correct
   "g"      'magit-status
   "B"      'magit-blame
   "b"      'magit-blame-toggle)
@@ -142,15 +139,6 @@
                           (term-mode . emacs)
                           (grep-mode . emacs))
   do (evil-set-initial-state mode state))
-
-;; keybindings for eclim
-(evil-define-key 'normal eclim-problems-mode-map
-  (kbd "e") 'eclim-problems-show-errors
-  (kbd "w") 'eclim-problems-show-warnings
-  (kbd "a") 'eclim-problems-show-all
-  (kbd "g") 'eclim-problems-buffer-refresh
-  (kbd "q") 'eclim-quit-window
-  (kbd "RET") 'eclim-problems-open-current)
 
 ;;Slime
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
@@ -409,34 +397,9 @@
 
 (setq mumamo-background-colors nil) 
 
-;; Interface to eclipse via eclim
-(require-install 'eclimd)
-(require-install 'eclim)
-(global-eclim-mode)
-
-(setq eclim-auto-save t
-      eclim-executable "/usr/lib/eclipse/eclim"
-      eclimd-executable "/usr/lib/eclipse/eclimd"
-      eclimd-wait-for-process nil
-      eclimd-default-workspace "~/workspace"
-      eclim-use-yasnippet nil
-      help-at-pt-display-when-idle t
-      help-at-pt-timer-delay 0.1)
-(add-hook 'eclim-mode-hook
-          (lambda ()
-            (local-set-key (kbd "<f4>") #'eclim-java-hierarchy)
-            (local-set-key (kbd "C-M-h") #'eclim-java-call-hierarchy)
-            (local-set-key (kbd "<f3>") #'eclim-java-find-declaration)))
-
-;; Call the help framework with the settings above & activate
-;; eclim-mode
-(help-at-pt-set-timer)
-
-;; Hook eclim up with auto complete mode
+;; Hook up auto complete mode
 (require-install 'auto-complete-config)
 (ac-config-default)
-(require-install 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
 
 ;; Groovy and Gradle
 
@@ -462,3 +425,4 @@
 ; (add-to-list 'auto-mode-alist '("\.scala$" . scala-mode))
 (require-install 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(add-hook 'java-mode-hook 'ensime-scala-mode-hook)
