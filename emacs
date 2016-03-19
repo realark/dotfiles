@@ -44,6 +44,9 @@
 ;Maximize emacs window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+;; text size
+(global-set-key (kbd "C-+") 'text-scale-adjust)
+
 ;; Require-install Macro
 (defmacro require-install (PCK)
   "Require package PCK, install via package-install if missing"
