@@ -213,6 +213,7 @@
 ;; Adapt to the whitespace style of the file we're editing
 (require-install 'fuzzy-format)
 (fuzzy-format-mode t)
+(setq show-trailing-whitespace t)
 
 ;;Emacs Code Browser
 (require-install 'ecb)
