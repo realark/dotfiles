@@ -139,7 +139,7 @@
                           (comint-mode . normal)
                           (shell-mode . insert)
                           (git-commit-mode . insert)
-                          (term-mode . emacs)
+                          (term-mode . insert)
                           (grep-mode . emacs))
   do (evil-set-initial-state mode state))
 
@@ -192,6 +192,14 @@
               (multi-term)
                 (switch-to-buffer b))))
 (global-set-key (kbd "C-x t") 'get-term)
+
+(evil-define-key 'normal term-raw-map (kbd "RET") 'term-send-return)
+(evil-define-key 'normal term-raw-map (kbd "p") 'term-paste)
+(evil-define-key 'insert term-raw-map (kbd "C-v") 'term-paste)
+
+(evil-define-key 'normal term-raw-map (kbd "C-d") 'term-send-eof)
+(evil-define-key 'insert term-raw-map (kbd "C-d") 'term-send-eof)
+
 ;(add-hook 'term-mode-hook
 ;          (lambda ()
 ;            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
