@@ -200,6 +200,13 @@
 (evil-define-key 'normal term-raw-map (kbd "C-d") 'term-send-eof)
 (evil-define-key 'insert term-raw-map (kbd "C-d") 'term-send-eof)
 
+;; screen bindings
+(evil-define-key 'insert term-raw-map (kbd "C-a") 'term-send-raw)
+(evil-define-key 'normal term-raw-map (kbd "C-a") 'term-send-raw)
+(evil-define-key 'normal term-raw-map (kbd "c") 'term-send-raw)
+(evil-define-key 'normal term-raw-map (kbd "n") 'term-send-raw)
+(evil-define-key 'normal term-raw-map (kbd "p") 'term-send-raw)
+
 ;(add-hook 'term-mode-hook
 ;          (lambda ()
 ;            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
