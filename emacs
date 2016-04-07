@@ -444,8 +444,7 @@
 (add-hook 'eclim-mode-hook
           (lambda ()
             (local-set-key (kbd "<f4>") #'eclim-java-hierarchy)
-            (local-set-key (kbd "C-M-h") #'eclim-java-call-hierarchy)
-            (local-set-key (kbd "<f3>") #'eclim-java-find-declaration)))
+            (local-set-key (kbd "C-M-h") #'eclim-java-call-hierarchy)))
 
 ;; Call the help framework with the settings above & activate
 ;; eclim-mode
