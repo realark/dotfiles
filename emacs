@@ -1,7 +1,7 @@
 ;; -*- emacs-lisp -*-
 ; Text and the such
 ;; Use colors to highlight commands, etc.
-(global-font-lock-mode t) 
+(global-font-lock-mode t)
 ;; Disable the welcome message
 (setq inhibit-startup-message t)
 ;; Format the title-bar to always include the buffer name
@@ -143,8 +143,14 @@
                           (shell-mode . insert)
                           (git-commit-mode . insert)
                           (term-mode . insert)
-                          (grep-mode . emacs))
+                          (grep-mode . insert))
   do (evil-set-initial-state mode state))
+
+;; grep-mode bindings
+(evil-define-key 'insert grep-mode-map
+  (kbd "q") 'quit-window
+  (kbd "j") 'next-error-no-select
+  (kbd "k") 'previous-error-no-select)
 
 ;; keybindings for eclim
 (evil-define-key 'normal eclim-problems-mode-map
@@ -205,25 +211,15 @@
                 (switch-to-buffer b))))
 (global-set-key (kbd "C-x t") 'get-term)
 
-(evil-define-key 'normal term-raw-map (kbd "RET") 'term-send-return)
-(evil-define-key 'normal term-raw-map (kbd "p") 'term-paste)
-(evil-define-key 'insert term-raw-map (kbd "C-v") 'term-paste)
+(evil-define-key 'normal term-raw-map
+  (kbd "p") 'term-paste
+  (kbd "RET") 'term-send-return
+  (kbd "C-d") 'term-send-eof)
 
-(evil-define-key 'normal term-raw-map (kbd "C-d") 'term-send-eof)
-(evil-define-key 'insert term-raw-map (kbd "C-d") 'term-send-eof)
-
-;; screen bindings
-(evil-define-key 'insert term-raw-map (kbd "C-a") 'term-send-raw)
-(evil-define-key 'normal term-raw-map (kbd "C-a") 'term-send-raw)
-(evil-define-key 'normal term-raw-map (kbd "c") 'term-send-raw)
-(evil-define-key 'normal term-raw-map (kbd "n") 'term-send-raw)
-(evil-define-key 'normal term-raw-map (kbd "p") 'term-send-raw)
-
-;(add-hook 'term-mode-hook
-;          (lambda ()
-;            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
-;            (add-to-list 'term-bind-key-alist '("C-d" . term-send-eof))))
-
+(evil-define-key 'insert term-raw-map
+  (kbd "C-v") 'term-paste
+  (kbd "C-d") 'term-send-eof
+  (kbd "C-a") 'term-send-raw)
 
 ;;Turn off tabs
 (setq-default indent-tabs-mode nil)
@@ -426,12 +422,17 @@
 (require-install 'flymake-shell)
 (add-hook 'sh-mode-hook 'flymake-shell-load)
 
-(setq mumamo-background-colors nil) 
+(setq mumamo-background-colors nil)
 
 ;; Interface to eclipse via eclim
 (require-install 'eclimd)
 (require-install 'eclim)
 (global-eclim-mode)
+
+(defun eclim-personal-find-implementors ()
+    "Find implementors of the symbol under the point."
+    (interactive)
+  (eclim-java-find-generic "all" "implementors" "all" (thing-at-point 'symbol)))
 
 (setq eclim-auto-save t
       eclim-executable "/usr/lib/eclipse/eclim"
@@ -443,7 +444,8 @@
       help-at-pt-timer-delay 0.1)
 (add-hook 'eclim-mode-hook
           (lambda ()
-            (local-set-key (kbd "<f4>") #'eclim-java-hierarchy)
+            (local-set-key (kbd "C-S-g") #'eclim-java-find-references)
+            (local-set-key (kbd "<f4>") #'eclim-personal-find-implementors)
             (local-set-key (kbd "C-M-h") #'eclim-java-call-hierarchy)))
 
 ;; Call the help framework with the settings above & activate
