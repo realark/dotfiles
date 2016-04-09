@@ -432,13 +432,22 @@
 
 (defun eclim-personal-switch-to-junit-buffer-and-run ()
   (interactive)
-  ; TODO: check if exists first
   (if (get-buffer "*compilation*")
       (progn
         (switch-to-buffer "*compilation*")
         (recompile)
         (end-of-buffer))
-    (message "No JUnit buffer to switch to.")))
+    (progn
+      (end-of-buffer)
+      (eclim-run-junit (eclim-project-name)
+                       (eclim--project-current-file)
+                       (eclim--byte-offset)
+                       (eclim--current-encoding))
+      (pop-to-mark-command)
+      (pop-to-mark-command)
+      (other-window 1)
+      (delete-other-windows)
+      (end-of-buffer))))
 
 (defun eclim-personal-find-implementors ()
     "Find implementors of the symbol under the point."
