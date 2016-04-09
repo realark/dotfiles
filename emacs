@@ -122,6 +122,7 @@
   "e b"    'eclim-project-build
   "e p"    'eclim-problems
   "e c"    'eclim-problems-correct
+  "e j"    'eclim-personal-switch-to-junit-buffer-and-run
   "g"      'magit-status
   "B"      'magit-blame
   "b"      'magit-blame-toggle)
@@ -428,6 +429,16 @@
 (require-install 'eclimd)
 (require-install 'eclim)
 (global-eclim-mode)
+
+(defun eclim-personal-switch-to-junit-buffer-and-run ()
+  (interactive)
+  ; TODO: check if exists first
+  (if (get-buffer "*compilation*")
+      (progn
+        (switch-to-buffer "*compilation*")
+        (recompile)
+        (end-of-buffer))
+    (message "No JUnit buffer to switch to.")))
 
 (defun eclim-personal-find-implementors ()
     "Find implementors of the symbol under the point."
