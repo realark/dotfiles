@@ -231,10 +231,6 @@
 (fuzzy-format-mode t)
 (setq show-trailing-whitespace t)
 
-;;Emacs Code Browser
-(require-install 'ecb)
-(global-set-key (kbd "C-c . t") 'ecb-toggle-ecb-windows)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -242,23 +238,6 @@
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(desktop-enable t nil (desktop))
- '(ecb-auto-activate nil)
- '(ecb-compile-window-height 6)
- '(ecb-layout-window-sizes
-   (quote
-    (("left-analyse"
-      (ecb-directories-buffer-name 0.1694915254237288 . 0.25862068965517243)
-      (ecb-sources-buffer-name 0.1694915254237288 . 0.4827586206896552)
-      (ecb-methods-buffer-name 0.1694915254237288 . 0.10344827586206896)
-      (ecb-analyse-buffer-name 0.1694915254237288 . 0.13793103448275862))
-     ("left8"
-      (ecb-directories-buffer-name 0.225531914893617 . 0.3103448275862069)
-      (ecb-sources-buffer-name 0.225531914893617 . 0.22413793103448276)
-      (ecb-methods-buffer-name 0.225531914893617 . 0.27586206896551724)
-      (ecb-history-buffer-name 0.225531914893617 . 0.1724137931034483)))))
- '(ecb-options-version "2.40")
- '(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2))
- '(ecb-tip-of-the-day nil)
  '(inhibit-startup-screen t)
  '(magit-fetch-arguments (quote ("--prune")))
  '(magit-log-arguments (quote ("--graph" "--color" "--decorate" "-n256")))
