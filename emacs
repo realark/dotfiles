@@ -358,6 +358,16 @@
 ;; fontify code in code blocks
 (setq org-src-fontify-natively t)
 
+; Neotree
+(require-install 'neotree)
+(global-set-key [f8] 'neotree-toggle)
+(setq neo-smart-open t)
+(add-hook 'neotree-mode-hook
+          (lambda ()
+            (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+            (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+            (define-key evil-normal-state-local-map (kbd "RET") 'neotree-change-root)))
+
 ;Dired options
 (require-install 'dired+)
 (diredp-toggle-find-file-reuse-dir 1)
