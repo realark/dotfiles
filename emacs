@@ -61,7 +61,7 @@
 (defadvice load-theme (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 (if window-system
- (load-theme 'tango-dark t))
+ (load-theme 'tsdh-dark t))
 
 ; toggle two-window split between horizontal and vertical
 (defun toggle-window-split ()
