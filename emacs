@@ -359,13 +359,9 @@
 (require-install 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
-;(global-auto-complete-mode t)
-;Flymake: on the fly code checking
-(require-install 'flymake-easy)
-(require-install 'flymake-cursor)
-;(add-to-list 'auto-mode-alist '("\\.lisp$" . common-lisp-mode))
-;(add-hook 'lisp-mode-hook 'flymake-lisp-load)
-(add-hook 'yaml-mode-hook 'flymake-yaml-load)
+;Flycheck
+(require-install 'flycheck)
+(global-flycheck-mode)
 
 ; spellcheck
 (add-hook 'java-mode-hook (lambda () (flyspell-prog-mode)))
@@ -383,9 +379,6 @@
 (add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode)
 
 ;;;;;;;;;;;;;;
-
-(require-install 'flymake-shell)
-(add-hook 'sh-mode-hook 'flymake-shell-load)
 
 (setq mumamo-background-colors nil)
 
