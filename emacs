@@ -113,6 +113,7 @@
      (add-to-list 'grep-find-ignored-directories "bin")))
 
 ;;Evil (extensible vi layer for Emacs)
+(require-install 'evil-leader)
 (global-evil-leader-mode) ; evil-leader must load first
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
@@ -358,6 +359,7 @@
 (setq org-src-fontify-natively t)
 
 ;Dired options
+(require-install 'dired+)
 (diredp-toggle-find-file-reuse-dir 1)
 
 (require-install 'rainbow-delimiters)
