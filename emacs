@@ -34,9 +34,6 @@
 (setq create-lockfiles nil) ; Don't create # lock files
 (blink-cursor-mode -1)
 
-(if window-system
- (load-theme 'tango-dark t))
-
 ; change the minbuffer startup message
 (defun display-startup-echo-area-message ()
   (message "This too shall pass."))
@@ -59,6 +56,12 @@
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (package-initialize)
+
+;; Theme
+(defadvice load-theme (before theme-dont-propagate activate)
+  (mapcar #'disable-theme custom-enabled-themes))
+(if window-system
+ (load-theme 'tango-dark t))
 
 ; toggle two-window split between horizontal and vertical
 (defun toggle-window-split ()
