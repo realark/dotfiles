@@ -129,7 +129,6 @@
 
 (require-install 'evil)
 (evil-mode 1)
-(require-install 'evil-magit)
 ;;; esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
@@ -186,6 +185,11 @@
       (magit-blame-quit)
     (call-interactively 'magit-blame)))
 
+(setq magit-fetch-arguments '("--prune"))
+(setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
+
+(require-install 'evil-magit)
+
 ;; Code folding
 (load-library "hideshow")
 (add-hook 'c-mode-common-hook   'hs-minor-mode)
@@ -230,25 +234,6 @@
 (require-install 'fuzzy-format)
 (fuzzy-format-mode t)
 (setq show-trailing-whitespace t)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(desktop-enable t nil (desktop))
- '(inhibit-startup-screen t)
- '(magit-fetch-arguments (quote ("--prune")))
- '(magit-log-arguments (quote ("--graph" "--color" "--decorate" "-n256")))
- '(safe-local-variable-values (quote ((Base . 10) (Syntax . ANSI-Common-Lisp))))
- '(vc-follow-symlinks nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 
 ;;;;; Buffer navigation
 ; necessary support function for buffer burial
