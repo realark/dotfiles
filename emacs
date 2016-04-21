@@ -33,6 +33,7 @@
 (setq large-file-warning-threshold 100000000) ;100mb
 (setq create-lockfiles nil) ; Don't create # lock files
 (blink-cursor-mode -1)
+(put 'narrow-to-region 'disabled nil)
 
 ; change the minbuffer startup message
 (defun display-startup-echo-area-message ()
