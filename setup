@@ -1,11 +1,27 @@
 #!/bin/sh
 force=$1
 source_dir="$( cd "$( dirname "$0" )" && pwd )"
+this_script="$(basename "$0")"
+skip_list=($this_script)
+
+cd $source_dir
 
 for file in *
 do
-    if [ "$file" != "$(basename "$0")" ]
-    then
-        ln $force -s "$source_dir/$file" ~/".$file"
+    skip_file="n"
+    for skip in "${skip_list[@]}"
+    do
+        if [ "$skip" == "$file" ]
+        then
+            skip_file="y"
+            break
+        fi
+    done
+    if [ "$skip_file" == "y" ]; then
+        continue;
     fi
+
+    ln $force -s "$source_dir/$file" ~/".$file"
 done
+
+cd -
