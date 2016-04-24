@@ -1,6 +1,8 @@
 TAGS
 workbench.xmi
+.emacs.desktop
 .lock
-.recommenders
 *#*#
+.recommenders
 .ensime*
+*.fasl
