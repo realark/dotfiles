@@ -340,7 +340,10 @@
 (global-set-key (kbd "C-S-T") #'ido-find-file-in-tag-files)
 
 ;Backup files
-(setq backup-directory-alist `(("." . "~/.emacs_saves")))
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 (setq backup-by-copying t)
 ;Desktop save files
 ;; Automatically save and restore sessions from the current dir
