@@ -2,26 +2,31 @@
 force=$1
 source_dir="$( cd "$( dirname "$0" )" && pwd )"
 this_script="$(basename "$0")"
-skip_list=($this_script)
+skip_list=($this_script ".git" ".lock" ".emacs.desktop")
 
 cd $source_dir
 
-for file in *
-do
-    skip_file="n"
-    for skip in "${skip_list[@]}"
-    do
-        if [ "$skip" == "$file" ]
-        then
-            skip_file="y"
-            break
-        fi
-    done
-    if [ "$skip_file" == "y" ]; then
-        continue;
+find_cmd="find . -type f -name '*'"
+for skip in "${skip_list[@]}"; do
+    if [ -f $skip ]; then
+        find_cmd="$find_cmd ! -path ./$skip"
+    elif [ -d $skip ]; then
+        find_cmd="$find_cmd ! -path ./${skip}/'*'"
     fi
+done
 
-    ln $force -s "$source_dir/$file" ~/".$file"
+for result in $(eval $find_cmd)
+do
+    # sed can take hashes in place of slashes
+    rel_path=$(echo $result | sed -r 's#^./##g')
+    file=$(echo $rel_path | sed -r 's#.*/([^/]*$)#\1#g')
+    dir=$(echo $rel_path | sed -r 's#(.*)/[^/]*$#\1#g')
+    if [ "$file" = "$dir" ]; then
+        ln $force -s "$source_dir/$file" ~/".$file"
+    else
+        mkdir -p ~/.$dir
+        ln $force -s "$source_dir/$dir/$file" ~/.$dir/$file
+    fi
 done
 
 cd -
