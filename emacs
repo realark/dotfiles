@@ -384,7 +384,17 @@
 (global-flycheck-mode)
 
 ; spellcheck
-(add-hook 'java-mode-hook (lambda () (flyspell-prog-mode)))
+(mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-prog-mode))
+      '(emacs-lisp-mode-hook
+        lisp-mode-hook
+        clojure-mode-hook
+        java-mode-hook
+        scala-mode-hook
+        groovy-mode-hook))
+
+(mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-mode))
+      '(org-mode-hook
+        text-mode-hook))
 
 ;; ctags
 (setq path-to-ctags "/usr/bin/ctags")
