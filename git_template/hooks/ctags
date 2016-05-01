@@ -1,4 +1,10 @@
 #!/bin/sh
 root_dir="`git rev-parse --git-dir`/.."
 cd $root_dir
-git ls-files | ctags -e -L -
+excludes=""
+if [ -f .tagskip ]; then
+    for exclude in $(cat .tagskip); do
+        excludes="$excludes | grep -v '${exclude}'"
+    done
+fi
+eval "git ls-files $excludes | ctags -e -L -"

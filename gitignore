@@ -6,3 +6,4 @@ workbench.xmi
 .recommenders
 .ensime*
 *.fasl
+.tagskip
