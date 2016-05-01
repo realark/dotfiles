@@ -282,27 +282,27 @@
               my-buffer-list)
        (bury-buffer)
        (nth n my-buffer-list)))))
-;Buffer nav keys
+;; evil buffer nav keys
 (define-key evil-normal-state-map "gT" 'crs-bury-buffer)
 (define-key evil-normal-state-map "gt" (lambda () (interactive) (crs-bury-buffer -1)))
 
-;(require 'icicle)
-;(icy-mode 1)
-;(setq icicle-show-Completions-initially-flag t)
-;(setq icicle-top-level-when-sole-completion-flag t)
-
-;(require 'helm)
-;(require 'helm-config)
-;(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-;(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-;(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-;(helm-mode 1)
-
+;; tags
 (require-install 'etags-select)
 (setq etags-select-go-if-unambiguous t)
 (setq etags-select-highlight-delay 5.0)
 (setq etags-select-use-short-name-completion t)
 (setq tags-revert-without-query 1)
+(global-set-key (kbd "<f3>") #'etags-select-find-tag-at-point)
+
+(evil-define-key 'emacs etags-select-mode-map
+  (kbd "j")       'etags-select-next-tag
+  (kbd "k")       'etags-select-previous-tag
+  (kbd "q")       'etags-select-quit
+  (kbd "/")       'evil-search-forward
+  (kbd "n")       'evil-search-next
+  (kbd "N")       'evil-search-previous)
+
+;; ido
 (require-install 'ido)
 (ido-mode t)
 (ido-everywhere)
@@ -311,33 +311,6 @@
 (require-install 'ido-vertical-mode)
 (ido-vertical-mode)
 (setq magit-completing-read-function #'magit-ido-completing-read)
-;(defun my-ido-find-tag ()
-;  "Find a tag using ido"
-;  (interactive)
-;  (let (tag-names)
-;    (map (lambda (x)
-;           (push (prin1-to-string x t) tag-names))
-;         (tags-completion-at-point-function)) ; not working
-;    (find-tag (ido-completing-read "Tag: " tag-names))))
-
-;(defun find-tag-no-prompt ()
-;  "Jump to the tag at point without prompting"
-;  (interactive)
-;  (find-tag (find-tag-default)))
-
-(defun ido-find-file-in-tag-files ()
-  (interactive)
-  (save-excursion
-    (let ((enable-recursive-minibuffers t))
-      (visit-tags-table-buffer))
-    (find-file
-     (expand-file-name
-      (ido-completing-read
-       "Project file: " (tags-table-files) nil t)))))
-
-(global-set-key (kbd "<f3>") #'etags-select-find-tag-at-point)
-(global-set-key (kbd "C-<f3>") #'tags-search)
-(global-set-key (kbd "C-S-T") #'ido-find-file-in-tag-files)
 
 ;Backup files
 (setq backup-directory-alist
@@ -355,6 +328,13 @@
       desktop-files-not-to-save   "^\*.*\*$"
       desktop-load-locked-desktop nil)
 (desktop-save-mode 1)
+
+;Projectile
+(require-install 'projectile)
+(projectile-global-mode)
+(setq projectile-enable-caching t)
+(global-set-key (kbd "C-S-F") #'projectile-find-file)
+(global-set-key (kbd "C-S-T") #'projectile-find-tag)
 
 ;Org mode
 (require-install 'org)
