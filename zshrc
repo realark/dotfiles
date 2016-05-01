@@ -276,4 +276,6 @@ else
     . $SSH_AGENT_FILE >/dev/null
 fi
 
-source  ~/.custom
+if [ -f ~/.custom ]; then
+    source  ~/.custom
+fi
