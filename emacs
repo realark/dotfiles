@@ -331,8 +331,18 @@
 
 ;Projectile
 (require-install 'projectile)
-(projectile-global-mode)
+(setq projectile-globally-ignored-directories
+      (append projectile-globally-ignored-directories
+              '(".git" ".ensime_cache.d" ".gradle"
+                ".recommenders" ".metadata" "dist")))
+(setq projectile-globally-ignored-files
+      (append projectile-globally-ignored-files
+              '(".ensime" "*.war" "*.jar" "*.zip"
+                "*.png" "*.gif" "*.vsd" "*.svg"
+                "*.exe" "eclimd.log"
+                ".emacs.desktop" "*.deb" "*.gz")))
 (setq projectile-enable-caching t)
+(projectile-global-mode)
 (global-set-key (kbd "C-S-F") #'projectile-find-file)
 (global-set-key (kbd "C-S-T") #'projectile-find-tag)
 
@@ -374,6 +384,7 @@
 
 (mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-mode))
       '(org-mode-hook
+        markdown-mode-hook
         text-mode-hook))
 
 ;; ctags

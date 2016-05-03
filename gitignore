@@ -7,3 +7,4 @@ workbench.xmi
 .ensime*
 *.fasl
 .tagskip
+.projectile
