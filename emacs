@@ -34,6 +34,15 @@
 (setq create-lockfiles nil) ; Don't create # lock files
 (blink-cursor-mode -1)
 (put 'narrow-to-region 'disabled nil)
+(setq help-window-select t)
+
+;; Disable GC in the minibuffer
+(defun my-minibuffer-setup-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
+(defun my-minibuffer-exit-hook ()
+  (setq gc-cons-threshold 800000))
+(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 ; change the minbuffer startup message
 (defun display-startup-echo-area-message ()
@@ -395,6 +404,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (ido-ubiquitous-mode)
 (require-install 'ido-vertical-mode)
 (ido-vertical-mode)
+(setq ido-create-new-buffer 'always)
 (setq magit-completing-read-function #'magit-ido-completing-read)
 
 ;Backup files
