@@ -297,6 +297,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (add-hook 'scala-mode-hook      'hs-minor-mode)
 (add-hook 'lisp-mode-hook       'hs-minor-mode)
 (add-hook 'sh-mode-hook         'hs-minor-mode)
+(add-hook 'json-mode-hook       'hs-minor-mode)
 
 ;;multi-term
 (require-install 'multi-term)
