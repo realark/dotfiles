@@ -181,7 +181,7 @@
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "/usr/bin/sbcl --noinform")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
-(slime-setup '(slime-fancy))
+(slime-setup '(slime-fancy slime-asdf))
 ;(global-set-key (kbd "C-c C-c") 'slime-compile-defun)
 ;(global-set-key (kbd "C-c C-k") 'slime-compile-and-load-file)
 (load "~/quicklisp/clhs-use-local.el" t)
