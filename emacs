@@ -35,6 +35,7 @@
 (blink-cursor-mode -1)
 (put 'narrow-to-region 'disabled nil)
 (setq help-window-select t)
+(setq echo-keystrokes 0.1)
 
 ;; Disable GC in the minibuffer
 (defun my-minibuffer-setup-hook ()
