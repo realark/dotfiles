@@ -447,6 +447,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 ;; fontify code in code blocks
 (setq org-src-fontify-natively t)
+(require-install 'evil-org)
 
 ; Neotree
 (require-install 'neotree)
