@@ -436,7 +436,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
       (append projectile-globally-ignored-files
               '(".ensime" "*.war" "*.jar" "*.zip"
                 "*.png" "*.gif" "*.vsd" "*.svg"
-                "*.exe" "eclimd.log"
+                "*.exe" "eclimd.log" "workbench.xmi"
                 ".emacs.desktop" "*.deb" "*.gz")))
 (setq projectile-enable-caching t)
 (projectile-global-mode)
