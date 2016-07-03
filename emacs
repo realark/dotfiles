@@ -62,11 +62,14 @@
      (package-install ,PCK)
      (require ,PCK)))
 
-;;Marmalade Package Archive
+;; use mepla and marmalade for package
 (require-install 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (package-initialize)
+
+;; try runs emacs packages without installing them
+(require-install 'try)
 
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
@@ -446,9 +449,13 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;Org mode
 (require-install 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(setq org-inhibit-startup-visibility-stuff t)
+(setq org-startup-indented t)
 ;; fontify code in code blocks
 (setq org-src-fontify-natively t)
 (require-install 'evil-org)
+(require-install 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 ; Neotree
 (require-install 'neotree)
