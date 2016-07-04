@@ -103,6 +103,13 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
+;; use ace-window
+(require-install 'ace-window)
+(global-set-key [remap other-window] 'ace-window)
+(custom-set-faces
+ '(aw-leading-char-face
+   ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+
 (defun select-current-line ()
   "Select the current line"
   (interactive)
