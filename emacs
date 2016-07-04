@@ -411,6 +411,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (ido-vertical-mode)
 (setq ido-create-new-buffer 'always)
 (setq magit-completing-read-function #'magit-ido-completing-read)
+;; flx matching for ido
+(require-install 'flx-ido)
+(flx-ido-mode 1)
+(setq ido-enable-flex-matching t)
+(setq ido-use-faces nil)
+
 
 ;Backup files
 (setq backup-directory-alist
