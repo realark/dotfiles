@@ -408,21 +408,29 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (kbd "n")       'evil-search-next
   (kbd "N")       'evil-search-previous)
 
-;; ido
-(require-install 'ido)
-(ido-mode t)
-(ido-everywhere)
-(require-install 'ido-ubiquitous)
-(ido-ubiquitous-mode)
-(require-install 'ido-vertical-mode)
-(ido-vertical-mode)
-(setq ido-create-new-buffer 'always)
-(setq magit-completing-read-function #'magit-ido-completing-read)
-;; flx matching for ido
-(require-install 'flx-ido)
-(flx-ido-mode 1)
-(setq ido-enable-flex-matching t)
-(setq ido-use-faces nil)
+;; ivy and friends
+(require-install 'ivy)
+(require-install 'swiper)
+(require-install 'counsel)
+
+(ivy-mode t)
+(setq ivy-wrap t)
+(setq ivy-use-virtual-buffers t)
+(setq ivy-height 10)
+(setq ivy-count-format "(%d/%d) ")
+
+;; ivy global keys
+(global-set-key (kbd "C-s") 'swiper)
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+;; ivy minibuffer keys
+(define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
+(define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+(define-key ivy-minibuffer-map (kbd "C-S-j") 'ivy-scroll-up-command)
+(define-key ivy-minibuffer-map (kbd "C-S-k") 'ivy-scroll-down-command)
+
+(setq magit-completing-read-function 'ivy-completing-read)
+(setq projectile-completion-system 'ivy)
 
 
 ;Backup files
