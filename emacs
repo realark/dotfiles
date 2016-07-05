@@ -189,12 +189,11 @@
 ;;Slime
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
 (require-install 'slime)
+(require-install 'slime-company)
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "/usr/bin/sbcl --noinform")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
-(slime-setup '(slime-fancy slime-asdf))
-;(global-set-key (kbd "C-c C-c") 'slime-compile-defun)
-;(global-set-key (kbd "C-c C-k") 'slime-compile-and-load-file)
+(slime-setup '(slime-fancy slime-asdf slime-company))
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
@@ -565,7 +564,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
       eclimd-default-workspace "~/workspace"
       eclim-use-yasnippet nil
       help-at-pt-display-when-idle t
-      help-at-pt-timer-delay 0.1)
+      help-at-pt-timer-delay 0.01)
 (add-hook 'eclim-mode-hook
           (lambda ()
             (local-set-key (kbd "C-S-g") #'eclim-java-find-references)
@@ -576,14 +575,18 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; eclim-mode
 (help-at-pt-set-timer)
 
-;; Hook eclim up with auto complete mode
-(require-install 'auto-complete-config)
-(ac-config-default)
-(require-install 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
+;; company mode
+(require-install 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+
+(require-install 'company-quickhelp)
+(company-quickhelp-mode t)
+
+(require-install 'company-emacs-eclim)
+(setq company-emacs-eclim-ignore-case t)
+(company-emacs-eclim-setup)
 
 ;; Groovy and Gradle
-
 (require-install 'groovy-mode)
 (require-install 'inf-groovy)
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
@@ -600,10 +603,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
 (add-hook 'cider-mode-hook 'ac-cider-setup)
 (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
-(eval-after-load "auto-complete"
-  '(progn
-     (add-to-list 'ac-modes 'cider-mode)
-     (add-to-list 'ac-modes 'cider-repl-mode)))
 
 ;; Scala
 ; (add-to-list 'auto-mode-alist '("\.scala$" . scala-mode))
