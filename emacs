@@ -590,6 +590,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq company-emacs-eclim-ignore-case t)
 (company-emacs-eclim-setup)
 
+(define-key company-active-map (kbd "M-n") nil)
+(define-key company-active-map (kbd "M-p") nil)
+(define-key company-active-map (kbd "M-j") #'company-select-next)
+(define-key company-active-map (kbd "M-k") #'company-select-previous)
+
 ;; Groovy and Gradle
 (require-install 'groovy-mode)
 (require-install 'inf-groovy)
