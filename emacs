@@ -417,6 +417,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq ivy-use-virtual-buffers t)
 (setq ivy-height 10)
 (setq ivy-count-format "(%d/%d) ")
+(setq ivy-extra-directories nil)
+(setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
 
 ;; ivy global keys
 (global-set-key (kbd "C-s") 'swiper)
@@ -427,6 +429,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
 (define-key ivy-minibuffer-map (kbd "C-S-j") 'ivy-scroll-up-command)
 (define-key ivy-minibuffer-map (kbd "C-S-k") 'ivy-scroll-down-command)
+
+(define-key counsel-find-file-map (kbd "<return>") 'ivy-alt-done)
 
 (setq magit-completing-read-function 'ivy-completing-read)
 (setq projectile-completion-system 'ivy)
