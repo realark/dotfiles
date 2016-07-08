@@ -418,7 +418,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq ivy-height 10)
 (setq ivy-count-format "(%d/%d) ")
 (setq ivy-extra-directories nil)
-(setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+(setq ivy-re-builders-alist '((t . ivy--regex-plus)))
 
 ;; ivy global keys
 (global-set-key (kbd "C-s") 'swiper)
