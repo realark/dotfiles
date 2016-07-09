@@ -595,6 +595,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (define-key company-active-map (kbd "M-j") #'company-select-next)
 (define-key company-active-map (kbd "M-k") #'company-select-previous)
 
+;; make company work with org-mode
+(defun add-pcomplete-to-capf ()
+  (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+(add-hook 'org-mode-hook #'add-pcomplete-to-capf)
+
 ;; Groovy and Gradle
 (require-install 'groovy-mode)
 (require-install 'inf-groovy)
