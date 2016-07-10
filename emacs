@@ -425,10 +425,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (global-set-key (kbd "M-x") 'counsel-M-x)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file)
 ;; ivy minibuffer keys
-(define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
-(define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
-(define-key ivy-minibuffer-map (kbd "C-S-j") 'ivy-scroll-up-command)
-(define-key ivy-minibuffer-map (kbd "C-S-k") 'ivy-scroll-down-command)
+(define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
+(define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
+(define-key ivy-minibuffer-map (kbd "M-S-j") 'ivy-scroll-up-command)
+(define-key ivy-minibuffer-map (kbd "M-S-k") 'ivy-scroll-down-command)
+(define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-history-element)
+(define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-history-element)
 
 (define-key counsel-find-file-map (kbd "<return>") 'ivy-alt-done)
 
