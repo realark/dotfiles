@@ -138,11 +138,15 @@
 (global-evil-leader-mode) ; evil-leader must load first
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
-  "<SPC>"  'execute-extended-command
+  "<SPC>"  'switch-to-buffer
+  "x"      'execute-extended-command
   "3"      'toggle-window-split
   "l"      'whitespace-mode
   "f"      'indent-region
   ";"      'toggle-comment-region-or-line
+  "o a"    'org-agenda
+  "o b"    'org-iswitchb
+  "o c"    'org-capture
   "<tab>"  'hs-toggle-hiding
   "e b"    'eclim-project-build
   "e p"    'eclim-problems
@@ -155,6 +159,7 @@
 (require-install 'evil)
 (evil-mode 1)
 ;;; esc quits
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
@@ -482,6 +487,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (require-install 'evil-org)
 (require-install 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(setq org-agenda-files (list "~/Documents/org-files/tasks.org"))
+(setq org-log-done 'time)
 
 ; Neotree
 (require-install 'neotree)
