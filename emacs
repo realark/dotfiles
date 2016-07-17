@@ -202,6 +202,26 @@
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
+(defun my-slime-repl-kill-or-interrupt ()
+  "If the user has entered text in the prompt, remove the text before and after point.
+Otherwise, send an interrupt to slime."
+  (interactive)
+  (cond ((= (marker-position slime-repl-input-start-mark) (point))
+         (slime-interrupt))
+        (t (slime-repl-kill-input)
+           (slime-repl-kill-input))))
+
+(evil-define-key 'insert slime-repl-mode-map
+  (kbd "C-c") 'my-slime-repl-kill-or-interrupt
+  (kbd "C-d") (lambda () (interactive)
+                (when (y-or-n-p "Quit slime?")
+                  (and (slime-repl-quit) (delete-window))))
+  (kbd "C-r") 'slime-repl-previous-matching-input
+  (kbd "TAB") 'completion-at-point
+  (kbd "C-l") 'slime-repl-clear-buffer
+  (kbd "C-k") 'slime-repl-previous-input
+  (kbd "C-j") 'slime-repl-next-input)
+
 ;;Git
 (require-install 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
@@ -338,6 +358,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (kbd "C-d") 'term-send-eof)
 
 (evil-define-key 'insert term-raw-map
+  (kbd "C-c") 'term-interrupt-subjob
+  (kbd "C-r") 'term-send-reverse-search-history
+  (kbd "C-k") 'term-send-up
+  (kbd "C-j") 'term-send-down
   (kbd "C-v") 'term-paste
   (kbd "C-d") 'term-send-eof
   (kbd "C-a") 'term-send-raw)
