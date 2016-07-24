@@ -202,6 +202,15 @@
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
+;; Toggle slime buffer
+(global-set-key [f9] (lambda () (interactive)
+                       (let ((slime-buffer (get-buffer "*slime-repl sbcl*")))
+                         (if slime-buffer
+                             (if (eq slime-buffer (current-buffer))
+                                 (delete-window)
+                               (switch-to-buffer-other-window "*slime-repl sbcl*"))
+                           (slime)))))
+
 (defun my-slime-repl-kill-or-interrupt ()
   "If the user has entered text in the prompt, remove the text before and after point.
 Otherwise, send an interrupt to slime."
@@ -222,7 +231,10 @@ Otherwise, send an interrupt to slime."
   (kbd "C-k") 'slime-repl-previous-input
   (kbd "C-j") 'slime-repl-next-input)
 
-;;Git
+(evil-define-key 'normal lisp-mode-map
+  (kbd "M-.") 'slime-edit-definition)
+
+;; Magit -- The best git interface I've ever used.
 (require-install 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-x g") 'magit-status)
