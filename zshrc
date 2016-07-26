@@ -269,7 +269,7 @@ if [ ! -f $SSH_AGENT_FILE ]; then
     ssh-agent > $SSH_AGENT_FILE
     . $SSH_AGENT_FILE >/dev/null
     ssh-add </dev/null
-    for file in $(find ~/.ssh -name id_rsa) ; do
+    for file in $(find ~/.ssh -name id_rsa | sort -u) ; do
         ssh-add $file </dev/null
     done
 else
