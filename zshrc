@@ -28,7 +28,7 @@ export LESS_TERMCAP_ZW=$(tput rsupm)
 
 
 #Some shell variables
-cdpath=(~ /media/Atlas /media)
+cdpath=( ~ )
 
 #history settings
 export HISTFILE=~/.zsh_history
@@ -234,7 +234,7 @@ function formatxml(){
 }
 
 # In general, I'd like to only capture complicatated commands or commands which changed the state of the machine.
-declare -a history_exclude_regexes=('^ls.*' '^tree.*$' '^(h)?top$' '^pwd.*' 'screen' '^echo.*$' '^whoami.*' 'su -' 'cd' '^idemacs$' '^git (status|log|ls|ll|show).*$' '^(sudo )?poweroff$' )
+declare -a history_exclude_regexes=('^ls.*' '^tree.*$' '^(h)?top$' '^pwd.*' 'screen' '^echo.*$' '^whoami.*' 'su -' '^\s*cd\s$' '^idemacs$' '^git (status|log|ls|ll|show).*$' '^(sudo )?poweroff$' )
 
 function zshaddhistory() {
     emulate -L zsh

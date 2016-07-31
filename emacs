@@ -126,6 +126,7 @@
 ;; Options for M-x rgrep
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-files)
+     (add-to-list 'grep-find-ignored-files "*.fasl")
      (add-to-list 'grep-find-ignored-files "*.class")))
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-directories)
@@ -175,6 +176,7 @@
                           (term-mode . insert)
                           (grep-mode . insert))
   do (evil-set-initial-state mode state))
+(evil-set-initial-state 'info-mode 'normal)
 
 ;; grep-mode bindings
 (evil-define-key 'insert grep-mode-map
@@ -233,6 +235,48 @@ Otherwise, send an interrupt to slime."
 
 (evil-define-key 'normal lisp-mode-map
   (kbd "M-.") 'slime-edit-definition)
+
+;; evil keys for slime inspector
+(evil-set-initial-state 'slime-inspector-mode 'normal)
+(evil-define-key 'normal slime-inspector-mode-map
+  (kbd "q") (lambda ()
+              "Reinspect the previous object or close the window if there is no previous object"
+              ;; mostly copied from slime-inspector-pop
+              (interactive)
+              (slime-eval-async
+                  `(swank:inspector-pop)
+                (lambda (result)
+                  (cond (result
+                         (slime-open-inspector result (pop slime-inspector-mark-stack)))
+                        (t (quit-window)))))))
+
+;; Paredit
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+;; Stop SLIME's REPL from grabbing DEL,
+;; which is annoying when backspacing over a '('
+(defun override-slime-repl-bindings-with-paredit ()
+  (define-key slime-repl-mode-map
+    (read-kbd-macro paredit-backward-delete-key) nil))
+(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+
+;; evil keys for paredit
+(evil-define-key 'insert paredit-mode-map
+  (kbd "C-l") 'paredit-forward-slurp-sexp
+  (kbd "C-S-h") 'paredit-backward-slurp-sexp
+  (kbd "C-h") 'paredit-forward-barf-sexp
+  (kbd "C-S-l") 'paredit-backward-barf-sexp)
+(evil-define-key 'normal paredit-mode-map
+  (kbd "C-l") 'paredit-forward-slurp-sexp
+  (kbd "C-S-h") 'paredit-backward-slurp-sexp
+  (kbd "C-h") 'paredit-forward-barf-sexp
+  (kbd "C-S-l") 'paredit-backward-barf-sexp)
 
 ;; Magit -- The best git interface I've ever used.
 (require-install 'magit)
@@ -507,7 +551,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
               '(".ensime" "*.war" "*.jar" "*.zip"
                 "*.png" "*.gif" "*.vsd" "*.svg"
                 "*.exe" "eclimd.log" "workbench.xmi"
-                ".emacs.desktop" "*.deb" "*.gz")))
+                ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
 (setq projectile-enable-caching t)
 (projectile-global-mode)
 (global-set-key (kbd "C-S-F") #'projectile-find-file)
@@ -630,6 +674,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 (require-install 'company-quickhelp)
 (company-quickhelp-mode t)
+(setq-default company-idle-delay 0.25)
+(setq-default company-minimum-prefix-length 2)
 
 (require-install 'company-emacs-eclim)
 (setq company-emacs-eclim-ignore-case t)
