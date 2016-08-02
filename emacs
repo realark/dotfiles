@@ -560,15 +560,38 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;Org mode
 (require-install 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(setq org-inhibit-startup-visibility-stuff t)
-(setq org-startup-indented t)
+(setq-default org-inhibit-startup-visibility-stuff t)
+(setq-default org-startup-indented t)
 ;; fontify code in code blocks
-(setq org-src-fontify-natively t)
+(setq-default org-src-fontify-natively t)
 (require-install 'evil-org)
 (require-install 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-(setq org-agenda-files (list "~/Documents/org-files/tasks.org"))
-(setq org-log-done 'time)
+(setq-default org-agenda-files (list "~/Documents/org-files/tasks.org"))
+(setq-default org-log-done 'time)
+;; Mobile-Org
+(require-install 'org-mobile)
+; stop mobile-org from adding an id to all tasks
+(setq-default org-mobile-force-id-on-agenda-items nil)
+(setq-default org-mobile-directory "~/Documents/mobileorg")
+(setq-default org-mobile-inbox-for-pull "~/Documents/mobileorg")
+(setq-default org-directory "~/Documents/org-files")
+; auto push to mobile org
+(defvar org-mobile-push-timer nil
+  "Timer that `org-mobile-push-timer' used to reschedule itself, or nil.")
+(defun org-mobile-push-with-delay (secs)
+  (when org-mobile-push-timer
+    (cancel-timer org-mobile-push-timer))
+  (setq org-mobile-push-timer
+        (run-with-idle-timer
+         (* 1 secs) nil 'org-mobile-push)))
+(add-hook 'after-save-hook
+          (lambda ()
+            (when (eq major-mode 'org-mode)
+              (dolist (file (org-mobile-files-alist))
+                (if (string= (file-truename (expand-file-name (car file)))
+                             (file-truename (buffer-file-name)))
+                    (org-mobile-push-with-delay 30))))))
 
 ; Neotree
 (require-install 'neotree)
