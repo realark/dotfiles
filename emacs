@@ -691,6 +691,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; eclim-mode
 (help-at-pt-set-timer)
 
+;; yasnippet
+(require-install 'yasnippet)
+(yas-global-mode 1)
+
 ;; company mode
 (require-install 'company)
 (add-hook 'after-init-hook 'global-company-mode)
