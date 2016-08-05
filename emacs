@@ -694,6 +694,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; yasnippet
 (require-install 'yasnippet)
 (yas-global-mode 1)
+;; don't turn on yas if there are no snippets
+(defun disable-yas-if-no-snippets ()
+  (when (and yas-minor-mode (null (yas--get-snippet-tables)))
+    (yas-minor-mode -1)))
+(add-hook 'yas-minor-mode-hook #'disable-yas-if-no-snippets)
 
 ;; company mode
 (require-install 'company)
