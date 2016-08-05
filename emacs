@@ -713,6 +713,18 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (define-key company-active-map (kbd "M-j") #'company-select-next)
 (define-key company-active-map (kbd "M-k") #'company-select-previous)
 
+;; Add yasnippet support for all company backends
+;; https://github.com/syl20bnr/spacemacs/pull/179
+(defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
+
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas) (and (listp backend)    (member 'company-yasnippet backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+
+(setq-default company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+
 ;; make company work with org-mode
 (defun add-pcomplete-to-capf ()
   (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
