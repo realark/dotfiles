@@ -190,6 +190,34 @@
   (kbd "q") 'eclim-quit-window
   (kbd "RET") 'eclim-problems-open-current)
 
+;; Paredit
+(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+;; Stop SLIME's REPL from grabbing DEL,
+;; which is annoying when backspacing over a '('
+(defun override-slime-repl-bindings-with-paredit ()
+  (define-key slime-repl-mode-map
+    (read-kbd-macro paredit-backward-delete-key) nil))
+(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+
+;; evil bindings for paredit
+(evil-define-key 'insert paredit-mode-map
+  (kbd "C-l") 'paredit-forward-slurp-sexp
+  (kbd "C-S-h") 'paredit-backward-slurp-sexp
+  (kbd "C-h") 'paredit-forward-barf-sexp
+  (kbd "C-S-l") 'paredit-backward-barf-sexp)
+(evil-define-key 'normal paredit-mode-map
+  (kbd "C-l") 'paredit-forward-slurp-sexp
+  (kbd "C-S-h") 'paredit-backward-slurp-sexp
+  (kbd "C-h") 'paredit-forward-barf-sexp
+  (kbd "C-S-l") 'paredit-backward-barf-sexp)
+
 ;;Slime
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
 (require-install 'slime)
@@ -226,12 +254,16 @@ Otherwise, send an interrupt to slime."
                   (and (slime-repl-quit) (delete-window))))
   (kbd "C-r") 'slime-repl-previous-matching-input
   (kbd "TAB") 'completion-at-point
-  (kbd "C-l") 'slime-repl-clear-buffer
+  (kbd "C-l") 'slime-repl-clear-buffer ;; FIXME this is overriding paredit
   (kbd "C-k") 'slime-repl-previous-input
   (kbd "C-j") 'slime-repl-next-input)
 
 (evil-define-key 'normal lisp-mode-map
   (kbd "M-.") 'slime-edit-definition)
+
+;; TODO: Add bindings for
+;; -slime stack traces
+;; -*slime-description* when slime-documentation is called
 
 ;; evil keys for slime inspector
 (evil-set-initial-state 'slime-inspector-mode 'normal)
@@ -246,34 +278,6 @@ Otherwise, send an interrupt to slime."
                   (cond (result
                          (slime-open-inspector result (pop slime-inspector-mark-stack)))
                         (t (quit-window)))))))
-
-;; Paredit
-(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
-;; Stop SLIME's REPL from grabbing DEL,
-;; which is annoying when backspacing over a '('
-(defun override-slime-repl-bindings-with-paredit ()
-  (define-key slime-repl-mode-map
-    (read-kbd-macro paredit-backward-delete-key) nil))
-(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
-
-;; evil keys for paredit
-(evil-define-key 'insert paredit-mode-map
-  (kbd "C-l") 'paredit-forward-slurp-sexp
-  (kbd "C-S-h") 'paredit-backward-slurp-sexp
-  (kbd "C-h") 'paredit-forward-barf-sexp
-  (kbd "C-S-l") 'paredit-backward-barf-sexp)
-(evil-define-key 'normal paredit-mode-map
-  (kbd "C-l") 'paredit-forward-slurp-sexp
-  (kbd "C-S-h") 'paredit-backward-slurp-sexp
-  (kbd "C-h") 'paredit-forward-barf-sexp
-  (kbd "C-S-l") 'paredit-backward-barf-sexp)
 
 ;; Magit -- The best git interface I've ever used.
 (require-install 'magit)
