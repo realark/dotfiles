@@ -701,6 +701,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (when (and yas-minor-mode (null (yas--get-snippet-tables)))
     (yas-minor-mode -1)))
 (add-hook 'yas-minor-mode-hook #'disable-yas-if-no-snippets)
+(require-install 'common-lisp-snippets)
 
 ;; company mode
 (require-install 'company)
