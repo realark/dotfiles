@@ -221,6 +221,8 @@
 ;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
 (require-install 'slime)
 (require-install 'slime-company)
+(make-directory "/tmp/slime-fasls/" t)
+(setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "/usr/bin/sbcl --noinform")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
