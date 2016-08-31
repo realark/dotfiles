@@ -248,6 +248,9 @@ Otherwise, send an interrupt to slime."
         (t (slime-repl-kill-input)
            (slime-repl-kill-input))))
 
+;; browse local hyper spec
+(load "~/quicklisp/clhs-use-local.el" t)
+
 (evil-define-key 'insert slime-repl-mode-map
   (kbd "C-c") 'my-slime-repl-kill-or-interrupt
   (kbd "C-d") (lambda () (interactive)
