@@ -565,7 +565,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;Org mode
 (require-install 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(setq-default org-inhibit-startup-visibility-stuff t)
 (setq-default org-startup-indented t)
 ;; fontify code in code blocks
 (setq-default org-src-fontify-natively t)
@@ -574,6 +573,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (setq-default org-agenda-files (list "~/Documents/org-files/tasks.org"))
 (setq-default org-log-done 'time)
+(setq-default org-enforce-todo-dependencies t)
+
+(setq-default org-refile-targets '((nil :maxlevel . 9)))
+(setq-default org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq-default org-refile-use-outline-path t)                  ; Show full paths for refiling
 ;; Mobile-Org
 (require-install 'org-mobile)
 ; stop mobile-org from adding an id to all tasks
