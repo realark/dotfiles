@@ -72,7 +72,7 @@
 
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
-  (mapcar #'disable-theme custom-enabled-themes))
+  (mapc #'disable-theme custom-enabled-themes))
 (if window-system
  (load-theme 'tsdh-dark t))
 
@@ -486,7 +486,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                      (let (badbuffer)
                        (dolist (hated-buffer-regex crs-hated-buffers badbuffer)
                          (if (string-match hated-buffer-regex (buffer-name this-buffer))
-                             (setq badbuffer this-buffer)))))
+                             (setq badbuffer this-buffer)))
+                       badbuffer))
                    (buffer-list)))))
 
 (defun crs-bury-buffer (&optional n)
