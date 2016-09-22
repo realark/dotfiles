@@ -197,7 +197,8 @@
 (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
 (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+(add-hook 'slime-repl-mode-hook (lambda () (and (require 'slime-xref-browser) ;; from slime-fancy
+                                                (paredit-mode +1))))
 ;; Stop SLIME's REPL from grabbing DEL,
 ;; which is annoying when backspacing over a '('
 (defun override-slime-repl-bindings-with-paredit ()
