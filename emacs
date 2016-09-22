@@ -283,7 +283,7 @@ Otherwise, send an interrupt to slime."
                   (and (slime-repl-quit) (delete-window))))
   (kbd "C-r") 'slime-repl-previous-matching-input
   (kbd "TAB") 'completion-at-point
-  (kbd "C-l") 'slime-repl-clear-buffer ;; FIXME this is overriding paredit
+  (kbd "C-S-l") 'slime-repl-clear-buffer
   (kbd "C-k") 'slime-repl-previous-input
   (kbd "C-j") 'slime-repl-next-input)
 
