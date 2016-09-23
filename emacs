@@ -309,7 +309,7 @@ Otherwise, send an interrupt to slime."
   (kbd "j") 'widget-forward
   (kbd "k") 'widget-backward
   (kbd "M-.") (lambda () (interactive)
-                (evil-forward-word-begin)
+                (end-of-line)
                 (slime-edit-definition (slime-symbol-at-point)))
   (kbd "q") 'bury-buffer)
 
