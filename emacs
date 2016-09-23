@@ -140,6 +140,7 @@
   "3"      'toggle-window-split
   "l"      'whitespace-mode
   "f"      'indent-region
+  "t"      #'run-unit-tests
   ";"      'toggle-comment-region-or-line
   "o a"    'org-agenda
   "o b"    'org-iswitchb
@@ -255,14 +256,17 @@
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
+(defun toggle-or-start-slime ()
+  (interactive)
+  (let ((slime-buffer (get-buffer "*slime-repl sbcl*")))
+    (if slime-buffer
+        (if (eq slime-buffer (current-buffer))
+            (delete-window)
+          (switch-to-buffer-other-window "*slime-repl sbcl*"))
+      (slime))))
+
 ;; Toggle slime buffer
-(global-set-key [f9] (lambda () (interactive)
-                       (let ((slime-buffer (get-buffer "*slime-repl sbcl*")))
-                         (if slime-buffer
-                             (if (eq slime-buffer (current-buffer))
-                                 (delete-window)
-                               (switch-to-buffer-other-window "*slime-repl sbcl*"))
-                           (slime)))))
+(global-set-key [f9] #'toggle-or-start-slime)
 
 (defun my-slime-repl-kill-or-interrupt ()
   "If the user has entered text in the prompt, remove the text before and after point.
@@ -276,6 +280,9 @@ Otherwise, send an interrupt to slime."
 ;; browse local hyper spec
 (load "~/quicklisp/clhs-use-local.el" t)
 
+(evil-define-key 'normal slime-repl-mode-map
+  (kbd "q") (lambda () (interactive) (end-of-buffer) (evil-insert-state) (toggle-or-start-slime)))
+
 (evil-define-key 'insert slime-repl-mode-map
   (kbd "C-c") 'my-slime-repl-kill-or-interrupt
   (kbd "C-d") (lambda () (interactive)
@@ -286,6 +293,12 @@ Otherwise, send an interrupt to slime."
   (kbd "C-S-l") 'slime-repl-clear-buffer
   (kbd "C-k") 'slime-repl-previous-input
   (kbd "C-j") 'slime-repl-next-input)
+
+(defun run-unit-tests ()
+  (interactive)
+  "Function for running unit tests. This should be overridden by a directory local definition."
+  (print "No override. Check for .dir-locals.el?")
+  nil)
 
 (evil-define-key 'normal lisp-mode-map
   (kbd "<f4>") #'slime-browse-classes
