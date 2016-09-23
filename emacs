@@ -288,11 +288,34 @@ Otherwise, send an interrupt to slime."
   (kbd "C-j") 'slime-repl-next-input)
 
 (evil-define-key 'normal lisp-mode-map
+  (kbd "<f4>") #'slime-browse-classes
   (kbd "M-.") 'slime-edit-definition)
 
-;; TODO: Add bindings for
-;; -slime stack traces
-;; -*slime-description* when slime-documentation is called
+;; slime xref browser evil bindings
+(evil-define-key 'normal slime-browser-map
+  (kbd "j") 'widget-forward
+  (kbd "k") 'widget-backward
+  (kbd "M-.") (lambda () (interactive)
+                (evil-forward-word-begin)
+                (slime-edit-definition (slime-symbol-at-point)))
+  (kbd "q") 'bury-buffer)
+
+;; slime xref evil bindings
+(define-key slime-xref-mode-map (kbd "j") 'slime-xref-next-line)
+(define-key slime-xref-mode-map (kbd "k") 'slime-xref-prev-line)
+
+;; sldb evil bindings
+(define-key sldb-mode-map (kbd "C-j") 'sldb-down)
+(define-key sldb-mode-map (kbd "C-k") 'sldb-up)
+(define-key sldb-mode-map (kbd "j") 'next-line)
+(define-key sldb-mode-map (kbd "k") 'previous-line)
+(define-key sldb-mode-map (kbd "l") 'forward-char)
+(define-key sldb-mode-map (kbd "h") 'backward-char)
+(define-key sldb-mode-map (kbd "$") 'end-of-line)
+(define-key sldb-mode-map (kbd "0") 'beginning-of-line)
+
+(evil-define-key 'normal slime-popup-buffer-mode-map
+  (kbd "q") #'quit-window)
 
 ;; evil keys for slime inspector
 (evil-set-initial-state 'slime-inspector-mode 'normal)
