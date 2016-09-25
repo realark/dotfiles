@@ -37,6 +37,9 @@
 (setq help-window-select t)
 (setq echo-keystrokes 0.1)
 
+(when (file-exists-p "~/.sec.el")
+  (load "~/.sec.el"))
+
 ;; Disable GC in the minibuffer
 (defun my-minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
@@ -633,7 +636,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (require-install 'evil-org)
 (require-install 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-(setq-default org-agenda-files (list "~/Documents/org-files/tasks.org"))
+(setq-default org-agenda-files (list "~/Documents/org-files/tasks.org"
+                                     "~/Documents/org-files/schedule.org"))
 (setq-default org-log-done 'time)
 (setq-default org-enforce-todo-dependencies t)
 
@@ -663,6 +667,13 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                 (if (string= (file-truename (expand-file-name (car file)))
                              (file-truename (buffer-file-name)))
                     (org-mobile-push-with-delay 30))))))
+
+;; calendar with google and org mode support
+(require-install 'calfw)
+(require-install 'calfw-org)
+
+;; sync org mode with google calendar
+(require-install 'org-gcal)
 
 ; Neotree
 (require-install 'neotree)
