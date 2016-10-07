@@ -8,3 +8,4 @@ workbench.xmi
 *.fasl
 .tagskip
 .projectile
+.custom.el
