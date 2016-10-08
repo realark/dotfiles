@@ -134,29 +134,6 @@
      (add-to-list 'grep-find-ignored-directories "bin")))
 
 ;;Evil (extensible vi layer for Emacs)
-(require-install 'evil-leader)
-(global-evil-leader-mode) ; evil-leader must load first
-(evil-leader/set-leader "<SPC>")
-(evil-leader/set-key
-  "<SPC>"  'switch-to-buffer
-  "x"      'execute-extended-command
-  "3"      'toggle-window-split
-  "l"      'whitespace-mode
-  "f"      'indent-region
-  "t"      #'run-unit-tests
-  ";"      'toggle-comment-region-or-line
-  "o a"    'org-agenda
-  "o b"    'org-iswitchb
-  "o c"    'org-capture
-  "<tab>"  'hs-toggle-hiding
-  "e b"    'eclim-project-build
-  "e p"    'eclim-problems
-  "e c"    'eclim-problems-correct
-  "e j"    'eclim-personal-switch-to-junit-buffer-and-run
-  "g"      'magit-status
-  "B"      'magit-blame
-  "b"      'magit-blame-toggle)
-
 (require-install 'evil)
 (evil-mode 1)
 ;;; esc quits
@@ -173,16 +150,9 @@
                           (comint-mode . normal)
                           (shell-mode . insert)
                           (git-commit-mode . insert)
-                          (term-mode . insert)
-                          (grep-mode . insert))
+                          (term-mode . insert))
   do (evil-set-initial-state mode state))
 (evil-set-initial-state 'info-mode 'normal)
-
-;; grep-mode bindings
-(evil-define-key 'insert grep-mode-map
-  (kbd "q") 'quit-window
-  (kbd "j") 'next-error-no-select
-  (kbd "k") 'previous-error-no-select)
 
 ;; keybindings for eclim
 (evil-define-key 'normal eclim-problems-mode-map
@@ -192,6 +162,49 @@
   (kbd "g") 'eclim-problems-buffer-refresh
   (kbd "q") 'eclim-quit-window
   (kbd "RET") 'eclim-problems-open-current)
+
+;; general for keybindings
+(require-install 'general)
+;; bind a key globally in normal state; keymaps must be quoted
+(general-evil-setup t)
+
+(general-nmap "/" (general-simulate-keys "C-s" t))
+(general-nmap "j" (general-simulate-keys "C-n" t))
+(general-nmap "k" (general-simulate-keys "C-p" t))
+(evil-define-key 'normal (current-global-map)
+  (kbd "h") (general-simulate-keys "C-b" t)
+  (kbd "l") (general-simulate-keys "C-f" t)
+  (kbd "0") 'beginning-of-line
+  (kbd "$") 'end-of-line
+  (kbd "g g") 'beginning-of-buffer
+  (kbd "G") 'end-of-buffer)
+
+(general-nmap "C-j" (general-simulate-keys "n" t))
+(general-nmap "C-k" (general-simulate-keys "p" t))
+
+(general-define-key
+ :states '(normal)
+ :prefix "SPC"
+;; :states '(normal visual insert emacs)
+;; :non-normal-prefix "S-SPC"
+ "<SPC>"  'switch-to-buffer
+ "x"      'execute-extended-command
+ "3"      'toggle-window-split
+ "l"      'whitespace-mode
+ "f"      'indent-region
+ "t"      #'run-unit-tests
+ ";"      'toggle-comment-region-or-line
+ "o a"    'org-agenda
+ "o b"    'org-iswitchb
+ "o c"    'org-capture
+ "<tab>"  'hs-toggle-hiding
+ "e b"    'eclim-project-build
+ "e p"    'eclim-problems
+ "e c"    'eclim-problems-correct
+ "e j"    'eclim-personal-switch-to-junit-buffer-and-run
+ "g"      'magit-status
+ "B"      'magit-blame
+ "b"      'magit-blame-toggle)
 
 ;; Paredit
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
@@ -452,12 +465,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; Code folding
 (load-library "hideshow")
-(add-hook 'c-mode-common-hook   'hs-minor-mode)
-(add-hook 'java-mode-hook       'hs-minor-mode)
-(add-hook 'scala-mode-hook      'hs-minor-mode)
-(add-hook 'lisp-mode-hook       'hs-minor-mode)
-(add-hook 'sh-mode-hook         'hs-minor-mode)
-(add-hook 'json-mode-hook       'hs-minor-mode)
+(add-hook 'prog-mode-hook 'hs-minor-mode)
 
 ;;multi-term
 (require-install 'multi-term)
