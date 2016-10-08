@@ -107,7 +107,6 @@
 
 ;; use ace-window
 (require-install 'ace-window)
-(global-set-key [remap other-window] 'ace-window)
 
 (defun select-current-line ()
   "Select the current line"
@@ -145,14 +144,13 @@
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-(cl-loop for (mode . state) in '((inferior-emacs-lisp-mode . emacs)
-                          (nrepl-mode . insert)
-                          (comint-mode . normal)
-                          (shell-mode . insert)
-                          (git-commit-mode . insert)
-                          (term-mode . insert))
-  do (evil-set-initial-state mode state))
-(evil-set-initial-state 'info-mode 'normal)
+
+;; Default to normal mode most of the time
+;; using evil-magit
+(setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
+;;(inferior-emacs-lisp-mode . emacs)
+(setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode))
+(setq-default evil-motion-state-modes '())
 
 ;; keybindings for eclim
 (evil-define-key 'normal eclim-problems-mode-map
@@ -169,16 +167,6 @@
 (general-evil-setup t)
 
 (general-nmap "/" (general-simulate-keys "C-s" t))
-(general-nmap "j" (general-simulate-keys "C-n" t))
-(general-nmap "k" (general-simulate-keys "C-p" t))
-(evil-define-key 'normal (current-global-map)
-  (kbd "h") (general-simulate-keys "C-b" t)
-  (kbd "l") (general-simulate-keys "C-f" t)
-  (kbd "0") 'beginning-of-line
-  (kbd "$") 'end-of-line
-  (kbd "g g") 'beginning-of-buffer
-  (kbd "G") 'end-of-buffer)
-
 (general-nmap "C-j" (general-simulate-keys "n" t))
 (general-nmap "C-k" (general-simulate-keys "p" t))
 
@@ -189,7 +177,13 @@
 ;; :non-normal-prefix "S-SPC"
  "<SPC>"  'switch-to-buffer
  "x"      'execute-extended-command
- "3"      'toggle-window-split
+ "0"      (general-simulate-keys "C-x 0" t)
+ "2"      (general-simulate-keys "C-x 2" t)
+ "3"      (general-simulate-keys "C-x 3" t)
+ "4"      'toggle-window-split
+ "q"      (general-simulate-keys "q" t)
+ "w"      'other-window
+ "W"      'ace-window
  "l"      'whitespace-mode
  "f"      'indent-region
  "t"      #'run-unit-tests
@@ -313,7 +307,7 @@ Otherwise, send an interrupt to slime."
 (defun run-unit-tests ()
   (interactive)
   "Function for running unit tests. This should be overridden by a directory local definition."
-  (print "No override. Check for .dir-locals.el?")
+  (print "No override. Check for .custom.el?")
   nil)
 
 (evil-define-key 'normal lisp-mode-map
