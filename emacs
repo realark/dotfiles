@@ -170,6 +170,8 @@
 (general-nmap "C-j" (general-simulate-keys "n" t))
 (general-nmap "C-k" (general-simulate-keys "p" t))
 
+(general-nmap :mode 'help-mode "q" (general-simulate-keys "q" t))
+
 (general-define-key
  :states '(normal)
  :prefix "SPC"
