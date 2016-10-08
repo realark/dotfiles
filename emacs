@@ -852,6 +852,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq-default custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
-(let ((project-customizations (concat (projectile-project-root) "./.custom.el")))
-  (when (file-exists-p project-customizations)
+(let ((project-customizations nil))
+  (ignore-errors
+    (setf project-customizations (concat (projectile-project-root) "./.custom.el")))
+  (when (and project-customizations (file-exists-p project-customizations))
     (load project-customizations)))
