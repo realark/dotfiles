@@ -173,7 +173,7 @@
 (general-nmap :mode 'help-mode "q" (general-simulate-keys "q" t))
 
 (general-define-key
- :states '(normal)
+ :states '(normal visual)
  :prefix "SPC"
 ;; :states '(normal visual insert emacs)
 ;; :non-normal-prefix "S-SPC"
