@@ -146,10 +146,8 @@
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
 ;; Default to normal mode most of the time
-;; using evil-magit
-(setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
-;;(inferior-emacs-lisp-mode . emacs)
 (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode))
+(setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
 (setq-default evil-motion-state-modes '())
 
 ;; keybindings for eclim
@@ -175,10 +173,11 @@
 (general-define-key
  :states '(normal visual)
  :prefix "SPC"
-;; :states '(normal visual insert emacs)
 ;; :non-normal-prefix "S-SPC"
- "<SPC>"  'switch-to-buffer
+ "<SPC>"  (general-simulate-keys "C-x C-f")
+ "k"      (general-simulate-keys "C-x k")
  "x"      'execute-extended-command
+ "1"      (general-simulate-keys "C-x 1" t)
  "0"      (general-simulate-keys "C-x 0" t)
  "2"      (general-simulate-keys "C-x 2" t)
  "3"      (general-simulate-keys "C-x 3" t)
@@ -330,14 +329,18 @@ Otherwise, send an interrupt to slime."
 (define-key slime-xref-mode-map (kbd "k") 'slime-xref-prev-line)
 
 ;; sldb evil bindings
-(define-key sldb-mode-map (kbd "C-j") 'sldb-down)
-(define-key sldb-mode-map (kbd "C-k") 'sldb-up)
-(define-key sldb-mode-map (kbd "j") 'next-line)
-(define-key sldb-mode-map (kbd "k") 'previous-line)
-(define-key sldb-mode-map (kbd "l") 'forward-char)
-(define-key sldb-mode-map (kbd "h") 'backward-char)
-(define-key sldb-mode-map (kbd "$") 'end-of-line)
-(define-key sldb-mode-map (kbd "0") 'beginning-of-line)
+(general-evil-define-key 'normal sldb-mode-map
+  "C-j" (general-simulate-keys "n" t)
+  "C-k" (general-simulate-keys "p" t)
+  "j" (general-simulate-keys "C-n" t)
+  "k" (general-simulate-keys "C-p" t)
+  "l" (general-simulate-keys "C-f" t)
+  "h" (general-simulate-keys "C-b" t)
+  "0" #'beginning-of-line
+  "$" #'end-of-line
+  "g" #'beginning-of-buffer
+  "G" #'end-of-buffer
+  "v" (general-simulate-keys "v" t))
 
 (evil-define-key 'normal slime-popup-buffer-mode-map
   (kbd "q") #'quit-window)
