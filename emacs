@@ -336,10 +336,16 @@ Otherwise, send an interrupt to slime."
   "k" (general-simulate-keys "C-p" t)
   "l" (general-simulate-keys "C-f" t)
   "h" (general-simulate-keys "C-b" t)
-  "0" #'beginning-of-line
-  "$" #'end-of-line
-  "g" #'beginning-of-buffer
-  "G" #'end-of-buffer
+  "0" (general-simulate-keys "0" t)
+  "1" (general-simulate-keys "1" t)
+  "2" (general-simulate-keys "2" t)
+  "3" (general-simulate-keys "3" t)
+  "4" (general-simulate-keys "4" t)
+  "4" (general-simulate-keys "5" t)
+  "6" (general-simulate-keys "6" t)
+  "7" (general-simulate-keys "7" t)
+  "8" (general-simulate-keys "8" t)
+  "9" (general-simulate-keys "9" t)
   "v" (general-simulate-keys "v" t))
 
 (evil-define-key 'normal slime-popup-buffer-mode-map
