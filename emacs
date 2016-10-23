@@ -202,6 +202,7 @@
  "b"      'magit-blame-toggle)
 
 ;; Paredit
+(require-install 'paredit)
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
 (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
 (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
@@ -740,8 +741,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq mumamo-background-colors nil)
 
 ;; Interface to eclipse via eclim
-(require-install 'eclimd)
 (require-install 'eclim)
+(require-install 'eclimd)
 (global-eclim-mode)
 
 (defun eclim-personal-switch-to-junit-buffer-and-run ()
