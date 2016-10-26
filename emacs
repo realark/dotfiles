@@ -349,6 +349,9 @@ Otherwise, send an interrupt to slime."
   "9" (general-simulate-keys "9" t)
   "v" (general-simulate-keys "v" t))
 
+(general-evil-define-key 'normal slime-xref-mode-map
+  "RET" (general-simulate-keys "RET" t))
+
 (evil-define-key 'normal slime-popup-buffer-mode-map
   (kbd "q") #'quit-window)
 
