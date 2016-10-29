@@ -661,29 +661,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq-default org-refile-targets '((nil :maxlevel . 9)))
 (setq-default org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq-default org-refile-use-outline-path t)                  ; Show full paths for refiling
-;; Mobile-Org
-(require-install 'org-mobile)
-; stop mobile-org from adding an id to all tasks
-(setq-default org-mobile-force-id-on-agenda-items nil)
-(setq-default org-mobile-directory "~/Documents/mobileorg")
-(setq-default org-mobile-inbox-for-pull "~/Documents/mobileorg")
-(setq-default org-directory "~/Documents/org-files")
-; auto push to mobile org
-(defvar org-mobile-push-timer nil
-  "Timer that `org-mobile-push-timer' used to reschedule itself, or nil.")
-(defun org-mobile-push-with-delay (secs)
-  (when org-mobile-push-timer
-    (cancel-timer org-mobile-push-timer))
-  (setq org-mobile-push-timer
-        (run-with-idle-timer
-         (* 1 secs) nil 'org-mobile-push)))
-(add-hook 'after-save-hook
-          (lambda ()
-            (when (eq major-mode 'org-mode)
-              (dolist (file (org-mobile-files-alist))
-                (if (string= (file-truename (expand-file-name (car file)))
-                             (file-truename (buffer-file-name)))
-                    (org-mobile-push-with-delay 30))))))
 
 ;; calendar with google and org mode support
 (require-install 'calfw)
