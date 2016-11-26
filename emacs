@@ -838,6 +838,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (require-install 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
+;; agressive indent mode to re-indent after changes are made
+(require-install 'aggressive-indent)
+(global-aggressive-indent-mode 1)
+;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+
 ;; custom vars
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
