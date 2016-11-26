@@ -37,6 +37,8 @@
 (setq help-window-select t)
 (setq echo-keystrokes 0.1)
 
+(global-hl-line-mode t)
+
 (when (file-exists-p "~/.sec.el")
   (load "~/.sec.el"))
 
