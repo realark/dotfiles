@@ -171,6 +171,7 @@
 (general-nmap "C-k" (general-simulate-keys "p" t))
 
 (general-nmap :mode 'help-mode "q" (general-simulate-keys "q" t))
+(general-nmap :mode 'help-mode "RET" (general-simulate-keys "RET" t))
 
 (general-define-key
  :states '(normal visual)
@@ -681,7 +682,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
             (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
             (define-key evil-normal-state-local-map (kbd "RET") 'neotree-change-root)))
 
-;Dired options
+;; elfeed
+(require-install 'elfeed)
+(elfeed-load-opml "~/.admin/arks_feeds.opml")
+
+;; Dired options
 (require-install 'dired+)
 (diredp-toggle-find-file-reuse-dir 1)
 
