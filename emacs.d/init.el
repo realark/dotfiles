@@ -9,21 +9,16 @@
 ;;; Code:
 
 
-;; Text and the such
-;; Use colors to highlight commands, etc.
-(global-font-lock-mode t)
-;; Disable the welcome message
+;; Tweak Standard options:
 (setq inhibit-startup-message t)
 ;; Format the title-bar to always include the buffer name
 (setq frame-title-format "emacs - %b")
 ;; Make the mouse wheel scroll Emacs
 (mouse-wheel-mode t)
-;; Always end a file with a newline
+;; Don't require an ending newline
 (setq require-final-newline nil)
-;; Stop emacs from arbitrarily adding lines to the end of a file when the
-;; cursor is moved past the end of it:
 (setq next-line-add-newlines nil)
-;; Flash instead of that annoying bell
+;; Flash instead of beeping
 (setq visible-bell t)
 ;; Remove icons toolbar
 (tool-bar-mode -1)
@@ -33,35 +28,38 @@
 (global-linum-mode t)
 (column-number-mode t)
 (line-number-mode t)
-(setq linum-format "%d")
-;Standard copy+pate keys
-(cua-mode 1)
-;Insert closing bracket
+(setq-default linum-format "%d")
+;; Insert closing bracket
 (electric-pair-mode 1)
 (show-paren-mode 1) ; turn on paren match highlighting
-(setq show-paren-style 'expression) ; highlight entire bracket expression
-(setq large-file-warning-threshold 100000000) ;100mb
-(setq create-lockfiles nil) ; Don't create # lock files
-(blink-cursor-mode -1)
+(setq-default show-paren-style 'expression) ; highlight entire bracket expression
+;; Enable narrowing
+(put 'narrow-to-defun  'disabled nil)
+(put 'narrow-to-page   'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+;; highlight the current line
+(global-hl-line-mode t)
+(setq large-file-warning-threshold 100000000) ;100mb
+(setq create-lockfiles nil)
+(blink-cursor-mode -1)
 (setq help-window-select t)
 (setq echo-keystrokes 0.1)
-
-(global-hl-line-mode t)
 
 (when (file-exists-p "~/.sec.el")
   (load "~/.sec.el"))
 
-;; Disable GC in the minibuffer
 (defun my-minibuffer-setup-hook ()
+  "Disable GC in the minibuffer."
   (setq gc-cons-threshold most-positive-fixnum))
 (defun my-minibuffer-exit-hook ()
+  "Re-enable GC after minibuffer exit."
   (setq gc-cons-threshold 800000))
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 ; change the minbuffer startup message
 (defun display-startup-echo-area-message ()
+  "Change the startup message."
   (message "This too shall pass."))
 
 ;Maximize emacs window
@@ -72,7 +70,7 @@
 
 ;; Require-install Macro
 (defmacro require-install (PCK)
-  "Require package PCK, install via package-install if missing"
+  "Require package PCK, install via \"package-install\" if missing."
   `(unless (require ,PCK nil t)
      (package-install ,PCK)
      (require ,PCK)))
@@ -87,12 +85,13 @@
 
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
+  "Change the theme."
   (mapc #'disable-theme custom-enabled-themes))
 (if window-system
- (load-theme 'tsdh-dark t))
+    (load-theme 'tsdh-dark t))
 
-; toggle two-window split between horizontal and vertical
 (defun toggle-window-split ()
+  "Toggle two-window split between horizontal and vertical."
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
@@ -121,13 +120,13 @@
 (require-install 'ace-window)
 
 (defun select-current-line ()
-  "Select the current line"
+  "Select the current line."
   (interactive)
   (end-of-line) ; move to end of line
   (set-mark (line-beginning-position)))
 
 (defun toggle-comment-region-or-line ()
-  "Comment or uncomment the selected region. If no region is selected use the current line."
+  "Comment or uncomment the selected region.  If no region is selected use the current line."
   (interactive)
   (if (not mark-active)
       (select-current-line))
@@ -225,9 +224,8 @@
 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 (add-hook 'slime-repl-mode-hook (lambda () (and (require 'slime-xref-browser) ;; from slime-fancy
                                                 (paredit-mode +1))))
-;; Stop SLIME's REPL from grabbing DEL,
-;; which is annoying when backspacing over a '('
 (defun override-slime-repl-bindings-with-paredit ()
+  "Stop SLIME's REPL from grabbing DEL."
   (define-key slime-repl-mode-map
     (read-kbd-macro paredit-backward-delete-key) nil))
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
@@ -320,8 +318,8 @@ Otherwise, send an interrupt to slime."
   (kbd "C-j") 'slime-repl-next-input)
 
 (defun run-unit-tests ()
+  "Function for running unit test(s).  This should be overridden by a directory local definition."
   (interactive)
-  "Function for running unit tests. This should be overridden by a directory local definition."
   (print "No override. Check for .custom.el?")
   nil)
 
@@ -384,9 +382,11 @@ Otherwise, send an interrupt to slime."
 
 ;; Magit -- The best git interface I've ever used.
 (require-install 'magit)
-(setq magit-last-seen-setup-instructions "1.4.0")
+(setq-default magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-x g") 'magit-status)
-(setq magit-push-always-verify nil)
+(setq-default magit-push-always-verify nil)
+(setq-default magit-fetch-arguments '("--prune"))
+(setq-default magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
 
 (defun magit-blame-toggle ()
   "Toggle magit-blame-mode on and off interactively."
@@ -394,10 +394,6 @@ Otherwise, send an interrupt to slime."
   (if (and (boundp 'magit-blame-mode) magit-blame-mode)
       (magit-blame-quit)
     (call-interactively 'magit-blame)))
-
-(setq magit-fetch-arguments '("--prune"))
-(setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
-
 
 ;; taken from: https://github.com/jordonbiondo/.emacs.d/blob/92bdf8cbedd61040ae85cb2a6b84cd3f3a9be4f6/jordon/jordon-magit.el
 (defun jordon-magit-line-region-of-section-at-point ()
@@ -491,20 +487,19 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;;multi-term
 (require-install 'multi-term)
-(setq multi-term-program "/bin/zsh")
+(setq-default multi-term-program "/bin/zsh")
 (defun last-term-buffer (l)
-  "Return most recently used term buffer."
+  "Return most recently used term buffer from the list of buffers, \"L\"."
   (when l
     (if (eq 'term-mode (with-current-buffer (car l) major-mode))
         (car l) (last-term-buffer (cdr l)))))
 (defun get-term ()
-        "Switch to the term buffer last used, or create a new one if
-    none exists, or if the current buffer is already a term."
-        (interactive)
-        (let ((b (last-term-buffer (buffer-list))))
-          (if (or (not b) (eq 'term-mode major-mode))
-              (multi-term)
-                (switch-to-buffer b))))
+  "Switch to the term buffer last used, or create a new one if none exists, or if the current buffer is already a term."
+  (interactive)
+  (let ((b (last-term-buffer (buffer-list))))
+    (if (or (not b) (eq 'term-mode major-mode))
+        (multi-term)
+      (switch-to-buffer b))))
 (global-set-key (kbd "C-x t") 'get-term)
 
 (evil-define-key 'normal term-raw-map
@@ -578,10 +573,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; tags
 (require-install 'etags-select)
-(setq etags-select-go-if-unambiguous t)
-(setq etags-select-highlight-delay 5.0)
-(setq etags-select-use-short-name-completion t)
-(setq tags-revert-without-query 1)
+(setq-default etags-select-go-if-unambiguous t)
+(setq-default etags-select-highlight-delay 5.0)
+(setq-default etags-select-use-short-name-completion t)
+(setq-default tags-revert-without-query 1)
 (global-set-key (kbd "<f3>") #'etags-select-find-tag-at-point)
 
 (evil-define-key 'emacs etags-select-mode-map
@@ -598,12 +593,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (require-install 'counsel)
 
 (ivy-mode t)
-(setq ivy-wrap t)
-(setq ivy-use-virtual-buffers t)
-(setq ivy-height 10)
-(setq ivy-count-format "(%d/%d) ")
-(setq ivy-extra-directories nil)
-(setq ivy-re-builders-alist '((t . ivy--regex-plus)))
+(setq-default ivy-wrap t)
+(setq-default ivy-use-virtual-buffers t)
+(setq-default ivy-height 10)
+(setq-default ivy-count-format "(%d/%d) ")
+(setq-default ivy-extra-directories nil)
+(setq-default ivy-re-builders-alist '((t . ivy--regex-plus)))
 
 ;; ivy global keys
 (global-set-key (kbd "C-s") 'swiper)
@@ -619,8 +614,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 (define-key counsel-find-file-map (kbd "<return>") 'ivy-alt-done)
 
-(setq magit-completing-read-function 'ivy-completing-read)
-(setq projectile-completion-system 'ivy)
+(setq-default magit-completing-read-function 'ivy-completing-read)
+(setq-default projectile-completion-system 'ivy)
 
 
 ;Backup files
@@ -629,30 +624,30 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 (setq backup-by-copying t)
-;Desktop save files
+;; Desktop save files
 ;; Automatically save and restore sessions from the current dir
-(setq desktop-dirname             "./"
-      desktop-base-file-name      ".emacs.desktop"
-      desktop-base-lock-name      ".lock"
-      desktop-path                (list desktop-dirname)
-      ;desktop-save                t
-      desktop-files-not-to-save   "^\*.*\*$"
-      desktop-load-locked-desktop nil)
+(setq-default desktop-dirname             "./"
+              desktop-base-file-name      ".emacs.desktop"
+              desktop-base-lock-name      ".lock"
+              desktop-path                (list desktop-dirname)
+                                        ;desktop-save                t
+              desktop-files-not-to-save   "^\*.*\*$"
+              desktop-load-locked-desktop nil)
 (desktop-save-mode 1)
 
-;Projectile
+;; Projectile
 (require-install 'projectile)
-(setq projectile-globally-ignored-directories
-      (append projectile-globally-ignored-directories
-              '(".git" ".ensime_cache.d" ".gradle"
-                ".recommenders" ".metadata" "dist")))
-(setq projectile-globally-ignored-files
-      (append projectile-globally-ignored-files
-              '(".ensime" "*.war" "*.jar" "*.zip"
-                "*.png" "*.gif" "*.vsd" "*.svg"
-                "*.exe" "eclimd.log" "workbench.xmi"
-                ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
-(setq projectile-enable-caching t)
+(setq-default projectile-globally-ignored-directories
+              (append projectile-globally-ignored-directories
+                      '(".git" ".ensime_cache.d" ".gradle"
+                        ".recommenders" ".metadata" "dist")))
+(setq-default projectile-globally-ignored-files
+              (append projectile-globally-ignored-files
+                      '(".ensime" "*.war" "*.jar" "*.zip"
+                        "*.png" "*.gif" "*.vsd" "*.svg"
+                        "*.exe" "eclimd.log" "workbench.xmi"
+                        ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
+(setq-default projectile-enable-caching t)
 (projectile-global-mode)
 (global-set-key (kbd "C-S-F") #'projectile-find-file)
 (global-set-key (kbd "C-S-T") #'projectile-find-tag)
@@ -685,7 +680,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ; Neotree
 (require-install 'neotree)
 (global-set-key [f8] 'neotree-toggle)
-(setq neo-smart-open t)
+(setq-default neo-smart-open t)
 (add-hook 'neotree-mode-hook
           (lambda ()
             (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
@@ -722,10 +717,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
         text-mode-hook))
 
 ;; ctags
-(setq path-to-ctags "/usr/bin/ctags")
+(setq-default path-to-ctags "/usr/bin/ctags")
 
 (defun create-tags (dir-name)
-  "Create tags file."
+  "Create tags file for the project in \"DIR-NAME\"."
   (interactive "DDirectory: ")
   (shell-command
    (format "ctags -f %s -e -R %s" path-to-ctags (directory-file-name dir-name))))
@@ -735,7 +730,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;;;;;;;;;;;;;;
 
-(setq mumamo-background-colors nil)
+(setq-default mumamo-background-colors nil)
 
 ;; Interface to eclipse via eclim
 (require-install 'eclim)
@@ -743,6 +738,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (global-eclim-mode)
 
 (defun eclim-personal-switch-to-junit-buffer-and-run ()
+  "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
   (interactive)
   (if (get-buffer "*compilation*")
       (progn
@@ -766,14 +762,14 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     (interactive)
   (eclim-java-find-generic "all" "implementors" "all" (thing-at-point 'symbol)))
 
-(setq eclim-auto-save t
-      eclim-executable "/usr/lib/eclipse/eclim"
-      eclimd-executable "/usr/lib/eclipse/eclimd"
-      eclimd-wait-for-process nil
-      eclimd-default-workspace "~/workspace"
-      eclim-use-yasnippet nil
-      help-at-pt-display-when-idle t
-      help-at-pt-timer-delay 0.01)
+(setq-default eclim-auto-save t
+              eclim-executable "/usr/lib/eclipse/eclim"
+              eclimd-executable "/usr/lib/eclipse/eclimd"
+              eclimd-wait-for-process nil
+              eclimd-default-workspace "~/workspace"
+              eclim-use-yasnippet nil
+              help-at-pt-display-when-idle t
+              help-at-pt-timer-delay 0.01)
 (add-hook 'eclim-mode-hook
           (lambda ()
             (local-set-key (kbd "C-S-g") #'eclim-java-find-references)
