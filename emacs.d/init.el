@@ -1,5 +1,15 @@
-;; -*- emacs-lisp -*-
-; Text and the such
+;;; init.el --- emacs init file
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Commentary:
+;;
+;; Nothing special here.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Code:
+
+
+;; Text and the such
 ;; Use colors to highlight commands, etc.
 (global-font-lock-mode t)
 ;; Disable the welcome message
@@ -865,3 +875,5 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     (setf project-customizations (concat (projectile-project-root) "./.custom.el")))
   (when (and project-customizations (file-exists-p project-customizations))
     (load project-customizations)))
+
+;;; init.el ends here
