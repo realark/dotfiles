@@ -618,6 +618,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; ivy global keys
 (global-set-key (kbd "C-s") 'swiper)
+;; isearch-forward seems to get stuck in the wrong state with swiper.
+;; Manually setting it to T seems to work around the problem.
+;; This is probably a problem with my config.
+(setq isearch-forward t)
 (global-set-key (kbd "M-x") 'counsel-M-x)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file)
 ;; ivy minibuffer keys
