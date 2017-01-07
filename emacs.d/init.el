@@ -45,6 +45,8 @@
 (setq help-window-select t)
 (setq echo-keystrokes 0.1)
 
+(mouse-avoidance-mode 'banish)
+
 (when (file-exists-p "~/.sec.el")
   (load "~/.sec.el"))
 
