@@ -884,6 +884,38 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :ensure t)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
+
+;; SQL
+(use-package sql-indent
+  :ensure t
+  :init (add-hook 'sql-mode-hook 'sql-indent))
+
+(use-package sqlup-mode
+  :ensure t
+  :init
+  (add-hook 'sql-mode-hook 'sqlup-mode)
+  (add-hook 'sql-interactive-mode-hook 'sqlup-mode)
+  :config
+  (add-to-list 'sqlup-blacklist "name"))
+
+(make-directory "~/.emacs.d/sql" :parents)
+(assert (file-exists-p "~/.emacs.d/sql")
+        T
+        "Unable to create or find sql history dir.")
+(defun my-sql-save-history-hook ()
+  (let ((lval 'sql-input-ring-file-name)
+        (rval 'sql-product))
+    (if (symbol-value rval)
+        (let ((filename
+               (concat "~/.emacs.d/sql/"
+                       (symbol-name (symbol-value rval))
+                       "-history.sql")))
+          (set (make-local-variable lval) filename))
+      (error
+       (format "SQL history will not be saved because %s is nil"
+               (symbol-name rval))))))
+(add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
+
 ;; agressive indent mode to re-indent after changes are made
 (use-package aggressive-indent
   :ensure t)
