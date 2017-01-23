@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Commentary:
 ;;
-;; Nothing special here.
+;; Just an Emacs init.  Nothing special here.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Code:
@@ -191,31 +191,16 @@
 
 (general-define-key
  :states '(normal visual)
- :prefix "SPC"
- ;; :non-normal-prefix "S-SPC"
- "<SPC>"  (general-simulate-keys "C-x C-f")
- "k"      (general-simulate-keys "C-x k")
- "x"      'execute-extended-command
- "1"      (general-simulate-keys "C-x 1" t)
- "0"      (general-simulate-keys "C-x 0" t)
- "2"      (general-simulate-keys "C-x 2" t)
- "3"      (general-simulate-keys "C-x 3" t)
+ "<SPC>"  (general-simulate-keys "C-x"))
+
+(general-define-key
+ :prefix "C-x"
  "4"      'toggle-window-split
- "q"      (general-simulate-keys "q" t)
- "w"      'other-window
- "W"      'ace-window
+ "x"      'execute-extended-command
  "l"      'whitespace-mode
  "f"      'indent-region
- "t"      #'run-unit-tests
  ";"      'toggle-comment-region-or-line
- "o a"    'org-agenda
- "o b"    'org-iswitchb
- "o c"    'org-capture
  "<tab>"  'hs-toggle-hiding
- "e b"    'eclim-project-build
- "e p"    'eclim-problems
- "e c"    'eclim-problems-correct
- "e j"    'eclim-personal-switch-to-junit-buffer-and-run
  "g"      'magit-status
  "B"      'magit-blame
  "b"      'magit-blame-toggle)
