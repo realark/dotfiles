@@ -195,15 +195,15 @@
 
 (general-define-key
  :prefix "C-x"
- "4"      'toggle-window-split
- "x"      'execute-extended-command
- "l"      'whitespace-mode
- "f"      'indent-region
- ";"      'toggle-comment-region-or-line
- "<tab>"  'hs-toggle-hiding
- "g"      'magit-status
- "B"      'magit-blame
- "b"      'magit-blame-toggle)
+ "4"      #'toggle-window-split
+ "x"      #'execute-extended-command
+ "l"      #'whitespace-mode
+ "f"      #'indent-region
+ "t"      #'run-unit-tests
+ ";"      #'toggle-comment-region-or-line
+ "<tab>"  #'hs-toggle-hiding
+ "g"      #'magit-status
+ "B"      #'magit-blame)
 
 ;; Hydras
 (use-package hydra
@@ -522,7 +522,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     (if (or (not b) (eq 'term-mode major-mode))
         (multi-term)
       (switch-to-buffer b))))
-(global-set-key (kbd "C-x t") 'get-term)
 
 (evil-define-key 'normal term-raw-map
   (kbd "p") 'term-paste
