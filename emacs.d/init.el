@@ -205,6 +205,30 @@
  "B"      'magit-blame
  "b"      'magit-blame-toggle)
 
+;; Hydras
+(use-package hydra
+  :ensure t
+  :config
+  (defhydra hydra-projectile (:color teal :columns 4)
+    "Projectile"
+    ("f"   projectile-find-file                "Find File")
+    ("r"   projectile-recentf                  "Recent Files")
+    ("t"   projectile-regenerate-tags          "Recent Files")
+
+    ("x"   projectile-remove-known-project     "Remove Known Project")
+    ("d"   projectile-find-dir                 "Find Directory")
+    ("c"   projectile-invalidate-cache         "Clear Cache")
+    ("X"   projectile-cleanup-known-projects   "Cleanup Known Projects")
+
+    ("o"   projectile-multi-occur              "Multi Occur")
+    ("g"   projectile-grep                     "Grep all files")
+    ("s"   projectile-switch-project           "Switch Project")
+    ("k"   projectile-kill-buffers             "Kill Buffers")
+    ("q"   nil "Cancel" :color red))
+  (general-define-key
+   :prefix "C-x"
+   "p"   #'hydra-projectile/body))
+
 ;; Paredit
 (use-package paredit
   :ensure t)
