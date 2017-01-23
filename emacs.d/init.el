@@ -70,6 +70,10 @@
 ;; text size
 (global-set-key (kbd "C-+") 'text-scale-adjust)
 
+;; winner mode allows easy undo/redo of window changes
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+
 ;; Require-install Macro
 (defmacro require-install (PCK)
   "Require package PCK, install via \"package-install\" if missing."
@@ -199,35 +203,112 @@
  "x"      #'execute-extended-command
  "l"      #'whitespace-mode
  "f"      #'indent-region
- "t"      #'run-unit-tests
  ";"      #'toggle-comment-region-or-line
  "<tab>"  #'hs-toggle-hiding
  "g"      #'magit-status
  "B"      #'magit-blame)
 
+(general-define-key "C-x <SPC>" #'find-file)
+
 ;; Hydras
 (use-package hydra
   :ensure t
   :config
-  (defhydra hydra-projectile (:color teal :columns 4)
-    "Projectile"
-    ("f"   projectile-find-file                "Find File")
-    ("r"   projectile-recentf                  "Recent Files")
-    ("t"   projectile-regenerate-tags          "Recent Files")
-
-    ("x"   projectile-remove-known-project     "Remove Known Project")
-    ("d"   projectile-find-dir                 "Find Directory")
-    ("c"   projectile-invalidate-cache         "Clear Cache")
-    ("X"   projectile-cleanup-known-projects   "Cleanup Known Projects")
-
-    ("o"   projectile-multi-occur              "Multi Occur")
-    ("g"   projectile-grep                     "Grep all files")
-    ("s"   projectile-switch-project           "Switch Project")
-    ("k"   projectile-kill-buffers             "Kill Buffers")
-    ("q"   nil "Cancel" :color red))
   (general-define-key
-   :prefix "C-x"
-   "p"   #'hydra-projectile/body))
+   "C-x t"
+   (defhydra hydra-test (:color blue :columns 1)
+     "Run Tests"
+     ("t"   #'run-unit-tests                "Unit")
+     ("i"   (lambda () (interactive) (print "TODO1"))      "Integration")
+     ("p"   (lambda () (interactive) (print "TODO2"))      "Performance")
+     ("q"   nil "Cancel" :exit t)))
+  (progn ;; Window moving helpers for hydra
+    (require 'windmove)
+
+    (defun hydra-move-splitter-left (arg)
+      "Move window splitter left."
+      (interactive "p")
+      (if (let ((windmove-wrap-around))
+            (windmove-find-other-window 'right))
+          (shrink-window-horizontally arg)
+        (enlarge-window-horizontally arg)))
+
+    (defun hydra-move-splitter-right (arg)
+      "Move window splitter right."
+      (interactive "p")
+      (if (let ((windmove-wrap-around))
+            (windmove-find-other-window 'right))
+          (enlarge-window-horizontally arg)
+        (shrink-window-horizontally arg)))
+
+    (defun hydra-move-splitter-up (arg)
+      "Move window splitter up."
+      (interactive "p")
+      (if (let ((windmove-wrap-around))
+            (windmove-find-other-window 'up))
+          (enlarge-window arg)
+        (shrink-window arg)))
+
+    (defun hydra-move-splitter-down (arg)
+      "Move window splitter down."
+      (interactive "p")
+      (if (let ((windmove-wrap-around))
+            (windmove-find-other-window 'up))
+          (shrink-window arg)
+        (enlarge-window arg))))
+  (general-define-key
+   "C-x w"
+   (defhydra hydra-window (:color amaranth :hint nil)
+     "
+ Split: _v_ert _x_:horz
+Delete: _o_nly  _da_ce  _dw_indow
+  Move: _s_wap
+  Misc:  _a_ce  _u_ndo  _r_edo"
+     ("h" windmove-left)
+     ("j" windmove-down)
+     ("k" windmove-up)
+     ("l" windmove-right)
+     ("H" hydra-move-splitter-left)
+     ("J" hydra-move-splitter-down)
+     ("K" hydra-move-splitter-up)
+     ("L" hydra-move-splitter-right)
+     ("|" (lambda ()
+            (interactive)
+            (split-window-right)
+            (windmove-right)))
+     ("_" (lambda ()
+            (interactive)
+            (split-window-below)
+            (windmove-down)))
+     ("v" split-window-right)
+     ("x" split-window-below)
+     ;; winner-mode must be enabled
+     ("u" winner-undo)
+     ("r" winner-redo)
+     ("o" delete-other-windows :exit t)
+     ("a" ace-window :exit t)
+     ("s" ace-swap-window)
+     ("dw" delete-window :exit t)
+     ("da" ace-delete-window :exit t)
+     ("q" nil)))
+  (general-define-key
+   "C-x p"
+   (defhydra hydra-projectile (:color blue :columns 4)
+     "Projectile"
+     ("f"   projectile-find-file                "Find File")
+     ("r"   projectile-recentf                  "Recent Files")
+     ("t"   projectile-regenerate-tags          "Recent Files")
+
+     ("x"   projectile-remove-known-project     "Remove Known Project")
+     ("d"   projectile-find-dir                 "Find Directory")
+     ("c"   projectile-invalidate-cache         "Clear Cache")
+     ("X"   projectile-cleanup-known-projects   "Cleanup Known Projects")
+
+     ("o"   projectile-multi-occur              "Multi Occur")
+     ("g"   projectile-grep                     "Grep all files")
+     ("s"   projectile-switch-project           "Switch Project")
+     ("k"   projectile-kill-buffers             "Kill Buffers")
+     ("q"   nil "Cancel" :color red))))
 
 ;; Paredit
 (use-package paredit
