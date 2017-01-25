@@ -261,8 +261,8 @@
    (defhydra hydra-window (:color amaranth :hint nil)
      "
  Split: _v_ert _x_:horz
-Delete: _o_nly  _da_ce  _dw_indow
-  Move: _s_wap
+Delete: _o_nly  _a_ce  _d_window
+  Move: _s_wap _b_uffer
   Misc:  _a_ce  _u_ndo  _r_edo"
      ("h" windmove-left)
      ("j" windmove-down)
@@ -288,8 +288,9 @@ Delete: _o_nly  _da_ce  _dw_indow
      ("o" delete-other-windows :exit t)
      ("a" ace-window :exit t)
      ("s" ace-swap-window)
-     ("dw" delete-window :exit t)
-     ("da" ace-delete-window :exit t)
+     ("b" switch-to-buffer)
+     ("d" delete-window)
+     ("a" ace-delete-window :exit t)
      ("q" nil)))
   (general-define-key
    "C-x p"
