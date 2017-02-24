@@ -218,9 +218,9 @@
    "C-x t"
    (defhydra hydra-test (:color blue :columns 1)
      "Run Tests"
-     ("t"   #'run-unit-tests                "Unit")
-     ("i"   (lambda () (interactive) (print "TODO1"))      "Integration")
-     ("p"   (lambda () (interactive) (print "TODO2"))      "Performance")
+     ("t"   #'run-unit-tests             "Unit")
+     ("i"   #'run-integration-tests      "Integration")
+     ("p"   #'run-performance-tests      "Performance")
      ("q"   nil "Cancel" :exit t)))
   (progn ;; Window moving helpers for hydra
     (require 'windmove)
@@ -419,6 +419,16 @@ Otherwise, send an interrupt to slime."
   (kbd "C-j") 'slime-repl-next-input)
 
 (defun run-unit-tests ()
+  "Function for running unit test(s).  This should be overridden by a directory local definition."
+  (interactive)
+  (print "No override. Check for .custom.el?")
+  nil)
+(defun run-integration-tests ()
+  "Function for running unit test(s).  This should be overridden by a directory local definition."
+  (interactive)
+  (print "No override. Check for .custom.el?")
+  nil)
+(defun run-performance-tests ()
   "Function for running unit test(s).  This should be overridden by a directory local definition."
   (interactive)
   (print "No override. Check for .custom.el?")
