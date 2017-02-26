@@ -595,39 +595,47 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :ensure t)
 
 ;; Code folding
-(load-library "hideshow")
-(add-hook 'prog-mode-hook 'hs-minor-mode)
+(use-package hideshow
+  :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'hs-minor-mode))
 
 ;;multi-term
 (use-package multi-term
-  :ensure t)
-(setq-default multi-term-program "/bin/zsh")
-(defun last-term-buffer (l)
-  "Return most recently used term buffer from the list of buffers, \"L\"."
-  (when l
-    (if (eq 'term-mode (with-current-buffer (car l) major-mode))
-        (car l) (last-term-buffer (cdr l)))))
-(defun get-term ()
-  "Switch to the term buffer last used, or create a new one if none exists, or if the current buffer is already a term."
-  (interactive)
-  (let ((b (last-term-buffer (buffer-list))))
-    (if (or (not b) (eq 'term-mode major-mode))
-        (multi-term)
-      (switch-to-buffer b))))
+  :ensure t
+  :config
+  (setq-default multi-term-program "/bin/zsh")
+  (defun last-term-buffer (l)
+    "Return most recently used term buffer from the list of buffers, \"L\"."
+    (when l
+      (if (eq 'term-mode (with-current-buffer (car l) major-mode))
+          (car l) (last-term-buffer (cdr l)))))
+  (defun get-term ()
+    "Switch to the term buffer last used, or create a new one if none exists, or if the current buffer is already a term."
+    (interactive)
+    (let ((b (last-term-buffer (buffer-list))))
+      (if (or (not b) (eq 'term-mode major-mode))
+          (multi-term)
+        (switch-to-buffer b))))
 
-(evil-define-key 'normal term-raw-map
-  (kbd "p") 'term-paste
-  (kbd "RET") 'term-send-return
-  (kbd "C-d") 'term-send-eof)
+  (general-define-key "C-x s" #'get-term)
 
-(evil-define-key 'insert term-raw-map
-  (kbd "C-c") 'term-interrupt-subjob
-  (kbd "C-r") 'term-send-reverse-search-history
-  (kbd "C-k") 'term-send-up
-  (kbd "C-j") 'term-send-down
-  (kbd "C-v") 'term-paste
-  (kbd "C-d") 'term-send-eof
-  (kbd "C-a") 'term-send-raw)
+  ;; might want to later set up auto term-line-mode and term-char-mode
+  ;; depending on evil state
+  (evil-define-key 'normal term-raw-map
+    (kbd "p") 'term-paste
+    (kbd "RET") 'term-send-return
+    (kbd "C-x d") 'term-send-eof
+    (kbd "C-d") 'term-send-eof)
+
+  (evil-define-key 'insert term-raw-map
+    (kbd "C-c") 'term-interrupt-subjob
+    (kbd "C-r") 'term-send-reverse-search-history
+    (kbd "C-k") 'term-send-up
+    (kbd "C-j") 'term-send-down
+    (kbd "C-v") 'term-paste
+    (kbd "C-d") 'term-send-eof
+    (kbd "C-a") 'term-send-raw))
 
 ;;Turn off tabs
 (setq-default indent-tabs-mode nil)
@@ -635,9 +643,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; Adapt to the whitespace style of the file we're editing
 (use-package fuzzy-format
-  :ensure t)
-(fuzzy-format-mode t)
-(setq show-trailing-whitespace t)
+  :ensure t
+  :config
+  (fuzzy-format-mode t)
+  (setq show-trailing-whitespace t))
 
 ;;;;; Buffer navigation
 ; necessary support function for buffer burial
