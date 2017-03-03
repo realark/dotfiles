@@ -96,7 +96,16 @@
   "Change the theme."
   (mapc #'disable-theme custom-enabled-themes))
 (if window-system
-    (load-theme 'tsdh-dark t))
+    (progn
+      ;; (require-install 'tsdh)
+      (require-install 'zenburn-theme)
+      (require-install 'doom-themes)
+      (require-install 'moe-theme)
+      (load-theme 'moe-dark t)
+      ;;(load-theme 'tsdh-dark t)
+      ;; (load-theme 'doom-one t)
+      ;;(load-theme 'zenburn t)
+      ))
 
 (defun toggle-window-split ()
   "Toggle two-window split between horizontal and vertical."
