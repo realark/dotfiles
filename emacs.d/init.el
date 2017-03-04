@@ -91,21 +91,26 @@
 (use-package try
   :ensure t)
 
+(use-package powerline
+  :ensure t)
+
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
   "Change the theme."
   (mapc #'disable-theme custom-enabled-themes))
-(if window-system
-    (progn
-      ;; (require-install 'tsdh)
-      (require-install 'zenburn-theme)
-      (require-install 'doom-themes)
-      (require-install 'moe-theme)
-      (load-theme 'moe-dark t)
-      ;;(load-theme 'tsdh-dark t)
-      ;; (load-theme 'doom-one t)
-      ;;(load-theme 'zenburn t)
-      ))
+(when window-system
+  (use-package tsdh
+    :ensure nil)
+  (use-package zenburn-theme
+    :ensure nil)
+  (use-package doom-themes
+    :ensure nil)
+  (use-package moe-theme
+    :ensure t
+    :config
+    (load-theme 'moe-dark t)
+    (moe-theme-set-color 'cyan)
+    (powerline-moe-theme)))
 
 (defun toggle-window-split ()
   "Toggle two-window split between horizontal and vertical."
