@@ -26,8 +26,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 ;;Show line numbers
 (global-linum-mode t)
-(column-number-mode t)
-(line-number-mode t)
 (setq-default linum-format "%d")
 ;; Insert closing bracket
 (electric-pair-mode 1)
