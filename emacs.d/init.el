@@ -233,6 +233,7 @@
      ("t"   #'run-unit-tests             "Unit")
      ("i"   #'run-integration-tests      "Integration")
      ("p"   #'run-performance-tests      "Performance")
+     ("r"   #'reload-systems             "Reload Systems")
      ("q"   nil "Cancel" :exit t)))
   (progn ;; Window moving helpers for hydra
     (require 'windmove)
@@ -430,21 +431,24 @@ Otherwise, send an interrupt to slime."
   (kbd "C-k") 'slime-repl-previous-input
   (kbd "C-j") 'slime-repl-next-input)
 
+(defun print-help ()
+  (print "No override. Check for .custom.el?"))
 (defun run-unit-tests ()
   "Function for running unit test(s).  This should be overridden by a directory local definition."
   (interactive)
-  (print "No override. Check for .custom.el?")
-  nil)
+  (print-help))
 (defun run-integration-tests ()
   "Function for running unit test(s).  This should be overridden by a directory local definition."
   (interactive)
-  (print "No override. Check for .custom.el?")
-  nil)
+  (print-help))
 (defun run-performance-tests ()
   "Function for running unit test(s).  This should be overridden by a directory local definition."
   (interactive)
-  (print "No override. Check for .custom.el?")
-  nil)
+  (print-help))
+(defun reload-systems ()
+  "Delete packages and reload asdf systems."
+  (interactive)
+  (print-help))
 
 (evil-define-key 'normal lisp-mode-map
   (kbd "<f4>") #'slime-browse-classes
