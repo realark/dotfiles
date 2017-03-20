@@ -307,21 +307,23 @@ Delete: _o_nly  _a_ce  _d_window
      ("q" nil)))
   (general-define-key
    "C-x p"
-   (defhydra hydra-projectile (:color blue :columns 4)
-     "Projectile"
-     ("f"   projectile-find-file                "Find File")
-     ("r"   projectile-recentf                  "Recent Files")
-     ("t"   projectile-regenerate-tags          "Recent Files")
+   (defhydra hydra-projectile (:color blue :hint nil)
+     "
+     PROJECTILE: %(projectile-project-root)
 
-     ("x"   projectile-remove-known-project     "Remove Known Project")
-     ("d"   projectile-find-dir                 "Find Directory")
-     ("c"   projectile-invalidate-cache         "Clear Cache")
-     ("X"   projectile-cleanup-known-projects   "Cleanup Known Projects")
+ Find/Replace                   Buffers
+------------------------------------------------------------------------------------------
+ _f_: file find                 _k_: Kill all buffers
+ _g_: grep all files
+ _r_: replace
+ _R_: replace regex
 
-     ("o"   projectile-multi-occur              "Multi Occur")
-     ("g"   projectile-grep                     "Grep all files")
-     ("s"   projectile-switch-project           "Switch Project")
-     ("k"   projectile-kill-buffers             "Kill Buffers")
+"
+     ("f"   projectile-find-file)
+     ("g"   projectile-grep)
+     ("r"   projectile-replace)
+     ("R"   projectile-replace-regexp)
+     ("k"   projectile-kill-buffers)
      ("q"   nil "Cancel" :color red))))
 
 ;; Paredit
