@@ -393,6 +393,7 @@ Delete: _o_nly  _a_ce  _d_window
 
 (load (expand-file-name "~/.roswell/helper.el"))
 (setq inferior-lisp-program "ros -Q run")
+(setq-default slime-protocol-version 'ignore)
 
 (defun toggle-or-start-slime ()
   (interactive)
