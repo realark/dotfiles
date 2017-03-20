@@ -379,7 +379,6 @@ Delete: _o_nly  _a_ce  _d_window
   (exchange-point-and-mark))
 
 ;;Slime
-;(setq inferior-lisp-program "/usr/bin/rlwrap -c -H ~/.sbcl_history /usr/bin/sbcl --noinform")
 (use-package slime
   :ensure t)
 (use-package slime-company
@@ -387,11 +386,13 @@ Delete: _o_nly  _a_ce  _d_window
 (make-directory "/tmp/slime-fasls/" t)
 (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "/usr/bin/sbcl --noinform")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
 (slime-setup '(slime-fancy slime-asdf slime-company))
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
+
+(load (expand-file-name "~/.roswell/helper.el"))
+(setq inferior-lisp-program "ros -Q run")
 
 (defun toggle-or-start-slime ()
   (interactive)
