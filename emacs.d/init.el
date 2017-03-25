@@ -405,6 +405,8 @@ Delete: _o_nly  _a_ce  _d_window
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
 (slime-setup '(slime-fancy slime-asdf slime-company))
+;; this is a hack. The hook have already been established.
+(add-hook 'slime-repl-mode-hook #'slime-company-maybe-enable)
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
 
@@ -984,6 +986,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (define-key company-active-map (kbd "M-p") nil)
 (define-key company-active-map (kbd "M-j") #'company-select-next)
 (define-key company-active-map (kbd "M-k") #'company-select-previous)
+(define-key company-active-map (kbd "M-?") 'company-show-doc-buffer)
+(define-key company-active-map (kbd "M-.") 'company-show-location)
 
 ;; ;; Add yasnippet support for all company backends
 ;; ;; https://github.com/syl20bnr/spacemacs/pull/179
@@ -1074,9 +1078,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
  ;; If there is more than one, they won't work right.
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
-(setq-default custom-file "~/.emacs.d/custom.el")
-(when (file-exists-p custom-file)
-  (load custom-file))
+(let ((custom-file "~/.emacs.d/custom.el"))
+  (when (file-exists-p custom-file)
+    (load custom-file)))
 
 (let ((project-customizations nil))
   (ignore-errors
