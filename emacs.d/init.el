@@ -631,6 +631,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (use-package evil-magit
   :ensure t)
 
+(use-package git-link
+  :ensure t)
+
 ;; Code folding
 (use-package hideshow
   :ensure t
