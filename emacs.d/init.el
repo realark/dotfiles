@@ -1077,9 +1077,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
  ;; If there is more than one, they won't work right.
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
-(let ((custom-file "~/.emacs.d/custom.el"))
-  (when (file-exists-p custom-file)
-    (load custom-file)))
+(setq-default custom-file "~/.emacs.d/custom.el")
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 (let ((project-customizations nil))
   (ignore-errors
