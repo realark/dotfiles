@@ -288,10 +288,22 @@
    "C-x w"
    (defhydra hydra-window (:color amaranth :hint nil)
      "
- Split: _v_ert _x_:horz
-Delete: _o_nly  _a_ce  _d_window
-  Move: _s_wap _b_uffer
-  Misc:  _a_ce  _u_ndo  _r_edo"
+WINDOW: %(buffer-name)
+-------------------------------------------------------------
+ Split:        _v_ert _x_:horz
+ Delete:       _o_nly  _d_window
+ Change:       _s_wap _b_uffer
+
+ Move:         _h_left _j_up _k_down _l_right
+ Nudge:        _H_left _J_down _K_down _L_right
+
+ Winner:       _u_ndo  _C-r_edo"
+     ("v" split-window-right)
+     ("x" split-window-below)
+     ("s" ace-swap-window)
+     ("b" switch-to-buffer)
+     ("o" delete-other-windows :exit t)
+     ("d" delete-window)
      ("h" windmove-left)
      ("j" windmove-down)
      ("k" windmove-up)
@@ -300,25 +312,9 @@ Delete: _o_nly  _a_ce  _d_window
      ("J" hydra-move-splitter-down)
      ("K" hydra-move-splitter-up)
      ("L" hydra-move-splitter-right)
-     ("|" (lambda ()
-            (interactive)
-            (split-window-right)
-            (windmove-right)))
-     ("_" (lambda ()
-            (interactive)
-            (split-window-below)
-            (windmove-down)))
-     ("v" split-window-right)
-     ("x" split-window-below)
      ;; winner-mode must be enabled
      ("u" winner-undo)
-     ("r" winner-redo)
-     ("o" delete-other-windows :exit t)
-     ("a" ace-window :exit t)
-     ("s" ace-swap-window)
-     ("b" switch-to-buffer)
-     ("d" delete-window)
-     ("a" ace-delete-window :exit t)
+     ("C-r" winner-redo)
      ("q" nil)))
   (general-define-key
    "C-x p"
