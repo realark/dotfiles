@@ -1033,6 +1033,18 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 
 ;; SQL
+(use-package sql
+  :ensure t
+  :config
+  (general-evil-define-key 'insert sql-interactive-mode-map
+    "C-S-r" #'comint-history-isearch-backward-regexp
+    "C-l" #'comint-clear-buffer
+    "C-k" #'comint-previous-input
+    "C-j" #'comint-next-input)
+  (add-hook 'sql-interactive-mode-hook
+            (lambda ()
+              (toggle-truncate-lines t))))
+
 (use-package sql-indent
   :ensure t
   :init (add-hook 'sql-mode-hook 'sql-indent))
