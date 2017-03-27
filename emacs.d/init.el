@@ -434,19 +434,22 @@ Otherwise, send an interrupt to slime."
 ;; browse local hyper spec
 (load "~/quicklisp/clhs-use-local.el" t)
 
-(evil-define-key 'normal slime-repl-mode-map
-  (kbd "q") (lambda () (interactive) (end-of-buffer) (evil-insert-state) (toggle-or-start-slime)))
 
-(evil-define-key 'insert slime-repl-mode-map
-  (kbd "C-c") 'my-slime-repl-kill-or-interrupt
-  (kbd "C-d") (lambda () (interactive)
-                (when (y-or-n-p "Quit slime?")
-                  (and (slime-repl-quit) (delete-window))))
-  (kbd "C-r") 'slime-repl-previous-matching-input
-  (kbd "TAB") 'completion-at-point
-  (kbd "C-S-l") 'slime-repl-clear-buffer
-  (kbd "C-k") 'slime-repl-previous-input
-  (kbd "C-j") 'slime-repl-next-input)
+(general-evil-define-key 'normal slime-repl-mode-map
+  "i" (lambda () (interactive) (end-of-buffer) (evil-insert 0))
+  "q" (lambda () (interactive) (end-of-buffer) (evil-insert-state) (toggle-or-start-slime))
+  [return]  #'slime-inspect-presentation-at-point)
+
+(general-evil-define-key 'insert slime-repl-mode-map
+  "C-c" 'my-slime-repl-kill-or-interrupt
+  "C-d" (lambda () (interactive)
+          (when (y-or-n-p "Quit slime?")
+            (and (slime-repl-quit) (delete-window))))
+  "C-r" 'slime-repl-previous-matching-input
+  "TAB" 'completion-at-point
+  "C-S-l" 'slime-repl-clear-buffer
+  "C-k" 'slime-repl-previous-input
+  "C-j" 'slime-repl-next-input)
 
 (defun print-help ()
   (print "No override. Check for .custom.el?"))
@@ -497,7 +500,7 @@ Otherwise, send an interrupt to slime."
   "2" (general-simulate-keys "2" t)
   "3" (general-simulate-keys "3" t)
   "4" (general-simulate-keys "4" t)
-  "4" (general-simulate-keys "5" t)
+  "5" (general-simulate-keys "5" t)
   "6" (general-simulate-keys "6" t)
   "7" (general-simulate-keys "7" t)
   "8" (general-simulate-keys "8" t)
