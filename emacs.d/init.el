@@ -245,6 +245,7 @@
    "C-x t"
    (defhydra hydra-test (:color blue :columns 1)
      "Run Tests"
+     ("s"   #'single-test                "Run a single test")
      ("t"   #'run-unit-tests             "Unit")
      ("i"   #'run-integration-tests      "Integration")
      ("p"   #'run-performance-tests      "Performance")
@@ -453,6 +454,10 @@ Otherwise, send an interrupt to slime."
 
 (defun print-help ()
   (print "No override. Check for .custom.el?"))
+(defun single-test ()
+  "Function for running unit test(s).  This should be overridden by a directory local definition."
+  (interactive)
+  (print-help))
 (defun run-unit-tests ()
   "Function for running unit test(s).  This should be overridden by a directory local definition."
   (interactive)
