@@ -245,8 +245,8 @@
    "C-x t"
    (defhydra hydra-test (:color blue :columns 1)
      "Run Tests"
-     ("s"   #'single-test                "Run a single test")
-     ("t"   #'run-unit-tests             "Unit")
+     ("t"   #'single-test                "Run a single test")
+     ("u"   #'run-unit-tests             "Unit")
      ("i"   #'run-integration-tests      "Integration")
      ("p"   #'run-performance-tests      "Performance")
      ("r"   #'reload-systems             "Reload Systems")
@@ -408,7 +408,7 @@ WINDOW: %(buffer-name)
 (setq inhibit-splash-screen t)
 
 (load (expand-file-name "~/.roswell/helper.el"))
-(setq inferior-lisp-program "ros -Q run")
+(setq inferior-lisp-program "ros -L sbcl -Q -l ~/.sbclrc run")
 (setq-default slime-protocol-version 'ignore)
 
 (defun toggle-or-start-slime ()
