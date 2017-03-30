@@ -402,7 +402,7 @@ WINDOW: %(buffer-name)
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
 (slime-setup '(slime-fancy slime-asdf slime-company))
-;; this is a hack. The hook have already been established.
+;; This is a hack. The hook should have already been established.
 (add-hook 'slime-repl-mode-hook #'slime-company-maybe-enable)
 (load "~/quicklisp/clhs-use-local.el" t)
 (setq inhibit-splash-screen t)
@@ -437,7 +437,6 @@ Otherwise, send an interrupt to slime."
 
 
 (general-evil-define-key 'normal slime-repl-mode-map
-  "i" (lambda () (interactive) (end-of-buffer) (evil-insert 0))
   "q" (lambda () (interactive) (end-of-buffer) (evil-insert-state) (toggle-or-start-slime))
   [return]  #'slime-inspect-presentation-at-point)
 
