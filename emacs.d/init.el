@@ -1047,7 +1047,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     "C-S-r" #'comint-history-isearch-backward-regexp
     "C-l" #'comint-clear-buffer
     "C-k" #'comint-previous-input
-    "C-j" #'comint-next-input)
+    "C-j" #'comint-next-input
+    "C-d" (lambda ()
+            (interactive)
+            (when (yes-or-no-p "Quit Sql session?")
+              (comint-delchar-or-maybe-eof 0)
+              (delete-window))))
   (add-hook 'sql-interactive-mode-hook
             (lambda ()
               (toggle-truncate-lines t))))
