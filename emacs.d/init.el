@@ -691,6 +691,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (fuzzy-format-mode t)
   (setq show-trailing-whitespace t))
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 ;;;;; Buffer navigation
 ; necessary support function for buffer burial
 (defun crs-delete-these (delete-these from-this-list)
