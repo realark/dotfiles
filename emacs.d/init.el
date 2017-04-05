@@ -531,12 +531,10 @@ Otherwise, send an interrupt to slime."
               "Reinspect the previous object or close the window if there is no previous object"
               ;; mostly copied from slime-inspector-pop
               (interactive)
-              (slime-eval-async
-                  `(swank:inspector-pop)
-                (lambda (result)
-                  (cond (result
-                         (slime-open-inspector result (pop slime-inspector-mark-stack)))
-                        (t (quit-window)))))))
+              (let ((result (slime-eval `(swank:inspector-pop))))
+                (if result
+                    (slime-open-inspector result (pop slime-inspector-mark-stack))
+                  (quit-window)))))
 
 ;; Magit -- The best git interface I've ever used.
 (use-package magit
