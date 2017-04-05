@@ -736,8 +736,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
        (bury-buffer)
        (nth n my-buffer-list)))))
 ;; evil buffer nav keys
-(define-key evil-normal-state-map "gT" 'crs-bury-buffer)
-(define-key evil-normal-state-map "gt" (lambda () (interactive) (crs-bury-buffer -1)))
+(general-define-key
+ :states '(normal)
+ "gT" #'crs-bury-buffer
+ "gt" (lambda () (interactive) (crs-bury-buffer -1)))
 
 ;; tags
 (use-package etags-select
