@@ -107,6 +107,11 @@
 (use-package powerline
   :ensure t)
 
+(use-package diminish
+  :ensure t
+  :config
+  (diminish 'undo-tree-mode))
+
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
   "Change the theme."
@@ -340,7 +345,8 @@ WINDOW: %(buffer-name)
 
 ;; Paredit
 (use-package paredit
-  :ensure t)
+  :ensure t
+  :diminish paredit-mode)
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
 (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
 (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
@@ -640,6 +646,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; Code folding
 (use-package hideshow
   :ensure t
+  :diminish hs-minor-mode
   :config
   (add-hook 'prog-mode-hook 'hs-minor-mode))
 
@@ -760,6 +767,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; ivy and friends
 (use-package ivy
+  :diminish ivy-mode
   :ensure t)
 (use-package swiper
   :ensure t)
@@ -879,8 +887,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;Flycheck
 (use-package flycheck
-  :ensure t)
-(global-flycheck-mode)
+  :ensure t
+  :diminish flycheck-mode
+  :config
+  (global-flycheck-mode)
+  (diminish 'flyspell-mode))
 
 ; spellcheck
 (mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-prog-mode))
@@ -965,7 +976,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; yasnippet
 (use-package yasnippet
-  :ensure t)
+  :ensure t
+  :diminish yas-minor-mode)
 (yas-global-mode 1)
 ;; don't turn on yas if there are no snippets
 (defun disable-yas-if-no-snippets ()
@@ -978,7 +990,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; company mode
 (use-package company
-  :ensure t)
+  :ensure t
+  :diminish company-mode)
 (add-hook 'after-init-hook 'global-company-mode)
 
 (use-package company-quickhelp
@@ -1093,8 +1106,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; agressive indent mode to re-indent after changes are made
 (use-package aggressive-indent
-  :ensure t)
-(global-aggressive-indent-mode 1)
+  :ensure t
+  :diminish aggressive-indent-mode
+  :config
+  (global-aggressive-indent-mode 1))
 ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
 
 ;; custom vars
