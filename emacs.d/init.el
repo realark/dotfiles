@@ -110,6 +110,7 @@
 (use-package diminish
   :ensure t
   :diminish
+  eldoc-mode
   undo-tree-mode
   auto-revert-mode)
 
