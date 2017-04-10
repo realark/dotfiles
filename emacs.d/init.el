@@ -109,10 +109,10 @@
 
 (use-package diminish
   :ensure t
-  :diminish
-  eldoc-mode
-  undo-tree-mode
-  auto-revert-mode)
+  :config
+  (diminish 'eldoc-mode)
+  (diminish 'undo-tree-mode)
+  (diminish 'auto-revert-mode))
 
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
@@ -841,8 +841,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;Org mode
 (use-package org
-  :diminish org-indent-mode
-  :ensure t)
+  :ensure t
+  :config
+  (diminish 'org-indent-mode))
+
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (setq-default org-startup-indented t)
 ;; fontify code in code blocks
