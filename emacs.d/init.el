@@ -695,6 +695,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; Adapt to the whitespace style of the file we're editing
 (use-package fuzzy-format
   :ensure t
+  :diminish fuzzy-format-mode
   :config
   (fuzzy-format-mode t)
   (setq show-trailing-whitespace t))
