@@ -108,11 +108,12 @@
   :ensure t)
 
 (use-package diminish
-  :ensure t
-  :config
-  (diminish 'eldoc-mode)
-  (diminish 'undo-tree-mode)
-  (diminish 'auto-revert-mode))
+  :ensure t)
+(diminish 'flyspell-mode)
+(diminish 'flyspell-prog-mode)
+(diminish 'eldoc-mode)
+(diminish 'undo-tree-mode)
+(diminish 'auto-revert-mode)
 
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
