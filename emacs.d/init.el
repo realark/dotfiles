@@ -26,7 +26,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 ;;Show line numbers
 (global-linum-mode t)
-(setq-default linum-format "%d")
 ;; Insert closing bracket
 (electric-pair-mode 1)
 (show-paren-mode 1) ; turn on paren match highlighting
