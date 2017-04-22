@@ -344,60 +344,32 @@ WINDOW: %(buffer-name)
      ("k"   projectile-kill-buffers)
      ("q"   nil "Cancel" :color red))))
 
-;; Paredit
-(use-package paredit
+(use-package lispyville
   :ensure t
-  :delight paredit-mode)
-(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-(add-hook 'slime-repl-mode-hook (lambda () (and (require 'slime-xref-browser) ;; from slime-fancy
-                                                (paredit-mode +1))))
-(defun override-slime-repl-bindings-with-paredit ()
-  "Stop SLIME's REPL from grabbing DEL."
-  (define-key slime-repl-mode-map
-    (read-kbd-macro paredit-backward-delete-key) nil))
-(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
-
-;; evil bindings for paredit
-(evil-define-key 'insert paredit-mode-map
-  (kbd "C-l") 'paredit-forward-slurp-sexp
-  (kbd "C-S-h") 'paredit-backward-slurp-sexp
-  (kbd "C-h") 'paredit-forward-barf-sexp
-  (kbd "C-S-l") 'paredit-backward-barf-sexp)
-(evil-define-key 'normal paredit-mode-map
-  (kbd "C-l") 'paredit-forward-slurp-sexp
-  (kbd "C-S-h") 'paredit-backward-slurp-sexp
-  (kbd "C-h") 'paredit-forward-barf-sexp
-  (kbd "C-S-l") 'paredit-backward-barf-sexp)
-
-(defun paredit--is-at-start-of-sexp ()
-  (and (looking-at "(\\|\\[")
-       (not (nth 3 (syntax-ppss))) ;; inside string
-       (not (nth 4 (syntax-ppss))))) ;; inside comment
-
-(defun paredit-duplicate-closest-sexp ()
-  (interactive)
-  ;; skips to start of current sexp
-  (while (not (paredit--is-at-start-of-sexp))
-    (paredit-backward))
-  (set-mark-command nil)
-  ;; while we find sexps we move forward on the line
-  (while (and (bounds-of-thing-at-point 'sexp)
-              (<= (point) (car (bounds-of-thing-at-point 'sexp)))
-              (not (= (point) (line-end-position))))
-    (forward-sexp)
-    (while (looking-at " ")
-      (forward-char)))
-  (kill-ring-save (mark) (point))
-  ;; go to the next line and copy the sexprs we encountered
-  (paredit-newline)
-  (yank)
-  (exchange-point-and-mark))
+  :delight lispyville-mode
+  :config
+  (add-hook 'lisp-mode-hook #'lispyville-mode)
+  (add-hook 'emacs-lisp-mode-hook       #'lispyville-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'lispyville-mode)
+  (add-hook 'ielm-mode-hook             #'lispyville-mode)
+  (add-hook 'lisp-mode-hook             #'lispyville-mode)
+  (add-hook 'lisp-interaction-mode-hook #'lispyville-mode)
+  (add-hook 'scheme-mode-hook           #'lispyville-mode)
+  ;; TODO: shadow lispyville forward/backward for easier sexp nav
+  ;; (when (= (- (line-end-position) 1) (point))
+  ;;   (forward-line)
+  ;;   (beginning-of-line))
+  ;; (when (<= (- (line-end-position) 1) (point))
+  ;;   ;; (forward-line)
+  ;;   (forward-word))
+  ;; (evil-define-motion lispyville-forward-sexp (count)
+  ;;   "This is an evil motion equivalent of `forward-sexp'."
+  ;;   (forward-sexp (or count 1)))
+  (lispyville-set-key-theme '(operators
+                              (escape insert)
+                              (slurp/barf-cp normal)
+                              (additional normal)
+                              (additional-movement normal visual motion))))
 
 (use-package ansi-color
   :ensure t)
