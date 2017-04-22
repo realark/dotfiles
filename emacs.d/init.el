@@ -399,10 +399,30 @@ WINDOW: %(buffer-name)
   (yank)
   (exchange-point-and-mark))
 
+(use-package ansi-color
+  :ensure t)
+
 ;;Slime
 (use-package slime
   :ensure t
-  :delight slime)
+  :delight slime
+  :config
+  (progn ; emit ansi colors in slime repl
+    (defvar slime-colors t "If non-nil, emit ansi colors in the slime repl.")
+    (defun slime-colors-on ()
+      "Enable ansi colors in the slime repl."
+      (interactive)
+      (setq slime-colors t))
+    (defun slime-colors-off ()
+      "Disable ansi colors in the slime repl."
+      (interactive)
+      (setq slime-colors nil))
+    (defadvice slime-repl-emit (around slime-repl-ansi-colorize activate compile)
+      (with-current-buffer (slime-output-buffer)
+        (setq ad-return-value ad-do-it)
+        (when slime-colors
+          (ansi-color-apply-on-region slime-output-start
+                                      slime-output-end))))))
 (use-package slime-company
   :ensure t)
 (make-directory "/tmp/slime-fasls/" t)
