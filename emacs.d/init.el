@@ -106,13 +106,12 @@
 (use-package powerline
   :ensure t)
 
-(use-package diminish
-  :ensure t)
-(diminish 'flyspell-mode)
-(diminish 'flyspell-prog-mode)
-(diminish 'eldoc-mode)
-(diminish 'undo-tree-mode)
-(diminish 'auto-revert-mode)
+(use-package delight
+  :ensure t
+  :config
+  (delight 'eldoc-mode nil 'eldoc)
+  (delight 'undo-tree-mode nil 'undo-tree)
+  (delight 'auto-revert-mode nil 'autorevert))
 
 ;; Theme
 (defadvice load-theme (before theme-dont-propagate activate)
@@ -348,7 +347,7 @@ WINDOW: %(buffer-name)
 ;; Paredit
 (use-package paredit
   :ensure t
-  :diminish paredit-mode)
+  :delight paredit-mode)
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
 (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
 (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
@@ -402,7 +401,8 @@ WINDOW: %(buffer-name)
 
 ;;Slime
 (use-package slime
-  :ensure t)
+  :ensure t
+  :delight slime)
 (use-package slime-company
   :ensure t)
 (make-directory "/tmp/slime-fasls/" t)
@@ -646,7 +646,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; Code folding
 (use-package hideshow
   :ensure t
-  :diminish hs-minor-mode
+  :delight hs-minor-mode
   :config
   (add-hook 'prog-mode-hook 'hs-minor-mode))
 
@@ -694,7 +694,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; Adapt to the whitespace style of the file we're editing
 (use-package fuzzy-format
   :ensure t
-  :diminish fuzzy-format-mode
+  :delight fuzzy-format-mode
   :config
   (fuzzy-format-mode t)
   (setq show-trailing-whitespace t))
@@ -768,7 +768,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; ivy and friends
 (use-package ivy
-  :diminish ivy-mode
+  :delight ivy-mode
   :ensure t)
 (use-package swiper
   :ensure t)
@@ -843,15 +843,14 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;Org mode
 (use-package org
   :ensure t
-  :config
-  (diminish 'org-indent-mode))
+  :delight org-indent-mode nil org-indent)
 
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (setq-default org-startup-indented t)
 ;; fontify code in code blocks
 (setq-default org-src-fontify-natively t)
 (use-package evil-org
-  :diminish evil-org-mode
+  :delight evil-org-mode
   :ensure t)
 (use-package org-bullets
   :ensure t)
@@ -893,10 +892,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;Flycheck
 (use-package flycheck
   :ensure t
-  :diminish flycheck-mode
+  :delight flycheck-mode
   :config
   (global-flycheck-mode)
-  (diminish 'flyspell-mode))
+  (delight 'flyspell-mode nil 'flyspell)
+  (delight 'flyspell-prog-mode nil 'flyspell))
 
 ; spellcheck
 (mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-prog-mode))
@@ -982,7 +982,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; yasnippet
 (use-package yasnippet
   :ensure t
-  :diminish yas-minor-mode)
+  :delight yas-minor-mode)
 (yas-global-mode 1)
 ;; don't turn on yas if there are no snippets
 (defun disable-yas-if-no-snippets ()
@@ -996,7 +996,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; company mode
 (use-package company
   :ensure t
-  :diminish company-mode)
+  :delight company-mode)
 (add-hook 'after-init-hook 'global-company-mode)
 
 (use-package company-quickhelp
@@ -1112,7 +1112,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; agressive indent mode to re-indent after changes are made
 (use-package aggressive-indent
   :ensure t
-  :diminish aggressive-indent-mode
+  :delight aggressive-indent-mode
   :config
   (global-aggressive-indent-mode 1))
 ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
