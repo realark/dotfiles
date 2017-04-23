@@ -893,8 +893,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;;;;;;;;;;;;;;
 
-(setq-default mumamo-background-colors nil)
-
 ;; Interface to eclipse via eclim
 (use-package eclim
   :init
