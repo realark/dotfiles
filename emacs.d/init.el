@@ -67,17 +67,6 @@
 ;; text size
 (global-set-key (kbd "C-+") 'text-scale-adjust)
 
-;; winner mode allows easy undo/redo of window changes
-(when (fboundp 'winner-mode)
-  (winner-mode 1))
-
-;; Require-install Macro
-(defmacro require-install (PCK)
-  "Require package PCK, install via \"package-install\" if missing."
-  `(unless (require ,PCK nil t)
-     (package-install ,PCK)
-     (require ,PCK)))
-
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
@@ -93,21 +82,30 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
+;; winner mode allows easy undo/redo of window changes
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+
+;; Require-install Macro
+(defmacro require-install (PCK)
+  "Require package PCK, install via \"package-install\" if missing."
+  `(unless (require ,PCK nil t)
+     (package-install ,PCK)
+     (require ,PCK)))
+
 ;; use mepla and marmalade for package
 (require-install 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 (require-install 'use-package)
+(setq-default use-package-always-ensure t)
 
 ;; try runs emacs packages without installing them
-(use-package try
-  :ensure t)
+(use-package try)
 
-(use-package powerline
-  :ensure t)
+(use-package powerline)
 
 (use-package delight
-  :ensure t
   :config
   (delight 'eldoc-mode nil 'eldoc)
   (delight 'undo-tree-mode nil 'undo-tree)
@@ -158,8 +156,7 @@
           (if this-win-2nd (other-window 1))))))
 
 ;; use ace-window
-(use-package ace-window
-  :ensure t)
+(use-package ace-window)
 
 (defun select-current-line ()
   "Select the current line."
@@ -187,7 +184,6 @@
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
-  :ensure t
   :init (evil-mode 1))
 ;;; esc quits
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -215,7 +211,6 @@
 
 ;; general for keybindings
 (use-package general
-  :ensure t
   :init (general-evil-setup t))
 ;; bind a key globally in normal state; keymaps must be quoted
 
@@ -245,7 +240,6 @@
 
 ;; Hydras
 (use-package hydra
-  :ensure t
   :config
   (general-define-key
    "C-x t"
@@ -345,7 +339,6 @@ WINDOW: %(buffer-name)
      ("q"   nil "Cancel" :color red))))
 
 (use-package lispyville
-  :ensure t
   :delight lispyville-mode
   :config
   (add-hook 'lisp-mode-hook                          #'lispyville-mode)
@@ -372,12 +365,10 @@ WINDOW: %(buffer-name)
                               (additional normal)
                               (additional-movement normal visual motion))))
 
-(use-package ansi-color
-  :ensure t)
+(use-package ansi-color)
 
 ;;Slime
 (use-package slime
-  :ensure t
   :delight slime
   :config
   (progn ; emit ansi colors in slime repl
@@ -396,8 +387,7 @@ WINDOW: %(buffer-name)
         (when slime-colors
           (ansi-color-apply-on-region slime-output-start
                                       slime-output-end))))))
-(use-package slime-company
-  :ensure t)
+(use-package slime-company)
 (make-directory "/tmp/slime-fasls/" t)
 (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
@@ -531,8 +521,7 @@ Otherwise, send an interrupt to slime."
                   (quit-window)))))
 
 ;; Magit -- The best git interface I've ever used.
-(use-package magit
-  :ensure t)
+(use-package magit)
 (setq-default magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-x g") 'magit-status)
 (setq-default magit-push-always-verify nil)
@@ -630,22 +619,18 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   "Clean whitespace in the given hunk."
   (delete-trailing-whitespace beg end))
 
-(use-package evil-magit
-  :ensure t)
+(use-package evil-magit)
 
-(use-package git-link
-  :ensure t)
+(use-package git-link)
 
 ;; Code folding
 (use-package hideshow
-  :ensure t
   :delight hs-minor-mode
   :config
   (add-hook 'prog-mode-hook 'hs-minor-mode))
 
 ;;multi-term
 (use-package multi-term
-  :ensure t
   :config
   (setq-default multi-term-program "/bin/zsh")
   (defun last-term-buffer (l)
@@ -686,7 +671,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; Adapt to the whitespace style of the file we're editing
 (use-package fuzzy-format
-  :ensure t
   :delight fuzzy-format-mode
   :config
   (fuzzy-format-mode t)
@@ -743,8 +727,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
  "gt" (lambda () (interactive) (crs-bury-buffer -1)))
 
 ;; tags
-(use-package etags-select
-  :ensure t)
+(use-package etags-select)
 (setq-default etags-select-go-if-unambiguous t)
 (setq-default etags-select-highlight-delay 5.0)
 (setq-default etags-select-use-short-name-completion t)
@@ -761,12 +744,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; ivy and friends
 (use-package ivy
-  :delight ivy-mode
-  :ensure t)
-(use-package swiper
-  :ensure t)
-(use-package counsel
-  :ensure t)
+  :delight ivy-mode)
+(use-package swiper)
+(use-package counsel)
 
 (ivy-mode t)
 (setq-default ivy-wrap t)
@@ -816,8 +796,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (desktop-save-mode 1)
 
 ;; Projectile
-(use-package projectile
-  :ensure t)
+(use-package projectile)
 (setq-default projectile-globally-ignored-directories
               (append projectile-globally-ignored-directories
                       '(".git" ".ensime_cache.d" ".gradle"
@@ -835,7 +814,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;Org mode
 (use-package org
-  :ensure t
   :delight org-indent-mode nil org-indent)
 
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -843,10 +821,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; fontify code in code blocks
 (setq-default org-src-fontify-natively t)
 (use-package evil-org
-  :delight evil-org-mode
-  :ensure t)
-(use-package org-bullets
-  :ensure t)
+  :delight evil-org-mode)
+(use-package org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (setq-default org-agenda-files (list "~/Documents/org-files/tasks.org"
                                      "~/Documents/org-files/schedule.org"))
@@ -858,8 +834,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq-default org-refile-use-outline-path t)                  ; Show full paths for refiling
 
 ; Neotree
-(use-package neotree
-  :ensure t)
+(use-package neotree)
 (global-set-key [f8] 'neotree-toggle)
 (setq-default neo-smart-open t)
 (add-hook 'neotree-mode-hook
@@ -869,22 +844,18 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
             (define-key evil-normal-state-local-map (kbd "RET") 'neotree-change-root)))
 
 ;; elfeed
-(use-package elfeed
-  :ensure t)
+(use-package elfeed)
 (elfeed-load-opml "~/.admin/arks_feeds.opml")
 
 ;; Dired options
-(use-package dired+
-  :ensure t)
+(use-package dired+)
 (diredp-toggle-find-file-reuse-dir 1)
 
-(use-package rainbow-delimiters
-  :ensure t)
+(use-package rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 ;Flycheck
 (use-package flycheck
-  :ensure t
   :delight flycheck-mode
   :config
   (global-flycheck-mode)
@@ -923,7 +894,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; Interface to eclipse via eclim
 (use-package eclim
-  :ensure t
   :init
   (require 'eclim)
   (require 'eclimd)
@@ -974,7 +944,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; yasnippet
 (use-package yasnippet
-  :ensure t
   :delight yas-minor-mode)
 (yas-global-mode 1)
 ;; don't turn on yas if there are no snippets
@@ -983,23 +952,19 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     (yas-minor-mode -1)))
 (add-hook 'yas-minor-mode-hook #'disable-yas-if-no-snippets)
 (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
-(use-package common-lisp-snippets
-  :ensure t)
+(use-package common-lisp-snippets)
 
 ;; company mode
 (use-package company
-  :ensure t
   :delight company-mode)
 (add-hook 'after-init-hook 'global-company-mode)
 
-(use-package company-quickhelp
-  :ensure t)
+(use-package company-quickhelp)
 (company-quickhelp-mode t)
 (setq-default company-idle-delay 0.25)
 (setq-default company-minimum-prefix-length 2)
 
-(use-package company-emacs-eclim
-  :ensure t)
+(use-package company-emacs-eclim)
 (setq company-emacs-eclim-ignore-case t)
 (company-emacs-eclim-setup)
 
@@ -1029,7 +994,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; Groovy and Gradle
 (use-package groovy-mode
-  :ensure t
   :init (require 'inf-groovy))
 (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
 (add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
@@ -1041,22 +1005,19 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                  (setq groovy-home "/usr/share/groovy")))
 
 ;; Clojure
-(use-package ac-cider
-  :ensure t)
+(use-package ac-cider)
 (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
 (add-hook 'cider-mode-hook 'ac-cider-setup)
 (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
 
 ;; Scala
 ; (add-to-list 'auto-mode-alist '("\.scala$" . scala-mode))
-(use-package ensime
-  :ensure t)
+(use-package ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 
 ;; SQL
 (use-package sql
-  :ensure t
   :config
   (general-evil-define-key 'insert sql-interactive-mode-map
     "C-S-r" #'comint-history-isearch-backward-regexp
@@ -1073,11 +1034,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
               (toggle-truncate-lines t))))
 
 (use-package sql-indent
-  :ensure t
   :init (add-hook 'sql-mode-hook 'sql-indent))
 
 (use-package sqlup-mode
-  :ensure t
   :init
   (add-hook 'sql-mode-hook 'sqlup-mode)
   (add-hook 'sql-interactive-mode-hook 'sqlup-mode)
@@ -1104,7 +1063,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; agressive indent mode to re-indent after changes are made
 (use-package aggressive-indent
-  :ensure t
   :delight aggressive-indent-mode
   :config
   (global-aggressive-indent-mode 1))
