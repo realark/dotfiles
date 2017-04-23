@@ -348,13 +348,14 @@ WINDOW: %(buffer-name)
   :ensure t
   :delight lispyville-mode
   :config
-  (add-hook 'lisp-mode-hook #'lispyville-mode)
-  (add-hook 'emacs-lisp-mode-hook       #'lispyville-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook #'lispyville-mode)
-  (add-hook 'ielm-mode-hook             #'lispyville-mode)
-  (add-hook 'lisp-mode-hook             #'lispyville-mode)
-  (add-hook 'lisp-interaction-mode-hook #'lispyville-mode)
-  (add-hook 'scheme-mode-hook           #'lispyville-mode)
+  (add-hook 'lisp-mode-hook                          #'lispyville-mode)
+  (add-hook 'emacs-lisp-mode-hook                    #'lispyville-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook   #'lispyville-mode)
+  (add-hook 'ielm-mode-hook                          #'lispyville-mode)
+  (add-hook 'lisp-mode-hook                          #'lispyville-mode)
+  (add-hook 'lisp-interaction-mode-hook              #'lispyville-mode)
+  (add-hook 'slime-repl-mode                         #'lispyville-mode)
+  (add-hook 'scheme-mode-hook                        #'lispyville-mode)
   ;; TODO: shadow lispyville forward/backward for easier sexp nav
   ;; (when (= (- (line-end-position) 1) (point))
   ;;   (forward-line)
