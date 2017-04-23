@@ -836,16 +836,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (setq-default org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq-default org-refile-use-outline-path t)                  ; Show full paths for refiling
 
-; Neotree
-(use-package neotree)
-(global-set-key [f8] 'neotree-toggle)
-(setq-default neo-smart-open t)
-(add-hook 'neotree-mode-hook
-          (lambda ()
-            (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
-            (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
-            (define-key evil-normal-state-local-map (kbd "RET") 'neotree-change-root)))
-
 ;; elfeed
 (use-package elfeed)
 (elfeed-load-opml "~/.admin/arks_feeds.opml")
