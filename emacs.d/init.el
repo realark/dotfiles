@@ -59,13 +59,11 @@
 ; change the minbuffer startup message
 (defun display-startup-echo-area-message ()
   "Change the startup message."
-  (message "This too shall pass."))
+  (message "Welcome"))
+;; (setq initial-scratch-message "")
 
-;Maximize emacs window
+;; Maximize emacs window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-;; text size
-(global-set-key (kbd "C-+") 'text-scale-adjust)
 
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
@@ -191,50 +189,45 @@
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
-  :init (evil-mode 1))
-;;; esc quits
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-
-;; Default to normal mode most of the time
-(setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode))
-(setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
-(setq-default evil-motion-state-modes '())
+  :config
+  (evil-mode 1)
+  ;; Default to normal mode most of the time
+  (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode))
+  (setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
+  (setq-default evil-motion-state-modes '()))
 
 ;; general for keybindings
 (use-package general
-  :init (general-evil-setup t))
-;; bind a key globally in normal state; keymaps must be quoted
+  :init
+  (general-evil-setup t)
+  :config
+  (general-define-key "<escape>" (general-simulate-keys "C-g"))
 
-(general-nmap "/" (general-simulate-keys "C-s" t))
-(general-nmap "C-j" (general-simulate-keys "n" t))
-(general-nmap "C-k" (general-simulate-keys "p" t))
+  (general-define-key "C-+" 'text-scale-adjust)
 
-(general-nmap :mode 'help-mode "q" (general-simulate-keys "q" t))
-(general-nmap :mode 'help-mode "RET" (general-simulate-keys "RET" t))
+  (general-nmap "/" (general-simulate-keys "C-s" t))
+  (general-nmap "C-j" (general-simulate-keys "n" t))
+  (general-nmap "C-k" (general-simulate-keys "p" t))
 
-(general-define-key
- :states '(normal visual)
- "<SPC>"  (general-simulate-keys "C-x"))
+  (general-nmap :mode 'help-mode "q" (general-simulate-keys "q" t))
+  (general-nmap :mode 'help-mode "RET" (general-simulate-keys "RET" t))
 
-(general-define-key
- :prefix "C-x"
- "4"      #'toggle-window-split
- "x"      #'execute-extended-command
- "l"      #'whitespace-mode
- "f"      #'indent-region
- ";"      #'toggle-comment-region-or-line
- "<tab>"  #'hs-toggle-hiding
- "g"      #'magit-status
- "B"      #'magit-blame)
+  (general-define-key
+   :states '(normal visual)
+   "<SPC>"  (general-simulate-keys "C-x"))
 
-(general-define-key "C-x <SPC>" #'find-file)
+  (general-define-key
+   :prefix "C-x"
+   "4"      #'toggle-window-split
+   "x"      #'execute-extended-command
+   "l"      #'whitespace-mode
+   "f"      #'indent-region
+   ";"      #'toggle-comment-region-or-line
+   "<tab>"  #'hs-toggle-hiding
+   "g"      #'magit-status
+   "B"      #'magit-blame)
+
+  (general-define-key "C-x <SPC>" #'find-file))
 
 ;; Hydras
 (use-package hydra
@@ -338,7 +331,7 @@ WINDOW: %(buffer-name)
 
 (use-package lispyville
   :delight lispyville-mode
-  :config
+  :init
   (add-hook 'lisp-mode-hook                          #'lispyville-mode)
   (add-hook 'emacs-lisp-mode-hook                    #'lispyville-mode)
   (add-hook 'eval-expression-minibuffer-setup-hook   #'lispyville-mode)
@@ -347,11 +340,102 @@ WINDOW: %(buffer-name)
   (add-hook 'lisp-interaction-mode-hook              #'lispyville-mode)
   (add-hook 'slime-repl-mode                         #'lispyville-mode)
   (add-hook 'scheme-mode-hook                        #'lispyville-mode)
+  :config
   (lispyville-set-key-theme '(operators
                               (escape insert)
                               (slurp/barf-cp normal)
                               (additional normal)
                               (additional-movement normal visual motion))))
+
+;; ivy and friends
+(use-package ivy
+  :delight ivy-mode
+  :init
+  (ivy-mode t)
+  :general
+  ("C-s" #'swiper
+   "M-x" #'counsel-M-x
+   "C-x C-f" #'counsel-find-file)
+  (:keymaps 'ivy-minibuffer-map
+            "M-j"     #'ivy-next-line
+            "M-k"     #'ivy-previous-line
+            "M-S-j"   #'ivy-scroll-up-command
+            "M-S-k"   #'ivy-scroll-down-command
+            "C-j"     #'ivy-next-history-element
+            "C-k"     #'ivy-previous-history-element)
+  (:keymaps 'counsel-find-file-map
+            "<return>" #'ivy-alt-done)
+  :config
+  (use-package swiper)
+  (use-package counsel)
+
+  (setq-default ivy-wrap t)
+  (setq-default ivy-use-virtual-buffers t)
+  (setq-default ivy-height 10)
+  (setq-default ivy-count-format "(%d/%d) ")
+  (setq-default ivy-extra-directories nil)
+  (setq-default ivy-re-builders-alist '((t . ivy--regex-plus)))
+  ;; isearch-forward seems to get stuck in the wrong state with swiper.
+  ;; Manually setting it to T seems to work around the problem.
+  ;; This is probably a problem with my config
+  (setq isearch-forward t)
+
+  (setq-default magit-completing-read-function 'ivy-completing-read)
+  (setq-default projectile-completion-system 'ivy))
+
+;; yasnippet
+(use-package yasnippet
+  :delight yas-minor-mode
+  :init
+  (yas-global-mode 1)
+  :config
+  ;; don't turn on yas if there are no snippets
+  (defun disable-yas-if-no-snippets ()
+    (when (and yas-minor-mode (null (yas--get-snippet-tables)))
+      (yas-minor-mode -1)))
+  (add-hook 'yas-minor-mode-hook #'disable-yas-if-no-snippets)
+  (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
+  (use-package common-lisp-snippets))
+
+;; company mode
+(use-package company
+  :delight company-mode
+  :init
+  (global-company-mode)
+  :general
+  (:keymaps 'company-active-map
+            "M-n" nil
+            "M-p" nil
+            "M-j" #'company-select-next
+            "M-k" #'company-select-previous
+            "M-?" #'company-show-doc-buffer
+            "M-." #'company-show-location)
+  :config
+  ;; make company work with org-mode
+  (defun add-pcomplete-to-capf ()
+    (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+  (add-hook 'org-mode-hook #'add-pcomplete-to-capf)
+  (use-package company-quickhelp
+    :config
+    (company-quickhelp-mode t)
+    (setq-default company-idle-delay 0.25)
+    (setq-default company-minimum-prefix-length 2)))
+
+;; Projectile
+(use-package projectile
+  :init
+  (setq-default projectile-globally-ignored-directories
+                (append projectile-globally-ignored-directories
+                        '(".git" ".ensime_cache.d" ".gradle"
+                          ".recommenders" ".metadata" "dist")))
+  (setq-default projectile-globally-ignored-files
+                (append projectile-globally-ignored-files
+                        '(".ensime" "*.war" "*.jar" "*.zip"
+                          "*.png" "*.gif" "*.vsd" "*.svg"
+                          "*.exe" "eclimd.log" "workbench.xmi"
+                          ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
+  (setq-default projectile-enable-caching t)
+  (projectile-mode))
 
 (use-package ansi-color)
 
@@ -615,13 +699,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;;multi-term
 (use-package multi-term
-  :config
-  (setq-default multi-term-program "/bin/zsh")
-  (defun last-term-buffer (l)
-    "Return most recently used term buffer from the list of buffers, \"L\"."
-    (when l
-      (if (eq 'term-mode (with-current-buffer (car l) major-mode))
-          (car l) (last-term-buffer (cdr l)))))
+  :init
   (defun get-term ()
     "Switch to the term buffer last used, or create a new one if none exists, or if the current buffer is already a term."
     (interactive)
@@ -629,8 +707,15 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
       (if (or (not b) (eq 'term-mode major-mode))
           (multi-term)
         (switch-to-buffer b))))
-
-  (general-define-key "C-x s" #'get-term)
+  :general
+  ("C-x s" #'get-term)
+  :config
+  (setq-default multi-term-program "/bin/zsh")
+  (defun last-term-buffer (l)
+    "Return most recently used term buffer from the list of buffers, \"L\"."
+    (when l
+      (if (eq 'term-mode (with-current-buffer (car l) major-mode))
+          (car l) (last-term-buffer (cdr l)))))
 
   ;; might want to later set up auto term-line-mode and term-char-mode
   ;; depending on evil state
@@ -727,64 +812,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (setq-default etags-select-use-short-name-completion t)
   (setq-default tags-revert-without-query 1))
 
-;; ivy and friends
-(use-package ivy
-  :delight ivy-mode)
-(use-package swiper)
-(use-package counsel)
-
-(ivy-mode t)
-(setq-default ivy-wrap t)
-(setq-default ivy-use-virtual-buffers t)
-(setq-default ivy-height 10)
-(setq-default ivy-count-format "(%d/%d) ")
-(setq-default ivy-extra-directories nil)
-(setq-default ivy-re-builders-alist '((t . ivy--regex-plus)))
-
-;; ivy global keys
-(global-set-key (kbd "C-s") 'swiper)
-;; isearch-forward seems to get stuck in the wrong state with swiper.
-;; Manually setting it to T seems to work around the problem.
-;; This is probably a problem with my config.
-(setq isearch-forward t)
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-;; ivy minibuffer keys
-(define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
-(define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
-(define-key ivy-minibuffer-map (kbd "M-S-j") 'ivy-scroll-up-command)
-(define-key ivy-minibuffer-map (kbd "M-S-k") 'ivy-scroll-down-command)
-(define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-history-element)
-(define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-history-element)
-
-(define-key counsel-find-file-map (kbd "<return>") 'ivy-alt-done)
-
-(setq-default magit-completing-read-function 'ivy-completing-read)
-(setq-default projectile-completion-system 'ivy)
-
-
-;Backup files
+;; Backup files
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 (setq backup-by-copying t)
-
-;; Projectile
-(use-package projectile
-  :config
-  (setq-default projectile-globally-ignored-directories
-                (append projectile-globally-ignored-directories
-                        '(".git" ".ensime_cache.d" ".gradle"
-                          ".recommenders" ".metadata" "dist")))
-  (setq-default projectile-globally-ignored-files
-                (append projectile-globally-ignored-files
-                        '(".ensime" "*.war" "*.jar" "*.zip"
-                          "*.png" "*.gif" "*.vsd" "*.svg"
-                          "*.exe" "eclimd.log" "workbench.xmi"
-                          ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
-  (setq-default projectile-enable-caching t)
-  (projectile-mode))
 
 ;; Org mode
 (use-package org
@@ -823,7 +856,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :config
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
-;Flycheck
+;; Flycheck
 (use-package flycheck
   :delight flycheck-mode
   :config
@@ -916,42 +949,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     :config
     (setq company-emacs-eclim-ignore-case t)
     (company-emacs-eclim-setup)))
-
-;; yasnippet
-(use-package yasnippet
-  :delight yas-minor-mode
-  :config
-  (yas-global-mode 1)
-  ;; don't turn on yas if there are no snippets
-  (defun disable-yas-if-no-snippets ()
-    (when (and yas-minor-mode (null (yas--get-snippet-tables)))
-      (yas-minor-mode -1)))
-  (add-hook 'yas-minor-mode-hook #'disable-yas-if-no-snippets)
-  (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
-  (use-package common-lisp-snippets))
-
-;; company mode
-(use-package company
-  :delight company-mode
-  :general
-  (:keymaps 'company-active-map
-            "M-n" nil
-            "M-p" nil
-            "M-j" #'company-select-next
-            "M-k" #'company-select-previous
-            "M-?" #'company-show-doc-buffer
-            "M-." #'company-show-location)
-  :config
-  (global-company-mode)
-  ;; make company work with org-mode
-  (defun add-pcomplete-to-capf ()
-    (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
-  (add-hook 'org-mode-hook #'add-pcomplete-to-capf)
-  (use-package company-quickhelp
-    :config
-    (company-quickhelp-mode t)
-    (setq-default company-idle-delay 0.25)
-    (setq-default company-minimum-prefix-length 2)))
 
 ;; Scala
 (use-package ensime
