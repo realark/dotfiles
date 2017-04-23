@@ -160,7 +160,6 @@
 
 (defun select-current-line ()
   "Select the current line."
-  (interactive)
   (end-of-line) ; move to end of line
   (set-mark (line-beginning-position)))
 
@@ -174,13 +173,17 @@
 ;; Options for M-x rgrep
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-files)
-     (add-to-list 'grep-find-ignored-files "*.fasl")
-     (add-to-list 'grep-find-ignored-files "*.class")))
+     (mapc (lambda (file-regex)
+             (add-to-list 'grep-find-ignored-files file-regex))
+           '("*.fasl"
+             "*.class"))))
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-directories)
-     (add-to-list 'grep-find-ignored-directories "target")
-     (add-to-list 'grep-find-ignored-directories "build")
-     (add-to-list 'grep-find-ignored-directories "bin")))
+     (mapc (lambda (dir-regex)
+             (add-to-list 'grep-find-ignored-directories dir-regex))
+           '("target"
+             "build"
+             "bin"))))
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
