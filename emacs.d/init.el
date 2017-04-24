@@ -424,6 +424,8 @@ WINDOW: %(buffer-name)
 ;; Projectile
 (use-package projectile
   :init
+  (projectile-mode)
+  :config
   (setq-default projectile-globally-ignored-directories
                 (append projectile-globally-ignored-directories
                         '(".git" ".ensime_cache.d" ".gradle"
@@ -434,8 +436,7 @@ WINDOW: %(buffer-name)
                           "*.png" "*.gif" "*.vsd" "*.svg"
                           "*.exe" "eclimd.log" "workbench.xmi"
                           ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
-  (setq-default projectile-enable-caching t)
-  (projectile-mode))
+  (setq-default projectile-enable-caching t))
 
 (use-package ansi-color)
 
