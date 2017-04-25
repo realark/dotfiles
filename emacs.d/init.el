@@ -822,7 +822,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; Org mode
 (use-package org
-  :mode "\\.org$"
+  :mode ("\\.org$" . org-mode)
   :delight org-indent-mode nil org-indent
   :config
   (setq-default org-startup-indented t)
@@ -837,9 +837,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (setq-default org-outline-path-complete-in-steps nil) ; Refile in a single go
   (setq-default org-refile-use-outline-path t) ; Show full paths for refiling
   (use-package evil-org
-    :delight evil-org-mode)
+    :delight
+    evil-org-mode
+    :init (add-hook 'org-mode-hook (lambda () (evil-org-mode 1))))
   (use-package org-bullets
-    :config
+    :init
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
 
 ;; elfeed
