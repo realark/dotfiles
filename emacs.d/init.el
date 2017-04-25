@@ -701,6 +701,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;;multi-term
 (use-package multi-term
   :init
+  (setq-default multi-term-program "/bin/zsh")
+  (defun last-term-buffer (l)
+    "Return most recently used term buffer from the list of buffers, \"L\"."
+    (when l
+      (if (eq 'term-mode (with-current-buffer (car l) major-mode))
+          (car l) (last-term-buffer (cdr l)))))
   (defun get-term ()
     "Switch to the term buffer last used, or create a new one if none exists, or if the current buffer is already a term."
     (interactive)
@@ -711,13 +717,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :general
   ("C-x s" #'get-term)
   :config
-  (setq-default multi-term-program "/bin/zsh")
-  (defun last-term-buffer (l)
-    "Return most recently used term buffer from the list of buffers, \"L\"."
-    (when l
-      (if (eq 'term-mode (with-current-buffer (car l) major-mode))
-          (car l) (last-term-buffer (cdr l)))))
-
   ;; might want to later set up auto term-line-mode and term-char-mode
   ;; depending on evil state
   (evil-define-key 'normal term-raw-map
@@ -894,70 +893,68 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;;;;;;;;;;;;;;
 
-;; Interface to eclipse via eclim
-(use-package eclim
-  :mode "\\.java$"
-  :general
-  (:keymaps 'eclim-mode-map
-            "C-S-g"  #'eclim-java-find-references
-            "<f4>"   #'eclim-personal-find-implementors
-            "C-M-h"  #'eclim-java-call-hierarchy)
-  (:keymaps 'eclim-problems-mode-map
-            "e" 'eclim-problems-show-errors
-            "w" 'eclim-problems-show-warnings
-            "a" 'eclim-problems-show-all
-            "g" 'eclim-problems-buffer-refresh
-            "q" 'eclim-quit-window
-            "RET" 'eclim-problems-open-current)
+(use-package cc-mode
+  :mode ("\\.java$" . java-mode)
   :config
-  (require 'eclim)
-  (require 'eclimd)
-  (global-eclim-mode)
-  (defun eclim-personal-switch-to-junit-buffer-and-run ()
-    "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
-    (interactive)
-    (if (get-buffer "*compilation*")
-        (progn
-          (switch-to-buffer "*compilation*")
-          (recompile)
-          (end-of-buffer))
-      (progn
-        (end-of-buffer)
-        (eclim-run-junit (eclim-project-name)
-                         (eclim--project-current-file)
-                         (eclim--byte-offset)
-                         (eclim--current-encoding))
-        (pop-to-mark-command)
-        (pop-to-mark-command)
-        (other-window 1)
-        (delete-other-windows)
-        (end-of-buffer))))
-
-  (defun eclim-personal-find-implementors ()
-    "Find implementors of the symbol under the point."
-    (interactive)
-    (eclim-java-find-generic "all" "implementors" "all" (thing-at-point 'symbol)))
-
-  (setq-default eclim-auto-save t
-                eclim-executable "/usr/lib/eclipse/eclim"
-                eclimd-executable "/usr/lib/eclipse/eclimd"
-                eclimd-wait-for-process nil
-                eclimd-default-workspace "~/workspace"
-                eclim-use-yasnippet nil
-                help-at-pt-display-when-idle t
-                help-at-pt-timer-delay 0.01)
-  ;; make help-at-pt-* settings take effect
-  (help-at-pt-set-timer)
-  (use-package company-emacs-eclim
+  (use-package eclim ; emacs frontend for eclipse
+    ;; don't autostart eclim mode
+    :mode ("\\.java$" . java-mode)
+    :general
+    (:keymaps 'eclim-mode-map
+              "C-S-g"  #'eclim-java-find-references
+              "<f4>"   #'eclim-personal-find-implementors
+              "C-M-h"  #'eclim-java-call-hierarchy)
+    (:keymaps 'eclim-problems-mode-map
+              "e" 'eclim-problems-show-errors
+              "w" 'eclim-problems-show-warnings
+              "a" 'eclim-problems-show-all
+              "g" 'eclim-problems-buffer-refresh
+              "q" 'eclim-quit-window
+              "RET" 'eclim-problems-open-current)
     :config
-    (setq company-emacs-eclim-ignore-case t)
-    (company-emacs-eclim-setup)))
+    (require 'eclim)
+    (require 'eclimd)
+    (global-eclim-mode)
+    (defun eclim-personal-switch-to-junit-buffer-and-run ()
+      "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
+      (interactive)
+      (if (get-buffer "*compilation*")
+          (progn
+            (switch-to-buffer "*compilation*")
+            (recompile)
+            (end-of-buffer))
+        (progn
+          (end-of-buffer)
+          (eclim-run-junit (eclim-project-name)
+                           (eclim--project-current-file)
+                           (eclim--byte-offset)
+                           (eclim--current-encoding))
+          (pop-to-mark-command)
+          (pop-to-mark-command)
+          (other-window 1)
+          (delete-other-windows)
+          (end-of-buffer))))
 
-;; Scala
-(use-package ensime
-  :mode ("\\.scala$" . scala-mode)
-  :config
-  (add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
+    (defun eclim-personal-find-implementors ()
+      "Find implementors of the symbol under the point."
+      (interactive)
+      (eclim-java-find-generic "all" "implementors" "all" (thing-at-point 'symbol)))
+
+    (setq-default eclim-auto-save t
+                  eclim-executable "/usr/lib/eclipse/eclim"
+                  eclimd-executable "/usr/lib/eclipse/eclimd"
+                  eclimd-wait-for-process nil
+                  eclimd-default-workspace "~/workspace"
+                  eclim-use-yasnippet nil
+                  help-at-pt-display-when-idle t
+                  help-at-pt-timer-delay 0.01)
+    ;; make help-at-pt-* settings take effect
+    (help-at-pt-set-timer)
+    (use-package company-emacs-eclim
+      :config
+      (setq company-emacs-eclim-ignore-case t)
+      (company-emacs-eclim-setup))))
+
 
 ;; SQL
 (use-package sql
