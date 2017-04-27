@@ -452,6 +452,28 @@ WINDOW: %(buffer-name)
               (delete-window)
             (switch-to-buffer-other-window "*slime-repl sbcl*"))
         (slime))))
+  (defun print-help ()
+    (print "No override. Check for .custom.el?"))
+  (defun single-test ()
+    "Function for running unit test(s).  This should be overridden by a directory local definition."
+    (interactive)
+    (print-help))
+  (defun run-unit-tests ()
+    "Function for running unit test(s).  This should be overridden by a directory local definition."
+    (interactive)
+    (print-help))
+  (defun run-integration-tests ()
+    "Function for running unit test(s).  This should be overridden by a directory local definition."
+    (interactive)
+    (print-help))
+  (defun run-performance-tests ()
+    "Function for running unit test(s).  This should be overridden by a directory local definition."
+    (interactive)
+    (print-help))
+  (defun reload-systems ()
+    "Delete packages and reload asdf systems."
+    (interactive)
+    (print-help))
   :general
   ("<f9>" #'toggle-or-start-slime)
   :config
@@ -509,29 +531,6 @@ Otherwise, send an interrupt to slime."
     "C-S-l" 'slime-repl-clear-buffer
     "C-k" 'slime-repl-previous-input
     "C-j" 'slime-repl-next-input)
-
-  (defun print-help ()
-    (print "No override. Check for .custom.el?"))
-  (defun single-test ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help))
-  (defun run-unit-tests ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help))
-  (defun run-integration-tests ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help))
-  (defun run-performance-tests ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help))
-  (defun reload-systems ()
-    "Delete packages and reload asdf systems."
-    (interactive)
-    (print-help))
 
   (evil-define-key 'normal lisp-mode-map
     (kbd "<f4>") #'slime-browse-classes
