@@ -498,7 +498,7 @@ WINDOW: %(buffer-name)
   (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
-  (slime-setup '(slime-fancy slime-asdf slime-company))
+  (slime-setup '(slime-fancy slime-asdf slime-company slime-xref-browser))
   ;; This is a hack. The hook should have already been established.
   (add-hook 'slime-repl-mode-hook #'slime-company-maybe-enable)
   (load "~/quicklisp/clhs-use-local.el" t)
