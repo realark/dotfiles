@@ -800,6 +800,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;; tags
 (use-package etags-select
+  :init
+  (setq-default tags-revert-without-query 1)
   :general
   ("<f3>" #'etags-select-find-tag-at-point)
   (general-evil-define-key 'emacs etags-select-mode-map
@@ -812,8 +814,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :config
   (setq-default etags-select-go-if-unambiguous t)
   (setq-default etags-select-highlight-delay 5.0)
-  (setq-default etags-select-use-short-name-completion t)
-  (setq-default tags-revert-without-query 1))
+  (setq-default etags-select-use-short-name-completion t))
 
 ;; Backup files
 (setq backup-directory-alist
