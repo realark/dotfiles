@@ -378,10 +378,7 @@ WINDOW: %(buffer-name)
   ;; isearch-forward seems to get stuck in the wrong state with swiper.
   ;; Manually setting it to T seems to work around the problem.
   ;; This is probably a problem with my config
-  (setq isearch-forward t)
-
-  (setq-default magit-completing-read-function 'ivy-completing-read)
-  (setq-default projectile-completion-system 'ivy))
+  (setq isearch-forward t))
 
 ;; yasnippet
 (use-package yasnippet
@@ -426,6 +423,7 @@ WINDOW: %(buffer-name)
   :init
   (projectile-mode)
   :config
+  (setq-default projectile-completion-system 'ivy)
   (setq-default projectile-globally-ignored-directories
                 (append projectile-globally-ignored-directories
                         '(".git" ".ensime_cache.d" ".gradle"
@@ -596,6 +594,7 @@ Otherwise, send an interrupt to slime."
   :general
   ("C-x g" 'magit-status)
   :config
+  (setq-default magit-completing-read-function 'ivy-completing-read)
   (setq-default magit-last-seen-setup-instructions "1.4.0")
   (setq-default magit-push-always-verify nil)
   (setq-default magit-fetch-arguments '("--prune"))
