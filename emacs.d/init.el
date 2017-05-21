@@ -434,7 +434,16 @@ WINDOW: %(buffer-name)
                           "*.png" "*.gif" "*.vsd" "*.svg"
                           "*.exe" "eclimd.log" "workbench.xmi"
                           ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
-  (setq-default projectile-enable-caching t))
+  (setq-default projectile-enable-caching t)
+
+  (progn ; rebuild projectile cache after magit checkouts
+    (defun %run-projectile-invalidate-cache (&rest _args)
+      ;; We ignore the args to `magit-checkout'.
+      (projectile-invalidate-cache nil))
+    (advice-add 'magit-checkout
+                :after #'%run-projectile-invalidate-cache)
+    (advice-add 'magit-branch-and-checkout ; This is `b c'.
+                :after #'%run-projectile-invalidate-cache)))
 
 (use-package ansi-color)
 
