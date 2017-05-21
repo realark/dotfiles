@@ -1,6 +1,6 @@
 # COMPLETION SETTINGS
 # add custom completion scripts
-fpath=(~/.zsh/completion $fpath) 
+fpath=(~/.zsh/completion $fpath)
 
 # compsys initialization
 autoload -U compinit
@@ -147,7 +147,6 @@ alias telnet='rlwrap nc'
 alias diff='colordiff'
 GRADLE_BIN="/usr/bin/gradle"
 alias gradle='runGradle'
-alias follow='. $HOME/scripts/follow'
 alias journalctl='journalctl --pager-end --since "1 day ago"'
 
 # I don't want to set LC_ALL but perl and locale complain if I don't
@@ -234,7 +233,7 @@ function formatxml(){
 }
 
 # In general, I'd like to only capture complicatated commands or commands which changed the state of the machine.
-declare -a history_exclude_regexes=('^ls.*' '^tree.*$' '^(h)?top$' '^pwd.*' 'screen' '^echo.*$' '^whoami.*' 'su -' '^\s*cd\s$' '^idemacs$' '^git (status|log|ls|ll|show).*$' '^(sudo )?poweroff$' )
+declare -a history_exclude_regexes=('^ls\s*$' '^tree\s*$' '^(h)?top$' '^pwd.*' 'screen' '^echo.*$' '^whoami.*' 'su -' '^\s*cd\s$' '^idemacs$' '^git (status|log|ls|ll|show).*$' '^(sudo )?poweroff$' )
 
 function zshaddhistory() {
     emulate -L zsh
@@ -245,37 +244,12 @@ function zshaddhistory() {
     done
 }
 
-#TODO
-function cleanmerge(){
-    echo "Not done yet"
-    exit 1
-    commitsha=$1
-    git format-patch $commitsha --stdout | git apply --check -
-#    git checkout -b mycrazybranch
-#    [change some stuff...]
-#    git add .
-#    git commit -m "changed some stuff"
-#    git format-patch master --stdout > crazy.patch
-#    git checkout master
-#    git apply crazy.patch --check
-#    [all good! cleanup...]
-#    rm crazy.patch
+function source_if_exists {
+    filepath=$1
+    if [ -f $filepath ]; then
+        source $filepath
+    fi
 }
 
-## ssh-agent. Manage keys through ksshaskpass
-export SSH_ASKPASS="/usr/bin/ksshaskpass"
-SSH_AGENT_FILE=/tmp/ssh-agent.sh
-if [ ! -f $SSH_AGENT_FILE ]; then
-    ssh-agent > $SSH_AGENT_FILE
-    . $SSH_AGENT_FILE >/dev/null
-    ssh-add </dev/null
-    for file in $(find ~/.ssh -name id_rsa | sort -u) ; do
-        ssh-add $file </dev/null
-    done
-else
-    . $SSH_AGENT_FILE >/dev/null
-fi
-
-if [ -f ~/.custom ]; then
-    source  ~/.custom
-fi
+source_if_exists ~/.admin/sec.sh
+source_if_exists ~/.admin/$(hostname)_custom.sh
