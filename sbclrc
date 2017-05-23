@@ -1,6 +1,6 @@
 ; -*- mode: Lisp;-*-
 
-(setf *read-default-float-format* 'double-float)
+;; (setf *read-default-float-format* 'double-float)
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
