@@ -170,7 +170,17 @@
   (interactive)
   (if (not mark-active)
       (select-current-line))
-  (comment-or-uncomment-region (region-beginning) (region-end)))
+  (if (and (boundp 'lispy-mode) lispy-mode)
+      (save-excursion
+        (let ((start (region-beginning))
+              (end (region-end)))
+          (deactivate-mark)
+          ;; (while (<=  (mark) start)
+          ;;   (beginning-of-line)
+          ;;   (lispy-comment)
+          ;;   (forward-line -1))
+          (message "TODO: lispy!!")))
+    (comment-or-uncomment-region (region-beginning) (region-end))))
 
 ;; Options for M-x rgrep
 (eval-after-load 'grep
@@ -328,6 +338,17 @@ WINDOW: %(buffer-name)
      ("R"   projectile-replace-regexp)
      ("k"   projectile-kill-buffers)
      ("q"   nil "Cancel" :color red))))
+
+(use-package lispy
+  :init
+  (add-hook 'lisp-mode-hook                          #'lispy-mode)
+  (add-hook 'emacs-lisp-mode-hook                    #'lispy-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook   #'lispy-mode)
+  (add-hook 'ielm-mode-hook                          #'lispy-mode)
+  (add-hook 'lisp-mode-hook                          #'lispy-mode)
+  (add-hook 'lisp-interaction-mode-hook              #'lispy-mode)
+  (add-hook 'slime-repl-mode                         #'lispy-mode)
+  (add-hook 'scheme-mode-hook                        #'lispy-mode))
 
 (use-package lispyville
   :delight lispyville-mode
