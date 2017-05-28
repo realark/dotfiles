@@ -850,6 +850,13 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (use-package evil-org
     :delight
     evil-org-mode
+    :general
+    (general-evil-define-key 'insert evil-org-mode-map
+      "M-h"     #'org-metaleft
+      "M-l"     #'org-metaright)
+    (general-evil-define-key 'normal evil-org-mode-map
+      "S-h"     #'org-shiftleft
+      "S-l"     #'org-shiftright)
     :init (add-hook 'org-mode-hook (lambda () (evil-org-mode 1))))
   (use-package org-bullets
     :init
