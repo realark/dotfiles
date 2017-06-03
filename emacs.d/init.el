@@ -170,16 +170,26 @@
   (interactive)
   (if (not mark-active)
       (select-current-line))
-  (if (and (boundp 'lispy-mode) lispy-mode)
+  (if (and (boundp 'smartparens-mode) smartparens-mode)
       (save-excursion
-        (let ((start (region-beginning))
-              (end (region-end)))
-          (deactivate-mark)
-          ;; (while (<=  (mark) start)
-          ;;   (beginning-of-line)
-          ;;   (lispy-comment)
-          ;;   (forward-line -1))
-          (message "TODO: lispy!!")))
+        (message "TODO sp-comment")
+        ;; go to end of region
+        ;; for each line going up:
+        ;;   if not commented
+        ;;      goto beginning of line
+        ;;      sp-comment
+        (beginning-of-line)
+        (sp-comment))
+    ;; (save-excursion
+    ;;   ;; (let ((start (region-beginning))
+    ;;   ;;       (end (region-end)))
+    ;;   ;;   (deactivate-mark)
+    ;;   ;;   ;; (while (<=  (mark) start)
+    ;;   ;;   ;;   (beginning-of-line)
+    ;;   ;;   ;;   (lispy-comment)
+    ;;   ;;   ;;   (forward-line -1))
+    ;;   ;;   (message "TODO: lispy!!"))
+    ;;   )
     (comment-or-uncomment-region (region-beginning) (region-end))))
 
 ;; Options for M-x rgrep
@@ -339,16 +349,19 @@ WINDOW: %(buffer-name)
      ("k"   projectile-kill-buffers)
      ("q"   nil "Cancel" :color red))))
 
-(use-package lispy
+(use-package smartparens
   :init
-  (add-hook 'lisp-mode-hook                          #'lispy-mode)
-  (add-hook 'emacs-lisp-mode-hook                    #'lispy-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook   #'lispy-mode)
-  (add-hook 'ielm-mode-hook                          #'lispy-mode)
-  (add-hook 'lisp-mode-hook                          #'lispy-mode)
-  (add-hook 'lisp-interaction-mode-hook              #'lispy-mode)
-  (add-hook 'slime-repl-mode                         #'lispy-mode)
-  (add-hook 'scheme-mode-hook                        #'lispy-mode))
+  (add-hook 'lisp-mode-hook                          #'smartparens-global-strict-mode)
+  (add-hook 'emacs-lisp-mode-hook                    #'smartparens-global-strict-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook   #'smartparens-global-strict-mode)
+  (add-hook 'ielm-mode-hook                          #'smartparens-global-strict-mode)
+  (add-hook 'lisp-mode-hook                          #'smartparens-global-strict-mode)
+  (add-hook 'lisp-interaction-mode-hook              #'smartparens-global-strict-mode)
+  (add-hook 'slime-repl-mode                         #'smartparens-global-strict-mode)
+  (add-hook 'scheme-mode-hook                        #'smartparens-global-strict-mode)
+  :delight smartparens-mode
+  :config
+  (smartparens-global-strict-mode))
 
 (use-package lispyville
   :delight lispyville-mode
