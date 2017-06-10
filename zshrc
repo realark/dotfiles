@@ -131,7 +131,7 @@ alias fswebcam="fswebcam -r 960x720"
 alias blank="xset dpms force off"
 alias tvtimesound="padsp sox -r 49000 -t ossdsp /dev/dsp3 -t ossdsp /dev/dsp" #Do something with arecord | aplay
 alias pm-suspend="export DISPLAY=:0 ; qdbus org.freedesktop.PowerManagement /org/freedesktop/PowerManagement Suspend"
-alias crontab="fcrontab -i"
+alias crontab="fcrontab"
 alias duh="du -h --max-depth=0"
 alias sqlplus="launch_sqlplus"
 alias sbcl="rlwrap -c -H ~/.sbcl_history sbcl --noinform"
