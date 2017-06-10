@@ -44,6 +44,11 @@
 
 (mouse-avoidance-mode 'banish)
 
+(setq-default
+ isearch-allow-scroll t
+ lazy-highlight-cleanup nil
+ lazy-highlight-initial-delay 0)
+
 (when (file-exists-p "~/.sec.el")
   (load "~/.sec.el"))
 
