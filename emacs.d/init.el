@@ -1043,6 +1043,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     :config
     (add-to-list 'sqlup-blacklist "name"))
 
+  (sql-set-sqli-buffer-generally)
+
   (make-directory "~/.emacs.d/sql" :parents)
   (assert (file-exists-p "~/.emacs.d/sql")
           T
