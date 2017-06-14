@@ -405,7 +405,9 @@ WINDOW: %(buffer-name)
   (:keymaps 'counsel-find-file-map
             "<return>" #'ivy-alt-done)
   :config
-  (use-package swiper)
+  (use-package swiper
+    :init
+    (setq-default swiper-action-recenter t))
   (use-package counsel)
 
   (setq-default ivy-wrap t)
