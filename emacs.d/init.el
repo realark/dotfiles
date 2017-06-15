@@ -800,17 +800,17 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;;;; Buffer navigation
-; necessary support function for buffer burial
+;; necessary support function for buffer burial
 (defun crs-delete-these (delete-these from-this-list)
   "Delete DELETE-THESE FROM-THIS-LIST."
   (cond
    ((car delete-these)
     (if (member (car delete-these) from-this-list)
         (crs-delete-these (cdr delete-these) (delete (car delete-these)
-                                                 from-this-list))
+                                                     from-this-list))
       (crs-delete-these (cdr delete-these) from-this-list)))
    (t from-this-list)))
-; buffer regexes to skip while cycling
+;; buffer regexes to skip while cycling
 (defvar crs-hated-buffers
   '("^\*.*\*$"
     "help"
@@ -876,18 +876,27 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (use-package org
   :mode ("\\.org$" . org-mode)
   :delight org-indent-mode nil org-indent
+  :general
+  ("C-x c" #'org-capture)
   :config
   (setq-default org-startup-indented t)
   ;; fontify code in code blocks
   (setq-default org-src-fontify-natively t)
-  (setq-default org-agenda-files (list "~/Documents/org-files/tasks.org"
-                                       "~/Documents/org-files/schedule.org"))
+  (setq-default org-directory "~/Documents/org-files/")
+  (setq-default org-agenda-files (list (concat org-directory "tasks.org")))
+  (setq-default org-default-notes-file (concat org-directory "notes.org"))
   (setq-default org-log-done 'time)
   (setq-default org-enforce-todo-dependencies t)
 
   (setq-default org-refile-targets '((nil :maxlevel . 9)))
   (setq-default org-outline-path-complete-in-steps nil) ; Refile in a single go
   (setq-default org-refile-use-outline-path t) ; Show full paths for refiling
+  (setq-default org-capture-templates
+                '(("t" "Task" entry (file+headline (concat org-directory "notes.org") "Tasks")
+                   "** TODO %?")
+                  ("m" "Misc" entry (file+headline (concat org-directory "notes.org") "Misc Thoughts")
+                   "** %?")))
+  (add-hook 'org-capture-mode-hook 'evil-insert-state)
   (use-package evil-org
     :delight
     evil-org-mode
