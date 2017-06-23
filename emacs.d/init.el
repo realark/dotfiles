@@ -366,6 +366,7 @@ WINDOW: %(buffer-name)
   (add-hook 'scheme-mode-hook                        #'smartparens-global-strict-mode)
   :delight smartparens-mode
   :config
+  (electric-pair-mode 0) ; doesn't play nice with smartparens
   (smartparens-global-strict-mode))
 
 (use-package lispyville
