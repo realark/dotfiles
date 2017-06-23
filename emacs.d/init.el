@@ -24,8 +24,6 @@
 (tool-bar-mode -1)
 ;; Use y or n instead of yes or not
 (fset 'yes-or-no-p 'y-or-n-p)
-;;Show line numbers
-(global-linum-mode t)
 ;; Insert closing bracket
 (electric-pair-mode 1)
 (show-paren-mode 1) ; turn on paren match highlighting
@@ -245,7 +243,17 @@
    :prefix "C-x"
    "4"      #'toggle-window-split
    "x"      #'execute-extended-command
-   "l"      #'whitespace-mode
+   "l"      (lambda ()
+              (interactive)
+              (message "active metashow")
+              (if (bound-and-true-p whitespace-mode)
+                  (progn
+                    (whitespace-mode 0)
+                    (linum-mode 0))
+                (progn
+                  (message "nil branch")
+                  (whitespace-mode 1)
+                  (linum-mode 1))))
    "f"      #'indent-region
    ";"      #'toggle-comment-region-or-line
    "<tab>"  #'hs-toggle-hiding
