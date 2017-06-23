@@ -430,6 +430,10 @@ WINDOW: %(buffer-name)
   ;; This is probably a problem with my config
   (setq isearch-forward t))
 
+(use-package avy
+  :general
+  ("C-x a" #'avy-goto-word-1))
+
 ;; yasnippet
 (use-package yasnippet
   :delight yas-minor-mode
