@@ -83,6 +83,16 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
+(defun keymap-symbol (keymap)
+  "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
+  (catch 'gotit
+    (mapatoms (lambda (sym)
+                (and (boundp sym)
+                     (eq (symbol-value sym) keymap)
+                     (not (eq sym 'keymap))
+                     (throw 'gotit sym))))))
+
+
 ;; winner mode allows easy undo/redo of window changes
 (when (fboundp 'winner-mode)
   (winner-mode 1))
