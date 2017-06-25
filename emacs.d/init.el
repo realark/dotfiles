@@ -811,6 +811,21 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     (kbd "C-d") 'term-send-eof
     (kbd "C-a") 'term-send-raw))
 
+(use-package eshell
+  :general
+  (general-evil-define-key 'insert eshell-mode-map
+    "C-j" #'eshell-next-input
+    "C-k" #'eshell-previous-input
+    "C-d" (lambda ()
+            (interactive)
+            (message "Hello!")
+            (eshell-send-eof-to-process)
+            (kill-buffer-and-window)))
+  :config
+  (if (boundp 'eshell-visual-commands)
+      (add-to-list 'eshell-visual-commands "htop")
+    (setq-default eshell-visual-commands '("htop"))))
+
 ;;Turn off tabs
 (setq-default indent-tabs-mode nil)
 (setq tab-width 4)
