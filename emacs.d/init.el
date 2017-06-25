@@ -432,7 +432,9 @@ WINDOW: %(buffer-name)
 
 (use-package avy
   :general
-  ("C-x a" #'avy-goto-word-1))
+  (general-define-key
+   :states '(normal)
+   "f" #'avy-goto-word-0))
 
 ;; yasnippet
 (use-package yasnippet
