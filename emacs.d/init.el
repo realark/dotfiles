@@ -357,11 +357,11 @@ WINDOW: %(buffer-name)
      "
      PROJECTILE: %(projectile-project-root)
 
- Find/Replace                   Buffers
+ Find/Replace                   Buffers                     Perspectives
 ------------------------------------------------------------------------------------------
- _f_: file find                 _k_: Kill all buffers
- _g_: grep all files
- _r_: replace
+ _f_: file find                 _k_: Kill all buffers         _s_: switch persp
+ _g_: grep all files                                        _a_: current agenda
+ _r_: replace                                               _i_: interact with current buffer
  _R_: replace regex
 
 "
@@ -370,6 +370,23 @@ WINDOW: %(buffer-name)
      ("r"   projectile-replace)
      ("R"   projectile-replace-regexp)
      ("k"   projectile-kill-buffers)
+     ("s"   persp-switch)
+     ("a"   (lambda ()
+              (interactive)
+              (unless (member "agenda" (persp-all-names))
+                (persp-new "agenda")
+                (with-perspective "agenda"
+                  (org-agenda-list)))
+              (persp-switch "agenda")))
+     ("i" (lambda ()
+            (interactive)
+            (unless (member "interact-lisp" (persp-all-names))
+              (persp-new "interact-lisp")
+              (with-perspective "interact-lisp"
+                (if (get-buffer "*slime-repl sbcl*")
+                    (toggle-or-start-slime)
+                  (or (run-unit-tests) (toggle-or-start-slime)))))
+            (persp-switch "interact-lisp")))
      ("q"   nil "Cancel" :color red))))
 
 (use-package smartparens
@@ -511,6 +528,9 @@ WINDOW: %(buffer-name)
     (advice-add 'magit-branch-and-checkout ; This is `b c'.
                 :after #'%run-projectile-invalidate-cache)))
 
+(use-package perspective
+  :init (persp-mode))
+
 (use-package ansi-color)
 
 ;;Slime
@@ -534,19 +554,23 @@ WINDOW: %(buffer-name)
   (defun run-unit-tests ()
     "Function for running unit test(s).  This should be overridden by a directory local definition."
     (interactive)
-    (print-help))
+    (print-help)
+    nil)
   (defun run-integration-tests ()
     "Function for running unit test(s).  This should be overridden by a directory local definition."
     (interactive)
-    (print-help))
+    (print-help)
+    nil)
   (defun run-performance-tests ()
     "Function for running unit test(s).  This should be overridden by a directory local definition."
     (interactive)
-    (print-help))
+    (print-help)
+    nil)
   (defun reload-systems ()
     "Delete packages and reload asdf systems."
     (interactive)
-    (print-help))
+    (print-help)
+    nil)
   :general
   ("<f9>" #'toggle-or-start-slime)
   :config
