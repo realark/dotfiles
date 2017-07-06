@@ -518,7 +518,14 @@ WINDOW: %(buffer-name)
                 :after #'%run-projectile-invalidate-cache)))
 
 (use-package perspective
-  :init (persp-mode)
+  :init
+  (persp-mode)
+  :general
+  ("<f9>" (lambda ()
+            (interactive)
+            (if persp-last
+                (persp-switch-last)
+              (interact-with-buffer))))
   :config
   (defmacro make-perspective (perspective-name &rest body)
     (declare (indent 1))
@@ -593,8 +600,6 @@ WINDOW: %(buffer-name)
     (interactive)
     (print-help)
     nil)
-  :general
-  ("<f9>" #'toggle-or-start-slime)
   :config
   (progn ;; emit ansi colors in slime repl
     (defvar slime-colors t "If non-nil, emit ansi colors in the slime repl.")
