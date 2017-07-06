@@ -1103,9 +1103,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
             (when (yes-or-no-p "Quit Sql session?")
               (comint-delchar-or-maybe-eof 0)
               (delete-window))))
+  (general-evil-define-key '(insert normal) sql-mode-map
+    "C-c C-c" #'sql-send-paragraph)
   :config
   (add-hook 'sql-interactive-mode-hook
             (lambda ()
+              (setq-default sql-buffer (get-buffer "*SQL*"))
               (toggle-truncate-lines t)))
 
   (use-package sql-indent
