@@ -355,7 +355,7 @@ WINDOW: %(buffer-name)
    "C-x p"
    (defhydra hydra-projectile (:color blue :hint nil)
      "
-     PROJECTILE: %(projectile-project-root)
+     PROJECTILE: %(or (ignore-errors (projectile-project-root)) \"(Not in a project)\")
 
  Find/Replace                   Buffers                     Perspectives
 ------------------------------------------------------------------------------------------
@@ -373,20 +373,9 @@ WINDOW: %(buffer-name)
      ("s"   persp-switch)
      ("a"   (lambda ()
               (interactive)
-              (unless (member "agenda" (persp-all-names))
-                (persp-new "agenda")
-                (with-perspective "agenda"
-                  (org-agenda-list)))
-              (persp-switch "agenda")))
-     ("i" (lambda ()
-            (interactive)
-            (unless (member "interact-lisp" (persp-all-names))
-              (persp-new "interact-lisp")
-              (with-perspective "interact-lisp"
-                (if (get-buffer "*slime-repl sbcl*")
-                    (toggle-or-start-slime)
-                  (or (run-unit-tests) (toggle-or-start-slime)))))
-            (persp-switch "interact-lisp")))
+              (funcall (make-perspective agenda
+                         (org-agenda-list)))))
+     ("i"   interact-with-buffer)
      ("q"   nil "Cancel" :color red))))
 
 (use-package smartparens
@@ -529,7 +518,40 @@ WINDOW: %(buffer-name)
                 :after #'%run-projectile-invalidate-cache)))
 
 (use-package perspective
-  :init (persp-mode))
+  :init (persp-mode)
+  :config
+  (defmacro make-perspective (perspective-name &rest body)
+    (declare (indent 1))
+    (assert (symbolp perspective-name))
+    (let ((persp-string (symbol-name perspective-name)))
+      `(lambda ()
+         (unless (member ,persp-string (persp-all-names))
+           (persp-new ,persp-string)
+           (with-perspective ,persp-string
+             ,@body))
+         (persp-switch ,persp-string))))
+
+  (macroexpand '(make-perspective interact-lisp
+                  (if (get-buffer "*slime-repl sbcl*")
+                      (toggle-or-start-slime)
+                    (or (run-unit-tests) (toggle-or-start-slime)))))
+
+  (defvar interactive-perspectives
+    (list
+     (cons "lisp-mode"
+           (make-perspective interact-lisp
+             (if (get-buffer "*slime-repl sbcl*")
+                 (toggle-or-start-slime)
+               (or (run-unit-tests) (toggle-or-start-slime))))))
+    "Interactive perspectives.")
+
+  (defun interact-with-buffer ()
+    (interactive)
+    (let* ((current-buffer-major-mode (message "%s" major-mode))
+           (persp-entry (assoc current-buffer-major-mode interactive-perspectives)))
+      (if persp-entry
+          (funcall (cdr persp-entry))
+        (message (format "No interactive perspective for '%s'" current-buffer-major-mode))))))
 
 (use-package ansi-color)
 
