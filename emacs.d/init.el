@@ -1193,4 +1193,23 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (when (and project-customizations (file-exists-p project-customizations))
     (load project-customizations)))
 
+
+;; will eventually add hooks to switch to the appropriate newline encoding
+;;(defun unix-file ()
+;;  "Change the current buffer to Latin 1 with Unix line-ends."
+;;  (interactive)
+;;  (set-buffer-file-coding-system 'iso-latin-1-unix t))
+;;
+;;(defun dos-file ()
+;;  "Change the current buffer to Latin 1 with DOS line-ends."
+;;  (interactive)
+;;  (set-buffer-file-coding-system 'iso-latin-1-dos t))
+;;
+;;(defun mac-file ()
+;;  "Change the current buffer to Latin 1 with Mac line-ends."
+;;  (interactive)
+;;  (set-buffer-file-coding-system 'iso-latin-1-mac t))
+;;
+
+
 ;;; init.el ends here
