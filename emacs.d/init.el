@@ -357,25 +357,21 @@ WINDOW: %(buffer-name)
      "
      PROJECTILE: %(or (ignore-errors (projectile-project-root)) \"(Not in a project)\")
 
- Find/Replace                   Buffers                     Perspectives
-------------------------------------------------------------------------------------------
- _f_: file find                 _k_: Kill all buffers         _s_: switch persp
- _g_: grep all files                                        _a_: current agenda
- _r_: replace                                               _i_: interact with current buffer
+ Find/Replace                   Buffers
+-----------------------------------------------------
+ _f_: file find                 _k_: Kill all buffers
+ _t_: find tag
+ _g_: grep all files
+ _r_: replace
  _R_: replace regex
 
 "
      ("f"   projectile-find-file)
+     ("t"   projectile-find-tag)
      ("g"   projectile-grep)
      ("r"   projectile-replace)
      ("R"   projectile-replace-regexp)
      ("k"   projectile-kill-buffers)
-     ("s"   persp-switch)
-     ("a"   (lambda ()
-              (interactive)
-              (funcall (make-perspective agenda
-                         (org-agenda-list)))))
-     ("i"   interact-with-buffer)
      ("q"   nil "Cancel" :color red))))
 
 (use-package smartparens
