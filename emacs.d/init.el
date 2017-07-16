@@ -513,48 +513,70 @@ WINDOW: %(buffer-name)
     (advice-add 'magit-branch-and-checkout ; This is `b c'.
                 :after #'%run-projectile-invalidate-cache)))
 
+(progn
+  (defvar interactive-perspectives '()
+    "list of (major-mode interactive-mode launch-interactive-mode-function).
+The first two elements must be a 1:1 unique mapping of major-modes.")
+  (setq interactive-perspectives
+        (list (list "lisp-mode" "slime-repl-mode" #'slime)))
+
+  (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
+    (let ((interactive-buffers (list)))
+      (dolist (buffer (buffer-list))
+        (let ((buffer-major-mode (with-current-buffer buffer major-mode)))
+          (when (string= interactive-mode buffer-major-mode)
+            (push buffer interactive-buffers))))
+      (cond
+       ((= 0 (length interactive-buffers))
+        (funcall launch-interaction-fn))
+       ((= 1 (length interactive-buffers))
+        (switch-to-buffer-other-window (first interactive-buffers)))
+       (t (message "TODO: implement interactive buffer prompt")))))
+
+  (defun toggle-interact-with-buffer ()
+    (interactive)
+    (let ((current-buffer-major-mode (message "%s" major-mode)))
+      (unless
+          (dolist (entry interactive-perspectives)
+            (let ((edit-mode (first entry))
+                  (interact-mode (second entry))
+                  (launch-interaction-fn (third entry)))
+              (cond
+               ((string= current-buffer-major-mode edit-mode)
+                (toggle-or-start-interaction interact-mode launch-interaction-fn)
+                (return t))
+               ((string= current-buffer-major-mode interact-mode)
+                (if (> (count-windows) 1)
+                    (delete-window)
+                  (bury-buffer))
+                (return t)))))
+        (message "No interactive mode for %s" current-buffer-major-mode))))
+  (general-define-key
+   "<f9>" #'toggle-interact-with-buffer))
+
 (use-package perspective
   :init
   (persp-mode)
   :general
-  ("<f9>" (lambda ()
-            (interactive)
-            (if persp-last
-                (persp-switch-last)
-              (interact-with-buffer))))
+  ("<f8>"   #'persp-next
+   "S-<f8>" #'persp-prev
+   "<f7>"   (lambda ()
+              (interactive)
+              (message "TODO: persp hydra")))
   :config
   (defmacro make-perspective (perspective-name &rest body)
     (declare (indent 1))
     (assert (symbolp perspective-name))
     (let ((persp-string (symbol-name perspective-name)))
-      `(lambda ()
+      `(progn
          (unless (member ,persp-string (persp-all-names))
            (persp-new ,persp-string)
            (with-perspective ,persp-string
              ,@body))
          (persp-switch ,persp-string))))
-
-  (macroexpand '(make-perspective interact-lisp
-                  (if (get-buffer "*slime-repl sbcl*")
-                      (toggle-or-start-slime)
-                    (or (run-unit-tests) (toggle-or-start-slime)))))
-
-  (defvar interactive-perspectives
-    (list
-     (cons "lisp-mode"
-           (make-perspective interact-lisp
-             (if (get-buffer "*slime-repl sbcl*")
-                 (toggle-or-start-slime)
-               (or (run-unit-tests) (toggle-or-start-slime))))))
-    "Interactive perspectives.")
-
-  (defun interact-with-buffer ()
-    (interactive)
-    (let* ((current-buffer-major-mode (message "%s" major-mode))
-           (persp-entry (assoc current-buffer-major-mode interactive-perspectives)))
-      (if persp-entry
-          (funcall (cdr persp-entry))
-        (message (format "No interactive perspective for '%s'" current-buffer-major-mode))))))
+  ;;(make-perspective emacs
+  ;; (find-file "~/.emacs.d/init.el"))
+  )
 
 (use-package ansi-color)
 
@@ -562,14 +584,6 @@ WINDOW: %(buffer-name)
 (use-package slime
   :delight slime
   :init
-  (defun toggle-or-start-slime ()
-    (interactive)
-    (let ((slime-buffer (get-buffer "*slime-repl sbcl*")))
-      (if slime-buffer
-          (if (eq slime-buffer (current-buffer))
-              (delete-window)
-            (switch-to-buffer-other-window "*slime-repl sbcl*"))
-        (slime))))
   (defun print-help ()
     (print "No override. Check for .custom.el?"))
   (defun single-test ()
@@ -642,7 +656,11 @@ Otherwise, send an interrupt to slime."
              (slime-repl-kill-input))))
 
   (general-evil-define-key 'normal slime-repl-mode-map
-    "q" (lambda () (interactive) (end-of-buffer) (evil-insert-state) (toggle-or-start-slime))
+    "q" (lambda ()
+          (interactive)
+          (end-of-buffer)
+          (evil-insert-state)
+          (toggle-interact-with-buffer))
     [return]  #'slime-inspect-presentation-at-point)
 
   (general-evil-define-key 'insert slime-repl-mode-map
