@@ -518,7 +518,8 @@ WINDOW: %(buffer-name)
     "list of (major-mode interactive-mode launch-interactive-mode-function).
 The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq interactive-perspectives
-        (list (list "lisp-mode" "slime-repl-mode" #'slime)))
+        (list (list "lisp-mode" "slime-repl-mode" #'slime)
+              (list "sql-mode" "sql-interactive-mode" #'sql-postgres)))
 
   (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
     (let ((interactive-buffers (list)))
