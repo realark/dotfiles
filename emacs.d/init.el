@@ -1033,6 +1033,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :config
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
+;; pretty lambda
+(setq-default prettify-symbols-alist
+              ;; lambda -> λ
+              '(("lambda" . 955)))
+(global-prettify-symbols-mode 1)
+
 ;; Flycheck
 (use-package flycheck
   :delight flycheck-mode
