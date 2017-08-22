@@ -978,6 +978,20 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
       `((".*" ,temporary-file-directory t)))
 (setq backup-by-copying t)
 
+;; erc
+(use-package erc
+  :ensure t
+  :defer t
+  :init
+  (setq-default erc-nick "_ark_"
+                erc-server-reconnect-timeout 5
+                erc-server-reconnect-attempts 3
+                erc-prompt-for-nickserv-password nil)
+  :config
+  (use-package erc-hl-nicks :ensure t)
+  (require 'erc-services)
+  (erc-services-mode 1))
+
 ;; Org mode
 (use-package org
   :mode ("\\.org$" . org-mode)
