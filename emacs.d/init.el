@@ -1218,7 +1218,17 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :delight aggressive-indent-mode
   :config
   ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-  (global-aggressive-indent-mode 1))
+  (global-aggressive-indent-mode 1)
+  ;; For cc-modes don't indent line below until ending ';' is entered
+  (defvar semicolon-delimited-modes (list 'java-mode 'c-mode))
+
+  (add-to-list
+   'aggressive-indent-dont-indent-if
+   '(and (remove-if-not (lambda (mode-name)
+                          (derived-mode-p mode-name))
+                        semicolon-delimited-modes)
+         (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
+                             (thing-at-point 'line))))))
 
 ;; custom vars
 (custom-set-faces
