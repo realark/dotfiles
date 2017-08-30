@@ -1092,9 +1092,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 ;;;;;;;;;;;;;;
 
-(use-package cc-mode
+(use-package gradle-mode
   :mode ("\\.java$" . java-mode)
-  :config)
+  :init
+  (add-hook 'java-mode-hook #'gradle-mode)
+  :config
+  (gradle-mode 1))
 
 (use-package eclim ;; emacs frontend for eclimd
   :init
