@@ -1090,65 +1090,71 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 (use-package cc-mode
   :mode ("\\.java$" . java-mode)
+  :config)
+
+(use-package eclim ;; emacs frontend for eclimd
+  :init
+  ;; TODO: lazy-load eclim
+  (require 'eclim)
+  (global-eclim-mode)
+  :general
+  (:keymaps 'eclim-mode-map
+            "C-S-g"  #'eclim-java-find-references
+            "<f4>"   #'eclim-personal-find-implementors
+            "C-M-h"  #'eclim-java-call-hierarchy)
+  (:keymaps 'eclim-problems-mode-map
+            "e" 'eclim-problems-show-errors
+            "w" 'eclim-problems-show-warnings
+            "a" 'eclim-problems-show-all
+            "g" 'eclim-problems-buffer-refresh
+            "q" 'eclim-quit-window
+            "RET" 'eclim-problems-open-current)
   :config
-  (use-package eclim ; emacs frontend for eclipse
-    ;; don't autostart eclim mode
-    :mode ("\\.java$" . java-mode)
-    :general
-    (:keymaps 'eclim-mode-map
-              "C-S-g"  #'eclim-java-find-references
-              "<f4>"   #'eclim-personal-find-implementors
-              "C-M-h"  #'eclim-java-call-hierarchy)
-    (:keymaps 'eclim-problems-mode-map
-              "e" 'eclim-problems-show-errors
-              "w" 'eclim-problems-show-warnings
-              "a" 'eclim-problems-show-all
-              "g" 'eclim-problems-buffer-refresh
-              "q" 'eclim-quit-window
-              "RET" 'eclim-problems-open-current)
-    :config
-    (require 'eclim)
-    (require 'eclimd)
-    (global-eclim-mode)
-    (defun eclim-personal-switch-to-junit-buffer-and-run ()
-      "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
-      (interactive)
-      (if (get-buffer "*compilation*")
-          (progn
-            (switch-to-buffer "*compilation*")
-            (recompile)
-            (end-of-buffer))
+  ;; FIXME override junit runner to work with new eclipse/eclim
+  (defun eclim--java-junit-file (project file offset encoding)
+    (concat eclim-executable
+            " -command java_junit -p " project
+            " -t " (eclim--java-current-class-name)
+            " -e " encoding))
+
+  (defun eclim-personal-switch-to-junit-buffer-and-run ()
+    "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
+    (interactive)
+    (if (get-buffer "*compilation*")
         (progn
-          (end-of-buffer)
-          (eclim-run-junit (eclim-project-name)
-                           (eclim--project-current-file)
-                           (eclim--byte-offset)
-                           (eclim--current-encoding))
-          (pop-to-mark-command)
-          (pop-to-mark-command)
-          (other-window 1)
-          (delete-other-windows)
-          (end-of-buffer))))
+          (switch-to-buffer "*compilation*")
+          (recompile)
+          (end-of-buffer))
+      (progn
+        (end-of-buffer)
+        (eclim-run-junit (eclim-project-name)
+                         (eclim--project-current-file)
+                         (eclim--byte-offset)
+                         (eclim--current-encoding))
+        (pop-to-mark-command)
+        (pop-to-mark-command)
+        (other-window 1)
+        (delete-other-windows)
+        (end-of-buffer))))
 
-    (defun eclim-personal-find-implementors ()
-      "Find implementors of the symbol under the point."
-      (interactive)
-      (eclim-java-find-generic "all" "implementors" "all" (thing-at-point 'symbol)))
+  (defun eclim-personal-find-implementors ()
+    "Find implementors of the symbol under the point."
+    (interactive)
+    (eclim-java-find-generic "all" "implementors" "all" (thing-at-point 'symbol)))
 
-    (setq-default eclim-auto-save t
-                  eclim-executable "/usr/lib/eclipse/eclim"
-                  eclimd-executable "/usr/lib/eclipse/eclimd"
-                  eclimd-wait-for-process nil
-                  eclimd-default-workspace "~/workspace"
-                  eclim-use-yasnippet nil
-                  help-at-pt-display-when-idle t
-                  help-at-pt-timer-delay 0.01)
-    ;; make help-at-pt-* settings take effect
-    (help-at-pt-set-timer)
-    (use-package company-emacs-eclim
-      :config
-      (setq company-emacs-eclim-ignore-case t)
-      (company-emacs-eclim-setup))))
+  (setq-default eclim-auto-save t
+                eclim-executable "/usr/lib/eclipse/eclim"
+                eclimd-executable "/usr/lib/eclipse/eclimd"
+                eclimd-wait-for-process nil
+                eclimd-default-workspace "~/workspace/"
+                help-at-pt-display-when-idle t
+                help-at-pt-timer-delay 0.01)
+  ;; make help-at-pt-* settings take effect
+  (help-at-pt-set-timer)
+  (use-package company-emacs-eclim
+    :init
+    (setq company-emacs-eclim-ignore-case t)
+    (company-emacs-eclim-setup)))
 
 
 ;; SQL
