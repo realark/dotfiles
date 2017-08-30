@@ -1104,6 +1104,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   ;; TODO: lazy-load eclim
   (require 'eclim)
   (global-eclim-mode)
+  (require 'company-eclim)
   :general
   (:keymaps 'eclim-mode-map
             "C-S-g"  #'eclim-java-find-references
@@ -1157,11 +1158,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                 help-at-pt-display-when-idle t
                 help-at-pt-timer-delay 0.01)
   ;; make help-at-pt-* settings take effect
-  (help-at-pt-set-timer)
-  (use-package company-emacs-eclim
-    :init
-    (setq company-emacs-eclim-ignore-case t)
-    (company-emacs-eclim-setup)))
+  (help-at-pt-set-timer))
 
 
 ;; SQL
