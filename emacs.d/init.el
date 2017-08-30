@@ -68,6 +68,10 @@
 ;; Maximize emacs window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+(defmacro boundp-and-true (mode-name)
+  "Non-nil if the mode specified by MODE-NAME is active."
+  `(and (boundp (quote ,mode-name)) ,mode-name))
+
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
@@ -183,7 +187,7 @@
   (interactive)
   (if (not mark-active)
       (select-current-line))
-  (if (and (boundp 'smartparens-mode) smartparens-mode)
+  (if (boundp-and-true smartparens-mode)
       (save-excursion
         (message "TODO sp-comment")
         ;; go to end of region
@@ -745,7 +749,7 @@ Otherwise, send an interrupt to slime."
   (defun magit-blame-toggle ()
     "Toggle magit-blame-mode on and off interactively."
     (interactive)
-    (if (and (boundp 'magit-blame-mode) magit-blame-mode)
+    (if (boundp-and-true magit-blame-mode)
         (magit-blame-quit)
       (call-interactively 'magit-blame)))
 
