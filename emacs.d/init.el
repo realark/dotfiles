@@ -1219,6 +1219,19 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :config
   ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
   (global-aggressive-indent-mode 1)
+
+  ;; prevent aggressive-indent from running when eclim autosaves the buffer
+  (defun ark-company-eclim-around (orig-fn &rest args)
+    "Disable aggressive indent during company-eclim completion."
+    (let ((indent-toggled (when (bound-and-true-p aggressive-indent-mode)
+                            (aggressive-indent-mode 0)
+                            t)))
+      (unwind-protect
+          (apply orig-fn args)
+        (when indent-toggled
+          (aggressive-indent-mode 1)))))
+  (advice-add 'company-eclim :around #'ark-company-eclim-around)
+
   ;; For cc-modes don't indent line below until ending ';' is entered
   (defvar semicolon-delimited-modes (list 'java-mode 'c-mode))
 
@@ -1228,7 +1241,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                           (derived-mode-p mode-name))
                         semicolon-delimited-modes)
          (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
-                             (thing-at-point 'line))))))
+                             (thing-at-point 'line)))))
+  (add-to-list
+   'aggressive-indent-dont-indent-if
+   'company-candidates))
 
 ;; custom vars
 (custom-set-faces
