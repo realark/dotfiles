@@ -1099,6 +1099,19 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :config
   (gradle-mode 1))
 
+(use-package jdecomp
+  :mode ("\\.class$" . jdecomp-mode)
+  :config
+  (customize-set-variable 'jdecomp-decompiler-type 'procyon)
+  (customize-set-variable 'jdecomp-decompiler-paths
+                          '((procyon . "/usr/share/java/procyon-decompiler/procyon-decompiler.jar")))
+  (defun my-jdecomp-bytecode ()
+    "Decompile the current file into raw bytecode"
+    (interactive)
+    (let ((jdecomp-decompiler-options
+           '((procyon "-r -ln -ss"""))))
+      (jdecomp-decompile-and-view (buffer-file-name)))))
+
 (use-package eclim ;; emacs frontend for eclimd
   :init
   ;; TODO: lazy-load eclim
