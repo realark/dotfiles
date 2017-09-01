@@ -1105,6 +1105,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (require 'eclim)
   (global-eclim-mode)
   (require 'company-eclim)
+  (general-define-key
+   :states '(normal insert)
+   "C-x e" #'hydra-eclim/body)
   :general
   (:keymaps 'eclim-mode-map
             ;; match some eclipse bindings
@@ -1112,29 +1115,38 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
             "<f4>"   #'eclim-personal-find-implementors
             "<f3>"   #'eclim-java-find-declaration
             "C-M-h"  #'eclim-java-call-hierarchy
-            "C-x e" (defhydra hydra-eclim (:color blue :columns 1)
-                      "Java Eclim"
-                      ("p"
-                       (defhydra hydra-eclim-problems (:color blue :columns 2)
-                         ("q"  nil "Cancel" :color red))
-                       "problems")
-                      ("f"
-                       (defhydra hydra-eclim-find (:color blue :columns 2)
-                         ("q"  nil "Cancel" :color red))
-                       "find")
-                      ("d"
-                       (defhydra hydra-eclim-doc (:color blue :columns 2)
-                         ("q"  nil "Cancel" :color red))
-                       "documentation")
-                      ("r"
-                       (defhydra hydra-eclim-refactor (:color blue :columns 2)
-                         ("q"  nil "Cancel" :color red))
-                       "refactor")
-                      ("j"
-                       (defhydra hydra-eclim-junit (:color blue :columns 2)
-                         ("q"  nil "Cancel" :color red))
-                       "Junit Testing")
-                      ("q" nil "Cancel" :color red)))
+            "C-x e" (progn
+                      (defhydra hydra-eclim-problems (:color amaranth :columns 1)
+                        "Eclim Problems"
+                        ("j"  (eclim-problems-next-same-file) "Next Problem in file" :exit nil)
+                        ("k"  (eclim-problems-prev-same-file) "Prev Problem in file" :exit nil)
+                        ("<RET>"  (eclim-problems-correct) "Correct Problem at Point")
+                        ("b"  (eclim-problems) "problems buffer")
+                        ("q"  nil "Cancel" :color red))
+                      (defhydra hydra-eclim-find (:color blue :columns 1)
+                        "Eclim Find"
+                        ("d"  (eclim-java-find-declaration) "Declaration")
+                        ("i"  (eclim-personal-find-implementors) "Implementors")
+                        ("h"  (eclim-java-call-hierarchy) "Call Hierarchy")
+                        ("r"  (eclim-java-find-references) "References To")
+                        ("q"  nil "Cancel" :color red))
+                      (defhydra hydra-eclim-doc (:color blue :columns 1)
+                        ("q"  nil "Cancel" :color red))
+                      (defhydra hydra-eclim-refactor (:color blue :columns 1)
+                        ("q"  nil "Cancel" :color red))
+                      (defhydra hydra-eclim-junit (:color blue :columns 1)
+                        ("d"  (eclim-debug-junit) "Debug Junit Test")
+                        ("q"  nil "Cancel" :color red))
+                      (defhydra hydra-eclim (:color blue :columns 1)
+                        "Java Eclim"
+                        ("b"  (eclim-project-build)  "build project")
+                        ("p" hydra-eclim-problems/body "-->problems")
+                        ("f" hydra-eclim-find/body "-->find")
+                        ("d" hydra-eclim-doc/body "-->documentation")
+                        ("r" hydra-eclim-refactor/body "-->refactor")
+                        ("j" (eclim-personal-switch-to-junit-buffer-and-run) "Repeat JUnit test.")
+                        ("J" hydra-eclim-junit/body "-->Other Junit Options")
+                        ("q" nil "Cancel" :color red))))
   (:keymaps 'eclim-problems-mode-map
             "e" 'eclim-problems-show-errors
             "w" 'eclim-problems-show-warnings
