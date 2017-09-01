@@ -1240,7 +1240,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
    '(and (remove-if-not (lambda (mode-name)
                           (derived-mode-p mode-name))
                         semicolon-delimited-modes)
-         (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
+         (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)(\(.*\)\))?\\b\\)"
                              (thing-at-point 'line)))))
   (add-to-list
    'aggressive-indent-dont-indent-if
