@@ -1107,9 +1107,34 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (require 'company-eclim)
   :general
   (:keymaps 'eclim-mode-map
+            ;; match some eclipse bindings
             "C-S-g"  #'eclim-java-find-references
             "<f4>"   #'eclim-personal-find-implementors
-            "C-M-h"  #'eclim-java-call-hierarchy)
+            "<f3>"   #'eclim-java-find-declaration
+            "C-M-h"  #'eclim-java-call-hierarchy
+            "C-x e" (defhydra hydra-eclim (:color blue :columns 1)
+                      "Java Eclim"
+                      ("p"
+                       (defhydra hydra-eclim-problems (:color blue :columns 2)
+                         ("q"  nil "Cancel" :color red))
+                       "problems")
+                      ("f"
+                       (defhydra hydra-eclim-find (:color blue :columns 2)
+                         ("q"  nil "Cancel" :color red))
+                       "find")
+                      ("d"
+                       (defhydra hydra-eclim-doc (:color blue :columns 2)
+                         ("q"  nil "Cancel" :color red))
+                       "documentation")
+                      ("r"
+                       (defhydra hydra-eclim-refactor (:color blue :columns 2)
+                         ("q"  nil "Cancel" :color red))
+                       "refactor")
+                      ("j"
+                       (defhydra hydra-eclim-junit (:color blue :columns 2)
+                         ("q"  nil "Cancel" :color red))
+                       "Junit Testing")
+                      ("q" nil "Cancel" :color red)))
   (:keymaps 'eclim-problems-mode-map
             "e" 'eclim-problems-show-errors
             "w" 'eclim-problems-show-warnings
