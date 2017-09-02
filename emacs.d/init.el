@@ -1147,10 +1147,17 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                         ("r"  (eclim-java-find-references) "References To")
                         ("q"  nil "Cancel" :color red))
                       (defhydra hydra-eclim-doc (:color blue :columns 1)
+                        "Eclim Doc"
+                        ("d" #'eclim-java-show-documentation-for-current-element "Show Doc")
                         ("q"  nil "Cancel" :color red))
                       (defhydra hydra-eclim-refactor (:color blue :columns 1)
+                        "Eclim Refactor"
+                        ("r" #'eclim-java-refactor-rename-symbol-at-point "Rename Symbol")
+                        ("i" #'eclim-java-import-organize "Import Organize")
+                        ("m" #'eclim-java-implement "method implement")
                         ("q"  nil "Cancel" :color red))
                       (defhydra hydra-eclim-junit (:color blue :columns 1)
+                        "Eclim JUnit"
                         ("d"  (eclim-debug-junit) "Debug Junit Test")
                         ("q"  nil "Cancel" :color red))
                       (defhydra hydra-eclim (:color blue :columns 1)
