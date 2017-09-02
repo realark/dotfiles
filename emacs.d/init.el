@@ -732,7 +732,10 @@ Otherwise, send an interrupt to slime."
                 (let ((result (slime-eval `(swank:inspector-pop))))
                   (if result
                       (slime-open-inspector result (pop slime-inspector-mark-stack))
-                    (quit-window))))))
+                    (quit-window)))))
+  (let ((cl-annot-slime-helper "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el"))
+    (when (file-exists-p cl-annot-slime-helper)
+      (load cl-annot-slime-helper))))
 
 ;; Magit -- The best git interface I've ever used.
 (use-package magit
