@@ -1137,7 +1137,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                         ("j"  (eclim-problems-next-same-file) "Next Problem in file" :exit nil)
                         ("k"  (eclim-problems-prev-same-file) "Prev Problem in file" :exit nil)
                         ("<RET>"  (eclim-problems-correct) "Correct Problem at Point")
-                        ("b"  (eclim-problems) "problems buffer")
+                        ("b"  (eclim-problems) "problems buffer" :exit t)
                         ("q"  nil "Cancel" :color red))
                       (defhydra hydra-eclim-find (:color blue :columns 1)
                         "Eclim Find"
@@ -1163,6 +1163,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                       (defhydra hydra-eclim (:color blue :columns 1)
                         "Java Eclim"
                         ("b"  (eclim-project-build)  "build project")
+                        ("e"  (eclim-run-class nil)  "run class")
                         ("p" hydra-eclim-problems/body "-->problems")
                         ("f" hydra-eclim-find/body "-->find")
                         ("d" hydra-eclim-doc/body "-->documentation")
@@ -1178,11 +1179,17 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
             "q" 'eclim-quit-window
             "RET" 'eclim-problems-open-current)
   :config
+
+  (defun ark-eclim-build-project-before-run (orig-fn &rest args)
+    (eclim/execute-command "project_build" "-p"))
+
+  (advice-add #'eclim-run-class :before #'ark-eclim-build-project-before-run)
+
   ;; FIXME override junit runner to work with new eclipse/eclim
   (defun eclim--java-junit-file (project file offset encoding)
     (concat eclim-executable
             " -command java_junit -p " project
-            " -t " (eclim--java-current-class-name)
+            " -t " (eclim--java-current-package) "." (eclim--java-current-class-name)
             " -e " encoding))
 
   (defun eclim-personal-switch-to-junit-buffer-and-run ()
