@@ -635,7 +635,6 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (use-package slime-company)
   (make-directory "/tmp/slime-fasls/" t)
   (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
-  (load (expand-file-name "~/quicklisp/slime-helper.el"))
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
   (slime-setup '(slime-fancy
                  slime-highlight-edits
@@ -648,7 +647,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq inhibit-splash-screen t)
 
   (load (expand-file-name "~/.roswell/helper.el"))
-  (setq inferior-lisp-program "ros -L sbcl -Q -l ~/.sbclrc run")
+  (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run")
   (setq-default slime-protocol-version 'ignore)
 
   (defun my-slime-repl-kill-or-interrupt ()
