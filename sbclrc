@@ -11,3 +11,35 @@
                         (user-homedir-pathname))))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
+
+
+(defmacro notes (&body body)
+  "Macro for writing un-eval'd notes and pseudo code."
+  (declare (ignore body))
+  '())
+
+
+(defmacro dis (args &rest body)
+  "Disassemble a lambda expression."
+  (flet ((arg-name (arg)
+           (if (consp arg)
+               (cadr arg)
+               arg))
+         (arg-decl (arg)
+           (if (consp arg)
+               `(type ,(car arg) ,(cadr arg))
+               nil)))
+    (let ((arglist (mapcar #'arg-name args))
+          (declarations (mapcar #'arg-decl args)))
+      `(disassemble
+        (lambda ,arglist
+          (declare ,@(remove nil declarations))
+          ,@body)))))
+
+(defmacro disasm-method (name &rest specializers)
+  "Disassemble a method.
+Usage: (disasm-method #'package:generic-fun '(integer))"
+  `(let* ((method (find-method (function ,name) nil '(,@specializers)))
+          (function (sb-mop:method-function method))
+          (fast-function (sb-pcl::%method-function-fast-function function)))
+     (disassemble fast-function)))
