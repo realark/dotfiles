@@ -187,27 +187,28 @@
   (interactive)
   (if (not mark-active)
       (select-current-line))
-  (if (boundp-and-true smartparens-mode)
-      (save-excursion
-        (message "TODO sp-comment")
-        ;; go to end of region
-        ;; for each line going up:
-        ;;   if not commented
-        ;;      goto beginning of line
-        ;;      sp-comment
-        (beginning-of-line)
-        (sp-comment))
-    ;; (save-excursion
-    ;;   ;; (let ((start (region-beginning))
-    ;;   ;;       (end (region-end)))
-    ;;   ;;   (deactivate-mark)
-    ;;   ;;   ;; (while (<=  (mark) start)
-    ;;   ;;   ;;   (beginning-of-line)
-    ;;   ;;   ;;   (lispy-comment)
-    ;;   ;;   ;;   (forward-line -1))
-    ;;   ;;   (message "TODO: lispy!!"))
-    ;;   )
-    (comment-or-uncomment-region (region-beginning) (region-end))))
+  (when nil ; TODO DWIM lisp comment
+    (if (boundp-and-true smartparens-mode)
+        (save-excursion
+          (message "TODO sp-comment")
+          ;; go to end of region
+          ;; for each line going up:
+          ;;   if not commented
+          ;;      goto beginning of line
+          ;;      sp-comment
+          (beginning-of-line)
+          ;; (save-excursion
+          ;;   ;; (let ((start (region-beginning))
+          ;;   ;;       (end (region-end)))
+          ;;   ;;   (deactivate-mark)
+          ;;   ;;   ;; (while (<=  (mark) start)
+          ;;   ;;   ;;   (beginning-of-line)
+          ;;   ;;   ;;   (lispy-comment)
+          ;;   ;;   ;;   (forward-line -1))
+          ;;   ;;   (message "TODO: lispy!!"))
+          ;;   )
+          (sp-comment))))
+  (comment-or-uncomment-region (region-beginning) (region-end)))
 
 ;; Options for M-x rgrep
 (eval-after-load 'grep
