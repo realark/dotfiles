@@ -233,7 +233,7 @@ function formatxml(){
 }
 
 # In general, I'd like to only capture complicatated commands or commands which changed the state of the machine.
-declare -a history_exclude_regexes=('^ls\s*$' '^tree\s*$' '^(h)?top$' '^pwd.*' 'screen' '^echo.*$' '^whoami.*' 'su -' '^\s*cd\s$' '^idemacs$' '^git (status|log|ls|ll|show).*$' '^(sudo )?poweroff$' )
+declare -a history_exclude_regexes=('^ls$' '^tree$' '^(h)?top$' '^pwd$' 'screen' '^whoami$' 'su -' '^\s*cd\s*$' '^idemacs$' '^git (status|log|ls|ll|show)$' '^(sudo )?poweroff$')
 
 function zshaddhistory() {
     emulate -L zsh
