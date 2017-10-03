@@ -1189,12 +1189,13 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (defun eclim--java-junit-file (project file offset encoding)
     (concat eclim-executable
             " -command java_junit -p " project
-            " -t " (eclim--java-current-package) "." (eclim--java-current-class-name)
+            " -t " (when (eclim--java-current-package) (concat (eclim--java-current-package) ".")) (eclim--java-current-class-name)
             " -e " encoding))
 
   (defun eclim-personal-switch-to-junit-buffer-and-run ()
     "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
     (interactive)
+    (eclim/execute-command "project_build" "-p")
     (if (get-buffer "*compilation*")
         (progn
           (switch-to-buffer "*compilation*")
