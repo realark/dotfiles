@@ -527,7 +527,8 @@ WINDOW: %(buffer-name)
   (use-package treemacs-projectile
     :config
     (setq-default treemacs-header-function #'treemacs-projectile-create-header))
-  (setq-default treemacs-git-integration t))
+  (setq-default treemacs-git-integration t)
+  (treemacs-follow-mode t))
 
 (progn
   (defvar interactive-perspectives '()
