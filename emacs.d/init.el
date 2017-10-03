@@ -518,6 +518,17 @@ WINDOW: %(buffer-name)
     (advice-add 'magit-branch-and-checkout ; This is `b c'.
                 :after #'%run-projectile-invalidate-cache)))
 
+(use-package treemacs
+  :defer t
+  :general
+  ("<f6>" #'treemacs-toggle)
+  :config
+  (use-package treemacs-evil)
+  (use-package treemacs-projectile
+    :config
+    (setq-default treemacs-header-function #'treemacs-projectile-create-header))
+  (setq-default treemacs-git-integration t))
+
 (progn
   (defvar interactive-perspectives '()
     "list of (major-mode interactive-mode launch-interactive-mode-function).
