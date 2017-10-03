@@ -1039,6 +1039,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     :init
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
 
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode)))
+
 ;; elfeed
 (use-package elfeed
   :defer t
