@@ -66,7 +66,19 @@
 (defun display-startup-echo-area-message ()
   "Change the startup message."
   (message "Welcome"))
-;; (setq initial-scratch-message "")
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+(setq initial-scratch-message
+      (concat
+       (replace-regexp-in-string
+        "^" ";; " ; comment each line
+        (replace-regexp-in-string
+         "\n$" "" ; remove trailing linebreak
+         (get-string-from-file "/etc/motd")))
+       "\n\n"))
 
 ;; Maximize emacs window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
