@@ -42,6 +42,9 @@
 
 (mouse-avoidance-mode 'banish)
 
+(global-visual-line-mode 1)
+(setq-default line-move-visual t)
+
 (setq-default
  isearch-allow-scroll t
  lazy-highlight-cleanup nil
