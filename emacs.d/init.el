@@ -242,7 +242,7 @@
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
-  :config
+  :init
   (evil-mode 1)
   ;; Default to normal mode most of the time
   (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode))
@@ -1165,7 +1165,13 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (require 'company-eclim)
   (general-define-key
    :states '(normal insert)
-   "C-x e" #'hydra-eclim/body)
+   "C-x e" #'hydra-eclim/body
+   "M-."   #'(lambda ()
+               (interactive)
+               (if (and (bound-and-true-p eclim-mode)
+                        (get-buffer "*eclimd*"))
+                   (eclim-java-find-declaration)
+                 (etags-select-find-tag-at-point))))
   :general
   (:keymaps 'eclim-mode-map
             ;; match some eclipse bindings
