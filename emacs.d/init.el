@@ -1163,6 +1163,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (require 'eclim)
   (global-eclim-mode)
   (require 'company-eclim)
+  ;; (advice-add #'start-eclimd :after (lambda (orig-fn &rest args) (revert-all-buffers)))
+  ;; (advice-add #'stop-eclimd :after (lambda (orig-fn &rest args) (revert-all-buffers)))
   (general-define-key
    :states '(normal insert)
    "C-x e" #'hydra-eclim/body
@@ -1269,7 +1271,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (setq-default eclim-auto-save t
                 eclim-executable "/usr/lib/eclipse/eclim"
                 eclimd-executable "/usr/lib/eclipse/eclimd"
-                eclimd-wait-for-process nil
+                eclimd-wait-for-process t
                 eclimd-default-workspace "~/workspace/"
                 help-at-pt-display-when-idle t
                 help-at-pt-timer-delay 0.01)
