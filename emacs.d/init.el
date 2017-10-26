@@ -159,9 +159,16 @@
   :if window-system
   :ensure t
   :config
-  (load-theme 'moe-dark t)
   (moe-theme-set-color 'cyan)
   (powerline-moe-theme))
+
+(use-package circadian
+  :if window-system
+  :ensure t
+  :config
+  (setq-default circadian-themes '(("6:00" . moe-light)
+                                   ("19:30" . moe-dark)))
+  (circadian-setup))
 
 (defun toggle-window-split ()
   "Toggle two-window split between horizontal and vertical."
