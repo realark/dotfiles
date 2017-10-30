@@ -900,7 +900,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (use-package hideshow
   :delight hs-minor-mode
   :config
-  (add-hook 'prog-mode-hook 'hs-minor-mode))
+  (add-hook 'prog-mode-hook 'hs-minor-mode)
+  (add-hook 'hs-minor-mode-hook 'hs-hide-initial-comment-block))
 
 ;;multi-term
 (use-package multi-term
