@@ -291,7 +291,6 @@
    "x"      #'execute-extended-command
    "l"      (lambda ()
               (interactive)
-              (message "active metashow")
               (if (bound-and-true-p whitespace-mode)
                   (progn
                     (whitespace-mode 0)
@@ -302,7 +301,6 @@
                   (linum-mode 1))))
    "f"      #'indent-region
    ";"      #'toggle-comment-region-or-line
-   "<tab>"  #'hs-toggle-hiding
    "g"      #'magit-status
    "B"      #'magit-blame)
 
@@ -899,6 +897,13 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; Code folding
 (use-package hideshow
   :delight hs-minor-mode
+  :general
+  (general-evil-define-key 'normal hs-minor-mode-map
+    "<tab>" (lambda ()
+              (interactive)
+              (save-excursion
+                (end-of-line)
+                (hs-toggle-hiding))))
   :config
   (add-hook 'prog-mode-hook 'hs-minor-mode)
   (add-hook 'hs-minor-mode-hook 'hs-hide-initial-comment-block))
