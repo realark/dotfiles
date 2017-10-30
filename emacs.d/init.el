@@ -552,7 +552,8 @@ WINDOW: %(buffer-name)
 (use-package treemacs
   :defer t
   :general
-  ("<f6>" #'treemacs-toggle)
+  ("<f6>" #'treemacs-projectile-toggle)
+  ("S-<f6>" #'treemacs-toggle)
   :config
   (use-package treemacs-evil)
   (use-package treemacs-projectile
