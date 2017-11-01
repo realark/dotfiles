@@ -1141,7 +1141,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (diredp-toggle-find-file-reuse-dir 1))
 
 (use-package rainbow-delimiters
-  :config
+  :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 ;; pretty lambda
