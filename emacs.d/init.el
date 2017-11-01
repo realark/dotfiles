@@ -1066,8 +1066,13 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :init
   (defhydra hydra-orgmode (:color amaranth :columns 1)
     "Org Mode"
-    ("c"  (org-capture) "Capture" :exit t)
     ("a"  (org-agenda) "Agenda" :exit t)
+    ("c"  (cfw:open-calendar-buffer
+           :contents-sources
+           (list
+            (cfw:org-create-source "Green")))
+     "Weekly calendar" :exit t)
+    ("C"  (org-capture) "Capture" :exit t)
     ("q"  nil "Cancel" :color red))
   :general
   ("C-x c" #'hydra-orgmode/body)
@@ -1108,6 +1113,16 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (use-package org-bullets
     :init
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
+
+(use-package calfw
+  :config
+  (use-package calfw-org)
+  (use-package calfw-ical)
+
+  ;; default calendar view to week instead of month
+  (defun my--cfw:open-calendar-buffer-view (orig-func &rest args &allow-other-keys)
+    (apply orig-func :view 'week :allow-other-keys t args))
+  (advice-add 'cfw:open-calendar-buffer :around #'my--cfw:open-calendar-buffer-view))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
