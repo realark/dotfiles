@@ -1213,6 +1213,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
            '((procyon "-r -ln -ss"""))))
       (jdecomp-decompile-and-view (buffer-file-name)))))
 
+(use-package thread-dump
+  :commands (thread-dump-open-file thread-dump-open-files thread-dump-open-dir))
+
 (use-package eclim ;; emacs frontend for eclimd
   :init
   ;; TODO: lazy-load eclim
