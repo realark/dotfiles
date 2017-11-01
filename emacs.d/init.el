@@ -1192,6 +1192,14 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :config
   (gradle-mode 1))
 
+(use-package groovy-mode
+  :mode
+  ("\\.gradle$" . groovy-mode)
+  ("\\.groovy$" . groovy-mode)
+  :init
+  (add-hook 'groovy-mode-hook 'hs-minor-mode)
+  (add-hook 'groovy-mode-hook 'rainbow-delimiters-mode))
+
 (use-package jdecomp
   :mode ("\\.class$" . jdecomp-mode)
   :config
