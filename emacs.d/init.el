@@ -1063,8 +1063,14 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (use-package org
   :mode ("\\.org$" . org-mode)
   :delight org-indent-mode nil org-indent
+  :init
+  (defhydra hydra-orgmode (:color amaranth :columns 1)
+    "Org Mode"
+    ("c"  (org-capture) "Capture" :exit t)
+    ("a"  (org-agenda) "Agenda" :exit t)
+    ("q"  nil "Cancel" :color red))
   :general
-  ("C-x c" #'org-capture)
+  ("C-x c" #'hydra-orgmode/body)
   :config
   (setq-default org-startup-indented t)
   ;; fontify code in code blocks
