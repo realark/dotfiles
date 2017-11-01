@@ -959,9 +959,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
       (add-to-list 'eshell-visual-commands "htop")
     (setq-default eshell-visual-commands '("htop"))))
 
-;;Turn off tabs
-(setq-default indent-tabs-mode nil)
-(setq tab-width 4)
+;;Turn off tabs and indent two spaces
+(setq-default indent-tabs-mode nil
+              c-basic-offset 2
+              tab-width 2)
 
 ;; Adapt to the whitespace style of the file we're editing
 (use-package fuzzy-format
