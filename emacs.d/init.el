@@ -1079,10 +1079,14 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (setq-default org-outline-path-complete-in-steps nil) ; Refile in a single go
   (setq-default org-refile-use-outline-path t) ; Show full paths for refiling
   (setq-default org-capture-templates
-                '(("t" "Task" entry (file+headline (concat org-directory "notes.org") "Tasks")
-                   "** TODO %?")
-                  ("m" "Misc" entry (file+headline (concat org-directory "notes.org") "Misc Thoughts")
-                   "** %?")))
+                `(("s" "Syn Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "syn")
+                   "* TODO %?")
+                  ("l" "Life Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "life")
+                   "* TODO %?")
+                  ("d" "Datadog Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "datadog")
+                   "* TODO %?")
+                  ("m" "Misc" entry (file ,(concat org-directory "orgzly/" "refile.org"))
+                   "* %?")))
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
   (use-package evil-org
     :delight
