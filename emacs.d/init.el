@@ -897,16 +897,16 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;; Code folding
 (use-package hideshow
   :delight hs-minor-mode
-  :general
-  (general-evil-define-key 'normal hs-minor-mode-map
+  :init
+  (add-hook 'prog-mode-hook 'hs-minor-mode)
+  (add-hook 'hs-minor-mode-hook 'hs-hide-initial-comment-block)
+  :config
+  (general-def 'normal hs-minor-mode-map
     "<tab>" (lambda ()
               (interactive)
               (save-excursion
                 (end-of-line)
-                (hs-toggle-hiding))))
-  :config
-  (add-hook 'prog-mode-hook 'hs-minor-mode)
-  (add-hook 'hs-minor-mode-hook 'hs-hide-initial-comment-block))
+                (hs-toggle-hiding)))))
 
 ;;multi-term
 (use-package multi-term
