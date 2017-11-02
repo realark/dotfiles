@@ -261,7 +261,7 @@
   :init
   (evil-mode 1)
   ;; Default to normal mode most of the time
-  (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode))
+  (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode eshell-mode))
   (setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
   (setq-default evil-motion-state-modes '()))
 
@@ -924,8 +924,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
       (if (or (not b) (eq 'term-mode major-mode))
           (multi-term)
         (switch-to-buffer b))))
-  :general
-  ("C-x s" #'get-term)
+  ;; :general
+  ;; ("C-x s" #'get-term)
   :config
   ;; might want to later set up auto term-line-mode and term-char-mode
   ;; depending on evil state
@@ -946,15 +946,23 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 (use-package eshell
   :general
-  (general-evil-define-key 'insert eshell-mode-map
-    "C-j" #'eshell-next-input
-    "C-k" #'eshell-previous-input
-    "C-d" (lambda ()
-            (interactive)
-            (message "Hello!")
-            (eshell-send-eof-to-process)
-            (kill-buffer-and-window)))
+  ("C-x s" #'eshell)
   :config
+  ;; esh-mode.el:303 eshell-mode-map is defined locally
+  ;; must use a hook to modify it
+  (defun my-eshell-hook ()
+    (general-def 'insert eshell-mode-map
+      "C-c" #'eshell-interrupt-process
+      "C-d" (lambda ()
+              (interactive)
+              (eshell-send-eof-to-process)
+              (if (= 1 (length (window-list)))
+                  (kill-buffer)
+                (kill-buffer-and-window)))
+      "C-j" #'eshell-next-input
+      "C-k" #'eshell-previous-input))
+  (add-hook 'eshell-mode-hook #'my-eshell-hook)
+
   (if (boundp 'eshell-visual-commands)
       (add-to-list 'eshell-visual-commands "htop")
     (setq-default eshell-visual-commands '("htop"))))
