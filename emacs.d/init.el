@@ -42,6 +42,8 @@
 
 (mouse-avoidance-mode 'banish)
 
+(setq mac-command-modifier 'meta)
+
 (global-visual-line-mode 1)
 (setq-default line-move-visual t)
 
