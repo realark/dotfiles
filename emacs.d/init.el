@@ -890,7 +890,11 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
   (define-magit-unstaged-hunk-action custom-magit-clean-hunk (beg end)
     "Clean whitespace in the given hunk."
-    (delete-trailing-whitespace beg end)))
+    (delete-trailing-whitespace beg end))
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-unpushed-to-upstream
+                          'magit-insert-unpushed-to-upstream-or-recent
+                          'replace))
 
 (use-package git-link)
 
