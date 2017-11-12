@@ -132,6 +132,12 @@
 (require-install 'use-package)
 (setq-default use-package-always-ensure t)
 
+;; env vars for osx
+(use-package exec-path-from-shell
+  :if (memq window-system '(ns))
+  :config
+  (exec-path-from-shell-initialize))
+
 ;; try runs emacs packages without installing them
 (use-package try)
 
@@ -1350,13 +1356,17 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
     (interactive)
     (eclim-java-find-generic "all" "implementors" "all" (thing-at-point 'symbol)))
 
-  (setq-default eclim-auto-save t
-                eclim-executable "/usr/lib/eclipse/eclim"
-                eclimd-executable "/usr/lib/eclipse/eclimd"
-                eclimd-wait-for-process t
-                eclimd-default-workspace "~/workspace/"
-                help-at-pt-display-when-idle t
-                help-at-pt-timer-delay 0.01)
+
+  (let ((eclipse-home (if (memq window-system '(ns))
+                          "/Applications/Eclipse.app/Contents/Eclipse/"
+                        "/usr/lib/eclipse/")))
+    (setq-default eclim-auto-save t
+                  eclim-executable (concat eclipse-home "eclim")
+                  eclimd-executable (concat eclipse-home "eclimd")
+                  eclimd-wait-for-process t
+                  eclimd-default-workspace "~/workspace/"
+                  help-at-pt-display-when-idle t
+                  help-at-pt-timer-delay 0.01))
   ;; make help-at-pt-* settings take effect
   (help-at-pt-set-timer))
 
