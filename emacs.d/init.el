@@ -1141,7 +1141,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :init
   (add-hook 'org-mode-hook (lambda ()
                              (when (string-suffix-p ".trello" (buffer-name))
-                               (org-trello-mode)))))
+                               (org-trello-mode))))
+  (defun org-trello-personal-fetch-buffer ()
+    "Fetch data from trello and populate the buffer"
+    (org-trello-sync-buffer t)))
 
 (use-package calfw
   :config
