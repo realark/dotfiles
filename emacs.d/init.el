@@ -649,6 +649,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 ;;Slime
 (use-package slime
   :delight slime
+  :commands slime
   :init
   (defun print-help ()
     (print "No override. Check for .custom.el?"))
@@ -677,7 +678,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (print-help)
     nil)
   :config
-  (progn ;; emit ansi colors in slime repl
+  (progn
+    ;; emit ansi colors in slime repl
     (defvar slime-colors t "If non-nil, emit ansi colors in the slime repl.")
     (defun slime-colors-on ()
       "Enable ansi colors in the slime repl."
@@ -696,19 +698,25 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (use-package slime-company)
   (make-directory "/tmp/slime-fasls/" t)
   (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
-  (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
-  (slime-setup '(slime-fancy
-                 slime-highlight-edits
-                 slime-asdf
-                 slime-company
-                 slime-xref-browser))
-  ;; This is a hack. The hook should have already been established.
-  (add-hook 'slime-repl-mode-hook #'slime-company-maybe-enable)
-  (load "~/quicklisp/clhs-use-local.el" t)
-  (setq inhibit-splash-screen t)
+
 
   (load (expand-file-name "~/.roswell/helper.el"))
   (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run")
+  (add-to-list 'load-path
+               (concat (roswell-slime-directory) "contrib/"))
+  (slime-setup '(slime-fancy
+                 slime-highlight-edits
+                 slime-asdf
+                 slime-xref-browser
+                 slime-company))
+  ;; This is a hack. slime-setup should enable slime-company
+  (slime-company-init)
+
+  (load "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
+
+  (setq inhibit-splash-screen t)
+
+  ;; stop slime from complaining about version mismatch
   (setq-default slime-protocol-version 'ignore)
 
   (defun my-slime-repl-kill-or-interrupt ()
