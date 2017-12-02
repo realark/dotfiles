@@ -797,6 +797,9 @@ Otherwise, send an interrupt to slime."
     (when (file-exists-p cl-annot-slime-helper)
       (load cl-annot-slime-helper))))
 
+(use-package elisp-slime-nav
+  :mode ("\\.el$" . emacs-lisp-mode))
+
 ;; Magit -- The best git interface I've ever used.
 (use-package magit
   :general
@@ -1144,6 +1147,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                                (org-trello-mode))))
   (defun org-trello-personal-fetch-buffer ()
     "Fetch data from trello and populate the buffer"
+    (interactive)
     (org-trello-sync-buffer t)))
 
 (use-package calfw
@@ -1431,7 +1435,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :delight aggressive-indent-mode
   :config
   ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-  (global-aggressive-indent-mode 1)
+  (let ((modes-to-indent '(lisp-mode-hook emacs-lisp-mode-hook)))
+    (mapc (lambda (hook)
+            (add-hook hook #'aggressive-indent-mode))
+          modes-to-indent))
 
   ;; prevent aggressive-indent from running when eclim autosaves the buffer
   (defun ark-company-eclim-around (orig-fn &rest args)
