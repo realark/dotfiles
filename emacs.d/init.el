@@ -273,15 +273,7 @@
   ;; Default to normal mode most of the time
   (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode eshell-mode))
   (setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
-  (setq-default evil-motion-state-modes '())
-  :config
-  (defun eshell/clear ()
-    "Clear the eshell buffer."
-    (let ((inhibit-read-only t))
-      (eshell/clear-scrollback)))
-  ;; (defun eshell/gradle ()
-  ;;   (find-file "./gradlew"))
-  (eshell/alias 'll 'ls '-l))
+  (setq-default evil-motion-state-modes '()))
 
 ;; general for keybindings
 (use-package general
@@ -585,6 +577,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq interactive-perspectives
         (list (list "lisp-mode" "slime-repl-mode" #'slime)
               (list "sh-mode" "term-mode" #'get-term)
+              (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
+              (list "java-mode" "inferior-groovy-mode" #'run-groovy)
               (list "sql-mode" "sql-interactive-mode" #'sql-postgres)))
 
   (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
@@ -653,6 +647,22 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   ;;(make-perspective emacs
   ;; (find-file "~/.emacs.d/init.el"))
   )
+
+;; comint bindings
+(progn
+  (general-def 'insert comint-mode-map
+    "C-r" #'comint-history-isearch-backward-regexp
+    "C-d" (lambda ()
+            (interactive)
+            (let ((proc (get-buffer-process (current-buffer))))
+              (if (and (eobp) proc (= (point) (marker-position (process-mark proc))))
+                  (progn (comint-send-eof)
+                         (sleep-for .200)
+                         (kill-buffer-and-window))
+                (delete-char arg))))
+    "C-c" #'comint-kill-input
+    "C-j" (general-simulate-keys "M-n")
+    "C-k" (general-simulate-keys "M-p")))
 
 (use-package ansi-color)
 
@@ -985,6 +995,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   ;; must use a hook to modify it
   (defun my-eshell-hook ()
     (general-def 'insert eshell-mode-map
+      "C-r" #'eshell-previous-matching-input
+      "C-l" #'eshell/clear
       "C-c" #'eshell-interrupt-process
       "C-d" (lambda ()
               (interactive)
@@ -993,12 +1005,23 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                   (kill-buffer)
                 (kill-buffer-and-window)))
       "C-j" #'eshell-next-input
-      "C-k" #'eshell-previous-input))
-  (add-hook 'eshell-mode-hook #'my-eshell-hook)
+      "C-k" #'eshell-previous-input)
 
-  (if (boundp 'eshell-visual-commands)
-      (add-to-list 'eshell-visual-commands "htop")
-    (setq-default eshell-visual-commands '("htop"))))
+    (if (boundp 'eshell-visual-commands)
+        (add-to-list 'eshell-visual-commands "htop")
+      (setq-default eshell-visual-commands '("htop")))
+
+    (defun eshell/clear ()
+      "Clear the eshell buffer."
+      (interactive)
+      (let ((inhibit-read-only t))
+        (eshell/clear-scrollback)
+        (eshell-send-input)))
+    ;; (defun eshell/gradle ()
+    ;;   (find-file "./gradlew"))
+    (eshell/alias 'll 'ls '-l))
+
+  (add-hook 'eshell-mode-hook #'my-eshell-hook))
 
 ;;Turn off tabs and indent two spaces
 (setq-default indent-tabs-mode nil
@@ -1253,8 +1276,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :init
   (add-hook 'groovy-mode-hook 'hs-minor-mode)
   (add-hook 'groovy-mode-hook 'rainbow-delimiters-mode)
-  :config
-  (setq-default groovy-indent-offset 2))
+  ;; :config
+  ;; (setq-default groovy-indent-offset 2)
+  ;; (let ((my-groovy-args '()))
+  ;;   )
+  ;; (setq groovysh-args  )
+  )
 
 (use-package jdecomp
   :mode ("\\.class$" . jdecomp-mode)
