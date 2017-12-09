@@ -1252,7 +1252,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   ("\\.groovy$" . groovy-mode)
   :init
   (add-hook 'groovy-mode-hook 'hs-minor-mode)
-  (add-hook 'groovy-mode-hook 'rainbow-delimiters-mode))
+  (add-hook 'groovy-mode-hook 'rainbow-delimiters-mode)
+  :config
+  (setq-default groovy-indent-offset 2))
 
 (use-package jdecomp
   :mode ("\\.class$" . jdecomp-mode)
@@ -1299,6 +1301,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                         "Eclim Problems"
                         ("j"  (eclim-problems-next-same-file) "Next Problem in file" :exit nil)
                         ("k"  (eclim-problems-prev-same-file) "Prev Problem in file" :exit nil)
+                        ("J"  (eclim-problems-next-same-window) "Next Problem in workspace" :exit nil)
+                        ("K"  (eclim-problems-previous-same-window) "Prev Problem in workspace" :exit nil)
                         ("<RET>"  (eclim-problems-correct) "Correct Problem at Point")
                         ("b"  (eclim-problems) "problems buffer" :exit t)
                         ("q"  nil "Cancel" :color red))
