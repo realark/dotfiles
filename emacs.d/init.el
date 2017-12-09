@@ -28,10 +28,12 @@
 (electric-pair-mode 1)
 (show-paren-mode 1) ; turn on paren match highlighting
 (setq-default show-paren-style 'expression) ; highlight entire bracket expression
-;; Enable narrowing
+;; Don't tell me what I can't do!
 (put 'narrow-to-defun  'disabled nil)
 (put 'narrow-to-page   'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+(put 'erase-buffer 'disabled nil)
+
 ;; highlight the current line
 (global-hl-line-mode t)
 (setq large-file-warning-threshold 100000000) ;100mb
@@ -271,7 +273,15 @@
   ;; Default to normal mode most of the time
   (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode eshell-mode))
   (setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
-  (setq-default evil-motion-state-modes '()))
+  (setq-default evil-motion-state-modes '())
+  :config
+  (defun eshell/clear ()
+    "Clear the eshell buffer."
+    (let ((inhibit-read-only t))
+      (eshell/clear-scrollback)))
+  ;; (defun eshell/gradle ()
+  ;;   (find-file "./gradlew"))
+  (eshell/alias 'll 'ls '-l))
 
 ;; general for keybindings
 (use-package general
