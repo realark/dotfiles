@@ -486,12 +486,6 @@ WINDOW: %(buffer-name)
   ;; This is probably a problem with my config
   (setq isearch-forward t))
 
-(use-package avy
-  :general
-  (general-define-key
-   :states '(normal)
-   "f" #'avy-goto-word-0))
-
 ;; yasnippet
 (use-package yasnippet
   :delight yas-minor-mode
@@ -623,30 +617,6 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
         (message "No interactive mode for %s" current-buffer-major-mode))))
   (general-define-key
    "<f9>" #'toggle-interact-with-buffer))
-
-(use-package perspective
-  :init
-  (persp-mode)
-  :general
-  ("<f8>"   #'persp-next
-   "S-<f8>" #'persp-prev
-   "<f7>"   (lambda ()
-              (interactive)
-              (message "TODO: persp hydra")))
-  :config
-  (defmacro make-perspective (perspective-name &rest body)
-    (declare (indent 1))
-    (assert (symbolp perspective-name))
-    (let ((persp-string (symbol-name perspective-name)))
-      `(progn
-         (unless (member ,persp-string (persp-all-names))
-           (persp-new ,persp-string)
-           (with-perspective ,persp-string
-             ,@body))
-         (persp-switch ,persp-string))))
-  ;;(make-perspective emacs
-  ;; (find-file "~/.emacs.d/init.el"))
-  )
 
 ;; comint bindings
 (progn
