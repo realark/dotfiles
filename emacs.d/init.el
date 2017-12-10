@@ -22,6 +22,7 @@
 (setq visible-bell t)
 ;; Remove icons toolbar
 (tool-bar-mode -1)
+(menu-bar-mode -1)
 ;; Use y or n instead of yes or not
 (fset 'yes-or-no-p 'y-or-n-p)
 ;; Insert closing bracket
@@ -566,6 +567,26 @@ WINDOW: %(buffer-name)
   (setq-default treemacs-git-integration t)
   (treemacs-follow-mode t))
 
+(use-package tabbar
+  :init
+  (tabbar-mode t)
+  :config
+  (set-face-foreground 'tabbar-selected "white")
+  (set-face-background 'tabbar-selected "DarkBlue")
+
+  (defun my-tabbar-buffer-groups ()
+    "Show all normal files in one group"
+    (list (cond ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
+                ((string-equal "TAGS" (buffer-name)) "emacs")
+                ((eq major-mode 'dired-mode) "emacs")
+                (t "user"))))
+  (setq tabbar-buffer-groups-function 'my-tabbar-buffer-groups)
+
+  (general-def
+    :states '(normal)
+    "gT" #'tabbar-backward
+    "gt" #'tabbar-forward))
+
 (progn
   (defvar interactive-perspectives '()
     "list of (major-mode interactive-mode launch-interactive-mode-function).
@@ -1034,11 +1055,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
               my-buffer-list)
        (bury-buffer)
        (nth n my-buffer-list)))))
-;; evil buffer nav keys
-(general-def
-  :states '(normal)
-  "gT" #'crs-bury-buffer
-  "gt" (lambda () (interactive) (crs-bury-buffer -1)))
 
 ;; tags
 (use-package etags-select
