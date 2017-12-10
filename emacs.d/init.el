@@ -1277,6 +1277,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (require 'company-eclim)
   ;; (advice-add #'start-eclimd :after (lambda (orig-fn &rest args) (revert-all-buffers)))
   ;; (advice-add #'stop-eclimd :after (lambda (orig-fn &rest args) (revert-all-buffers)))
+  (add-hook 'groovy-mode-hook #'eclim-mode)
   (general-define-key
    :states '(normal insert)
    "C-x e" #'hydra-eclim/body
@@ -1360,10 +1361,14 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
           (end-of-buffer))
       (progn
         (end-of-buffer)
-        (eclim-run-junit (eclim-project-name)
-                         (eclim--project-current-file)
-                         (eclim--byte-offset)
-                         (eclim--current-encoding))
+        ;; calling into the implementation
+        ;; to enable spock test runs
+        (compile
+         (eclim--java-junit-file
+          (eclim-project-name)
+          (eclim--project-current-file)
+          (eclim--byte-offset)
+          (eclim--current-encoding)))
         (pop-to-mark-command)
         (pop-to-mark-command)
         (other-window 1)
