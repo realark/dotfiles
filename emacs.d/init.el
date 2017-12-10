@@ -1349,13 +1349,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
   (advice-add #'eclim-run-class :before #'ark-eclim-build-project-before-run)
 
-  ;; FIXME override junit runner to work with new eclipse/eclim
-  (defun eclim--java-junit-file (project file offset encoding)
-    (concat eclim-executable
-            " -command java_junit -p " project
-            " -t " (when (eclim--java-current-package) (concat (eclim--java-current-package) ".")) (eclim--java-current-class-name)
-            " -e " encoding))
-
   (defun eclim-personal-switch-to-junit-buffer-and-run ()
     "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
     (interactive)
