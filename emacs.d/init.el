@@ -66,15 +66,24 @@
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
-; change the minbuffer startup message
+;;Turn off tabs and indent two spaces
+(setq-default indent-tabs-mode nil
+              c-basic-offset 2
+              tab-width 2)
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+                                        ; change the minbuffer startup message
 (defun display-startup-echo-area-message ()
   "Change the startup message."
   (message "Welcome"))
+
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
   (with-temp-buffer
     (insert-file-contents filePath)
     (buffer-string)))
+
 (setq initial-scratch-message
       (concat
        (replace-regexp-in-string
@@ -106,15 +115,6 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
-(defun keymap-symbol (keymap)
-  "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
-  (catch 'gotit
-    (mapatoms (lambda (sym)
-                (and (boundp sym)
-                     (eq (symbol-value sym) keymap)
-                     (not (eq sym 'keymap))
-                     (throw 'gotit sym))))))
-
 
 ;; winner mode allows easy undo/redo of window changes
 (when (fboundp 'winner-mode)
@@ -141,7 +141,8 @@
   (exec-path-from-shell-initialize))
 
 ;; try runs emacs packages without installing them
-(use-package try)
+(use-package try
+  :commands try)
 
 (use-package powerline)
 
@@ -176,8 +177,8 @@
   :if window-system
   :ensure t
   :config
-  (setq-default circadian-themes '(("6:00" . moe-light)
-                                   ("19:30" . moe-dark)))
+  (setq-default circadian-themes '(("07:30" . moe-light)
+                                   ("18:00" . moe-dark)))
   (circadian-setup))
 
 (defun toggle-window-split ()
@@ -329,7 +330,8 @@
      ("p"   #'run-performance-tests      "Performance")
      ("r"   #'reload-systems             "Reload Systems")
      ("q"   nil "Cancel" :exit t)))
-  (progn ;; Window moving helpers for hydra
+  (progn
+    ;; Window moving helpers for hydra
     (require 'windmove)
 
     (defun hydra-move-splitter-left (arg)
@@ -798,7 +800,6 @@ Otherwise, send an interrupt to slime."
 (use-package elisp-slime-nav
   :mode ("\\.el$" . emacs-lisp-mode))
 
-;; Magit -- The best git interface I've ever used.
 (use-package magit
   :general
   ("C-x g" 'magit-status)
@@ -907,7 +908,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 (use-package git-link)
 
-;; Code folding
 (use-package hideshow
   :delight hs-minor-mode
   :init
@@ -921,7 +921,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                 (end-of-line)
                 (hs-toggle-hiding)))))
 
-;;multi-term
 (use-package multi-term
   :init
   (setq-default multi-term-program "/bin/zsh")
@@ -993,20 +992,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
   (add-hook 'eshell-mode-hook #'my-eshell-hook))
 
-;;Turn off tabs and indent two spaces
-(setq-default indent-tabs-mode nil
-              c-basic-offset 2
-              tab-width 2)
-
-;; Adapt to the whitespace style of the file we're editing
-(use-package fuzzy-format
-  :delight fuzzy-format-mode
-  :config
-  (fuzzy-format-mode t)
-  (setq show-trailing-whitespace t))
-
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
 ;;;;; Buffer navigation
 ;; necessary support function for buffer burial
 (defun crs-delete-these (delete-these from-this-list)
@@ -1050,10 +1035,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
        (bury-buffer)
        (nth n my-buffer-list)))))
 ;; evil buffer nav keys
-(general-define-key
- :states '(normal)
- "gT" #'crs-bury-buffer
- "gt" (lambda () (interactive) (crs-bury-buffer -1)))
+(general-def
+  :states '(normal)
+  "gT" #'crs-bury-buffer
+  "gt" (lambda () (interactive) (crs-bury-buffer -1)))
 
 ;; tags
 (use-package etags-select
@@ -1233,7 +1218,9 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;;;;;;;;;;;;;;
 
 (use-package gradle-mode
-  :mode ("\\.java$" . java-mode)
+  :mode (("\\.java$" . java-mode)
+         ("\\.gradle$" . groovy-mode)
+         ("\\.groovy$" . groovy-mode))
   :init
   (add-hook 'java-mode-hook #'gradle-mode)
   :config
@@ -1269,7 +1256,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 (use-package thread-dump
   :commands (thread-dump-open-file thread-dump-open-files thread-dump-open-dir))
 
-(use-package eclim ;; emacs frontend for eclimd
+(use-package eclim
   :init
   ;; TODO: lazy-load eclim
   (require 'eclim)
@@ -1394,8 +1381,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   ;; make help-at-pt-* settings take effect
   (help-at-pt-set-timer))
 
-
-;; SQL
 (use-package sql
   :mode ("\\.sql$" . sql-mode)
   :general
@@ -1447,7 +1432,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
                  (symbol-name rval))))))
   (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook))
 
-;; agressive indent mode to re-indent after changes are made
 (use-package aggressive-indent
   :delight aggressive-indent-mode
   :config
@@ -1482,14 +1466,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   (add-to-list
    'aggressive-indent-dont-indent-if
    'company-candidates))
-
-;; custom vars
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
 (setq-default custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file)
