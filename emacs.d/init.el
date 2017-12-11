@@ -584,8 +584,8 @@ WINDOW: %(buffer-name)
 
   (general-def
     :states '(normal)
-    "gT" #'tabbar-backward
-    "gt" #'tabbar-forward))
+    "gT" #'tabbar-backward-tab
+    "gt" #'tabbar-forward-tab))
 
 (progn
   (defvar interactive-perspectives '()
