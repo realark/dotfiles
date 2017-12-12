@@ -1355,6 +1355,20 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
   (advice-add #'eclim-run-class :before #'ark-eclim-build-project-before-run)
 
+  (progn
+    ;; stop eclim (java-side) from prepending the project name to the relative file location
+    (defun ark-eclim-fix-project-relative-file-location (orig-fn &rest args)
+      (let ((eclim-relative-file (apply orig-fn args))
+            (project-prefix (concat "^.*" (eclim-project-name) "/")))
+        (setq eclim-relative-file
+              (replace-regexp-in-string
+               project-prefix
+               ""
+               eclim-relative-file))
+        eclim-relative-file))
+
+    (advice-add #'eclim--project-current-file :around #'ark-eclim-fix-project-relative-file-location))
+
   (defun eclim-personal-switch-to-junit-buffer-and-run ()
     "Re-run the last eclim junit test.  If there is not last test then test the current buffer."
     (interactive)
