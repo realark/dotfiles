@@ -1251,8 +1251,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :init
   (add-hook 'groovy-mode-hook 'hs-minor-mode)
   (add-hook 'groovy-mode-hook 'rainbow-delimiters-mode)
-  ;; :config
-  ;; (setq-default groovy-indent-offset 2)
+  :config
+  (setq-default groovy-indent-offset 2)
   ;; (let ((my-groovy-args '()))
   ;;   )
   ;; (setq groovysh-args  )
