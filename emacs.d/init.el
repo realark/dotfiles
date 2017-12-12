@@ -404,10 +404,10 @@ WINDOW: %(buffer-name)
      "
      PROJECTILE: %(or (ignore-errors (projectile-project-root)) \"(Not in a project)\")
 
- Find/Replace                   Buffers
------------------------------------------------------
- _f_: file find                 _k_: Kill all buffers
- _t_: find tag
+ Find/Replace         Tasks                   Buffers
+----------------------------------------------------------------------------------
+ _f_: file find         _t_: test project         _k_: Kill all buffers
+ _t_: find tag          _c_: command run
  _g_: grep all files
  _r_: replace
  _R_: replace regex
@@ -418,6 +418,8 @@ WINDOW: %(buffer-name)
      ("g"   projectile-grep)
      ("r"   projectile-replace)
      ("R"   projectile-replace-regexp)
+     ("t"   projectile-test-project)
+     ("c"   projectile-run-project)
      ("k"   projectile-kill-buffers)
      ("q"   nil "Cancel" :color red))))
 
