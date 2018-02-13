@@ -158,15 +158,10 @@
   "Change the theme."
   (mapc #'disable-theme custom-enabled-themes))
 
-(use-package tsdh
-  :if window-system
-  :ensure nil)
-(use-package zenburn-theme
-  :if window-system
-  :ensure nil)
 (use-package doom-themes
   :if window-system
-  :ensure nil)
+  :ensure t)
+
 (use-package moe-theme
   :if window-system
   :ensure t
@@ -178,7 +173,7 @@
   :if window-system
   :ensure t
   :config
-  (setq-default circadian-themes '(("07:30" . moe-light)
+  (setq-default circadian-themes '(("07:30" . doom-solarized-light)
                                    ("18:00" . moe-dark)))
   (circadian-setup))
 
