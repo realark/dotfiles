@@ -165,15 +165,23 @@
 (use-package moe-theme
   :if window-system
   :ensure t
+  :defer t
+  :load-path "themes"
   :config
   (moe-theme-set-color 'cyan)
   (powerline-moe-theme))
+
+(use-package farmhouse-theme
+  :if window-system
+  :defer t
+  :load-path "themes"
+  :ensure t)
 
 (use-package circadian
   :if window-system
   :ensure t
   :config
-  (setq-default circadian-themes '(("07:30" . doom-solarized-light)
+  (setq-default circadian-themes '(("07:30" . farmhouse-light)
                                    ("18:00" . moe-dark)))
   (circadian-setup))
 
