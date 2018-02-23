@@ -158,10 +158,6 @@
   "Change the theme."
   (mapc #'disable-theme custom-enabled-themes))
 
-(use-package doom-themes
-  :if window-system
-  :ensure t)
-
 (use-package moe-theme
   :if window-system
   :ensure t
@@ -835,6 +831,7 @@ Otherwise, send an interrupt to slime."
   (setq-default magit-push-always-verify nil)
   (setq-default magit-fetch-arguments '("--prune"))
   (setq-default magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
+  (put 'magit-clean 'disabled nil)
   (use-package evil-magit)
 
   (defun magit-blame-toggle ()
@@ -1276,6 +1273,8 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 (use-package thread-dump
   :commands (thread-dump-open-file thread-dump-open-files thread-dump-open-dir))
+
+;; (use-package meghanada)
 
 (use-package eclim
   :init
