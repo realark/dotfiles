@@ -1258,6 +1258,10 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   ;; (setq groovysh-args  )
   )
 
+(use-package scala-mode
+  :mode
+  ("\\.scala$" . scala-mode))
+
 (use-package jdecomp
   :mode ("\\.class$" . jdecomp-mode)
   :config
