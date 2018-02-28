@@ -161,7 +161,6 @@
 (use-package moe-theme
   :if window-system
   :ensure t
-  :defer t
   :load-path "themes"
   :config
   (moe-theme-set-color 'cyan)
@@ -169,9 +168,8 @@
 
 (use-package farmhouse-theme
   :if window-system
-  :defer t
-  :load-path "themes"
-  :ensure t)
+  :ensure t
+  :load-path "themes")
 
 (use-package circadian
   :if window-system
