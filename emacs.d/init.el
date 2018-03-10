@@ -1057,24 +1057,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
        (bury-buffer)
        (nth n my-buffer-list)))))
 
-;; tags
-(use-package etags-select
-  :init
-  (setq-default tags-revert-without-query 1)
-  :general
-  ("<f3>" #'etags-select-find-tag-at-point)
-  (general-evil-define-key 'emacs etags-select-mode-map
-    "j"       'etags-select-next-tag
-    "k"       'etags-select-previous-tag
-    "q"       'etags-select-quit
-    "/"       'evil-search-forward
-    "n"       'evil-search-next
-    "N"       'evil-search-previous)
-  :config
-  (setq-default etags-select-go-if-unambiguous t)
-  (setq-default etags-select-highlight-delay 5.0)
-  (setq-default etags-select-use-short-name-completion t))
-
 ;; Backup files
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
@@ -1183,11 +1165,6 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
   :defer t
   :config
   (elfeed-load-opml "~/.admin/arks_feeds.opml"))
-
-;; Dired options
-(use-package dired+
-  :config
-  (diredp-toggle-find-file-reuse-dir 1))
 
 (use-package rainbow-delimiters
   :init
