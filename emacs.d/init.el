@@ -517,10 +517,8 @@ WINDOW: %(buffer-name)
             "M-?" #'company-show-doc-buffer
             "M-." #'company-show-location)
   :config
-  ;; make company work with org-mode
-  (defun add-pcomplete-to-capf ()
-    (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
-  (add-hook 'org-mode-hook #'add-pcomplete-to-capf)
+  (setf company-backends
+        (remove 'company-eclim company-backends))
   (use-package company-quickhelp
     :config
     (company-quickhelp-mode t)
@@ -1405,6 +1403,17 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 ;;  (interactive)
 ;;  (set-buffer-file-coding-system 'iso-latin-1-mac t))
 ;;
+
+(use-package lsp-mode
+  :config
+  (load "~/workspace/intellij-lsp-server/lsp-intellij.el")
+  (use-package company-lsp
+    :config
+    (push 'company-lsp company-backends))
+  (with-eval-after-load 'lsp-mode
+    (require 'lsp-intellij)
+    (add-hook 'java-mode-hook #'lsp-intellij-enable)))
+
 
 
 ;;; init.el ends here
