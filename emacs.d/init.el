@@ -169,6 +169,7 @@
 (use-package farmhouse-theme
   :if window-system
   :ensure t
+  :defer t
   :load-path "themes")
 
 (use-package circadian
