@@ -545,6 +545,30 @@ WINDOW: %(buffer-name)
                           ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
   (setq-default projectile-enable-caching t)
 
+  (progn
+    (defun gradle-command-alias (cmd)
+      "Simplify running commands on specific gradle subprojects."
+      (let ((tokens (split-string cmd)))
+        ;; use wrapper
+        (setf (first tokens) "./gradlew")
+        ;; replace arg '/' with ':'
+        (mapconcat (lambda (arg)
+                     (if (string-equal "./gradlew" arg)
+                         arg
+                       (replace-regexp-in-string "/" ":" arg)))
+                   tokens
+                   " ")))
+
+    (defun my-projectile-command-advice (orig-fn &rest args)
+      (apply orig-fn
+             (if (or (string-match "^gradle" (first args))
+                     (string-match "^./gradlew" (first args)))
+                 (list (gradle-command-alias (first args)))
+               args)))
+
+    ;; projectile-run-compilation ?
+    (advice-add #'projectile-run-compilation :around #'my-projectile-command-advice))
+
   (progn ; rebuild projectile cache after magit checkouts
     (defun %run-projectile-invalidate-cache (&rest _args)
       ;; We ignore the args to `magit-checkout'.
