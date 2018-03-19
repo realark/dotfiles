@@ -550,7 +550,7 @@ WINDOW: %(buffer-name)
       "Simplify running commands on specific gradle subprojects."
       (let ((tokens (split-string cmd)))
         ;; use wrapper
-        (setf (first tokens) "./gradlew")
+        (setcar tokens "./gradlew")
         ;; replace arg '/' with ':'
         (mapconcat (lambda (arg)
                      (if (string-equal "./gradlew" arg)
