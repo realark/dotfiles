@@ -752,7 +752,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
   (load "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
 
-  (setq inhibit-splash-screen t)
+  (setq-default inhibit-splash-screen t)
 
   ;; stop slime from complaining about version mismatch
   (setq-default slime-protocol-version 'ignore)
@@ -766,7 +766,7 @@ Otherwise, send an interrupt to slime."
           (t (slime-repl-kill-input)
              (slime-repl-kill-input))))
 
-  (general-evil-define-key 'normal slime-repl-mode-map
+  (general-def 'normal slime-repl-mode-map
     "q" (lambda ()
           (interactive)
           (end-of-buffer)
@@ -774,7 +774,7 @@ Otherwise, send an interrupt to slime."
           (toggle-interact-with-buffer))
     [return]  #'slime-inspect-presentation-at-point)
 
-  (general-evil-define-key 'insert slime-repl-mode-map
+  (general-def 'insert slime-repl-mode-map
     "C-c" 'my-slime-repl-kill-or-interrupt
     "C-d" (lambda () (interactive)
             (when (y-or-n-p "Quit slime?")
@@ -785,22 +785,18 @@ Otherwise, send an interrupt to slime."
     "C-k" 'slime-repl-previous-input
     "C-j" 'slime-repl-next-input)
 
-  (evil-define-key 'normal lisp-mode-map
-    (kbd "<f4>") #'slime-browse-classes
-    (kbd "M-.") 'slime-edit-definition)
+  (general-def 'normal lisp-mode-map
+    "<f4>" #'slime-browse-classes
+    "M-." 'slime-edit-definition)
 
   ;; slime xref browser evil bindings
-  (evil-define-key 'normal slime-browser-map
-    (kbd "j") 'widget-forward
-    (kbd "k") 'widget-backward
-    (kbd "M-.") (lambda () (interactive)
-                  (end-of-line)
-                  (slime-edit-definition (slime-symbol-at-point)))
-    (kbd "q") 'bury-buffer)
-
-  ;; slime xref evil bindings
-  (define-key slime-xref-mode-map (kbd "j") 'slime-xref-next-line)
-  (define-key slime-xref-mode-map (kbd "k") 'slime-xref-prev-line)
+  (general-def 'normal slime-browser-map
+    "j" 'widget-forward
+    "k" 'widget-backward
+    "M-." (lambda () (interactive)
+            (end-of-line)
+            (slime-edit-definition (slime-symbol-at-point)))
+    "q" 'bury-buffer)
 
   ;; sldb evil bindings
   (general-evil-define-key 'normal sldb-mode-map
@@ -822,23 +818,25 @@ Otherwise, send an interrupt to slime."
     "9" (general-simulate-keys "9" t)
     "v" (general-simulate-keys "v" t))
 
-  (general-evil-define-key 'normal slime-xref-mode-map
-    "RET" (general-simulate-keys "RET" t))
+  ;; slime xref evil bindings
 
-  (evil-define-key 'normal slime-popup-buffer-mode-map
-    (kbd "q") #'quit-window)
+  (general-def 'normal slime-xref-mode-map
+    "j" #'slime-xref-next-line
+    "k" #'slime-xref-prev-line
+    "RET" (general-simulate-keys "RET" t))
 
   ;; evil keys for slime inspector
   (evil-set-initial-state 'slime-inspector-mode 'normal)
-  (evil-define-key 'normal slime-inspector-mode-map
-    (kbd "q") (lambda ()
-                "Reinspect the previous object or close the window if there is no previous object"
-                ;; mostly copied from slime-inspector-pop
-                (interactive)
-                (let ((result (slime-eval `(swank:inspector-pop))))
-                  (if result
-                      (slime-open-inspector result (pop slime-inspector-mark-stack))
-                    (quit-window)))))
+  (general-def 'normal slime-inspector-mode-map
+    "q" (lambda ()
+          "Reinspect the previous object or close the window if there is no previous object"
+          ;; mostly copied from slime-inspector-pop
+          (interactive)
+          (let ((result (slime-eval `(swank:inspector-pop))))
+            (if result
+                (slime-open-inspector result (pop slime-inspector-mark-stack))
+              (quit-window)))))
+
   (let ((cl-annot-slime-helper "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el"))
     (when (file-exists-p cl-annot-slime-helper)
       (load cl-annot-slime-helper))))
