@@ -666,6 +666,34 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (general-define-key
    "<f9>" #'toggle-interact-with-buffer))
 
+(progn
+  (defun my-ide-type-hierarchy ()
+    (warn "Not Implemented"))
+  (defun my-ide-callers ()
+    (warn "Not Implemented"))
+  (defun my-ide-documentation ()
+    (warn "Not Implemented"))
+  (defun my-ide-usage ()
+    (warn "Not Implemented"))
+
+  (defhydra hydra-ide (:color amaranth :columns 1)
+    "IDE Actions"
+    ("h"  (my-ide-type-hierarchy) "Type Hierarchy" :exit t)
+    ("c"  (my-ide-callers) "Callers" :exit t)
+    ("u"  (my-ide-usage) "Usage" :exit t)
+    ("d"  (my-ide-documentation) "Documentation" :exit t)
+    ("q"  nil "Cancel" :color red))
+
+  (defmacro ide-hydra-impl ()
+    nil)
+
+  (when nil
+    ;; implement in buffer-local functions
+    (ide-hydra-impl lisp-mode
+                    (my-ide-type-hierarchy slime-browse-classes))
+    )
+  )
+
 ;; comint bindings
 (progn
   (general-def 'insert comint-mode-map
