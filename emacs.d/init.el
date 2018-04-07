@@ -687,7 +687,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 ;;Slime
 (use-package slime
   :delight slime
-  :commands slime
+  :commands (slime slime-connect)
   :init
   (defun print-help ()
     (print "No override. Check for .custom.el?"))
@@ -740,8 +740,6 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
   (load (expand-file-name "~/.roswell/helper.el"))
   (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run")
-  (add-to-list 'load-path
-               (concat (roswell-slime-directory) "contrib/"))
   (slime-setup '(slime-fancy
                  slime-highlight-edits
                  slime-asdf
@@ -775,15 +773,15 @@ Otherwise, send an interrupt to slime."
     [return]  #'slime-inspect-presentation-at-point)
 
   (general-def 'insert slime-repl-mode-map
-    "C-c" 'my-slime-repl-kill-or-interrupt
+    "C-c" #'my-slime-repl-kill-or-interrupt
     "C-d" (lambda () (interactive)
             (when (y-or-n-p "Quit slime?")
               (and (slime-repl-quit) (delete-window))))
-    "C-r" 'slime-repl-previous-matching-input
-    "TAB" 'completion-at-point
-    "C-S-l" 'slime-repl-clear-buffer
-    "C-k" 'slime-repl-previous-input
-    "C-j" 'slime-repl-next-input)
+    "C-r" #'slime-repl-previous-matching-input
+    "TAB" #'completion-at-point
+    "C-S-l" #'slime-repl-clear-buffer
+    "C-k" #'slime-repl-previous-input
+    "C-j" #'slime-repl-next-input)
 
   (general-def 'normal lisp-mode-map
     "<f4>" #'slime-browse-classes
@@ -799,7 +797,7 @@ Otherwise, send an interrupt to slime."
     "q" 'bury-buffer)
 
   ;; sldb evil bindings
-  (general-evil-define-key 'normal sldb-mode-map
+  (general-def 'normal sldb-mode-map
     "C-j" (general-simulate-keys "n" t)
     "C-k" (general-simulate-keys "p" t)
     "j" (general-simulate-keys "C-n" t)
