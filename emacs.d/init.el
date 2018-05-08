@@ -1406,8 +1406,7 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
 
 (use-package lsp-mode
   :config
-  (load "~/workspace/intellij-lsp-server/lsp-intellij.el")
-  (require 'lsp-intellij)
+  (use-package lsp-intellij)
   (add-hook 'java-mode-hook #'lsp-intellij-enable)
   (use-package lsp-ui)
   (add-hook 'lsp-after-open-hook #'lsp-ui-mode)
