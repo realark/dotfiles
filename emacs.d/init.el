@@ -581,15 +581,16 @@ WINDOW: %(buffer-name)
 (use-package treemacs
   :defer t
   :general
-  ("<f6>" #'treemacs-projectile-toggle)
-  ("S-<f6>" #'treemacs-toggle)
+  ("<f6>" #'treemacs)
   :config
   (use-package treemacs-evil)
   (use-package treemacs-projectile
     :config
     (setq-default treemacs-header-function #'treemacs-projectile-create-header))
   (setq-default treemacs-git-integration t)
-  (treemacs-follow-mode t))
+  (treemacs-git-mode 'extended)
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t))
 
 (use-package tabbar
   :init
