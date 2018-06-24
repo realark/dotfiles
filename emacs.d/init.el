@@ -890,7 +890,14 @@ Otherwise, send an interrupt to slime."
           (end-of-buffer)
           (evil-insert-state)
           (toggle-interact-with-buffer))
-    [return]  #'slime-inspect-presentation-at-point)
+    [return]  #'slime-inspect-presentation-at-point
+    "C-<return>" #'slime-expand-1)
+
+  ;; macroexpansion keys not working
+  ;; defaults are C-c <ret> == exapnd, C-/ == undo
+  (general-def 'normal slime-macroexpansion-minor-mode-map
+    "u" #'slime-macroexpand-undo
+    "C-<return>" #'slime-expand-1-inplace)
 
   (general-def 'insert slime-repl-mode-map
     "C-c" #'my-slime-repl-kill-or-interrupt
