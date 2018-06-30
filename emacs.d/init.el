@@ -517,8 +517,6 @@ WINDOW: %(buffer-name)
             "M-?" #'company-show-doc-buffer
             "M-." #'company-show-location)
   :config
-  (setf company-backends
-        (remove 'company-eclim company-backends))
   (use-package company-quickhelp
     :config
     (company-quickhelp-mode t)
