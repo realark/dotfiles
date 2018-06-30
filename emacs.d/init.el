@@ -44,8 +44,6 @@
 
 (mouse-avoidance-mode 'exile)
 
-(setq-default mac-command-modifier 'meta)
-
 (global-visual-line-mode 1)
 (setq-default line-move-visual t)
 
@@ -53,13 +51,6 @@
  isearch-allow-scroll t
  lazy-highlight-cleanup nil
  lazy-highlight-initial-delay 0)
-
-(defun load-if-exists (file)
-  "If FILE exists load it."
-  (when (file-exists-p file)
-    (load file)))
-
-(load-if-exists "~/.admin/sec.el")
 
 (defun my-minibuffer-setup-hook ()
   "Disable GC in the minibuffer."
@@ -77,199 +68,213 @@
 
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 
-;; Change the minbuffer startup message
-(defun display-startup-echo-area-message ()
-  "Change the startup message."
-  ;; Print deathday from https://www.death-clock.org/
-  (message "Sunday, 28th June 2071"))
+;; Misc elisp utils
+(progn
+  (defun load-if-exists (file)
+    "If FILE exists load it."
+    (when (file-exists-p file)
+      (load file)))
 
-(defun get-string-from-file (filePath)
-  "Return filePath's file content."
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (buffer-string)))
+  (defun get-string-from-file (file-path)
+    "Return the contents of FILE-PATH as a string."
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      (buffer-string)))
 
-(setq initial-scratch-message
-      (concat
-       (replace-regexp-in-string
-        "^" ";; " ; comment each line
-        (replace-regexp-in-string
-         "\n$" "" ; remove trailing linebreak
-         (get-string-from-file "/etc/motd")))
-       "\n\n"))
+  (defmacro boundp-and-true (mode-name)
+    "Non-nil if the mode specified by MODE-NAME is active."
+    `(and (boundp (quote ,mode-name)) ,mode-name))
 
-;; Maximize emacs window
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (defun rename-file-and-buffer (new-name)
+    "Renames both current buffer and file it's visiting to NEW-NAME."
+    (interactive "sNew name: ")
+    (let ((name (buffer-name))
+          (filename (buffer-file-name)))
+      (if (not filename)
+          (message "Buffer '%s' is not visiting a file!" name)
+        (if (get-buffer new-name)
+            (message "A buffer named '%s' already exists!" new-name)
+          (progn
+            (rename-file filename new-name 1)
+            (rename-buffer new-name)
+            (set-visited-file-name new-name)
+            (set-buffer-modified-p nil))))))
 
-(defmacro boundp-and-true (mode-name)
-  "Non-nil if the mode specified by MODE-NAME is active."
-  `(and (boundp (quote ,mode-name)) ,mode-name))
+  (defun toggle-window-split ()
+    "Toggle two-window split between horizontal and vertical."
+    (interactive)
+    (if (= (count-windows) 2)
+        (let* ((this-win-buffer (window-buffer))
+               (next-win-buffer (window-buffer (next-window)))
+               (this-win-edges (window-edges (selected-window)))
+               (next-win-edges (window-edges (next-window)))
+               (this-win-2nd (not (and (<= (car this-win-edges)
+                                           (car next-win-edges))
+                                       (<= (cadr this-win-edges)
+                                           (cadr next-win-edges)))))
+               (splitter
+                (if (= (car this-win-edges)
+                       (car (window-edges (next-window))))
+                    'split-window-horizontally
+                  'split-window-vertically)))
+          (delete-other-windows)
+          (let ((first-win (selected-window)))
+            (funcall splitter)
+            (if this-win-2nd (other-window 1))
+            (set-window-buffer (selected-window) this-win-buffer)
+            (set-window-buffer (next-window) next-win-buffer)
+            (select-window first-win)
+            (if this-win-2nd (other-window 1))))))
 
-(defun rename-file-and-buffer (new-name)
-  "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
-      (if (get-buffer new-name)
-          (message "A buffer named '%s' already exists!" new-name)
-        (progn
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil))))))
+  (defun revert-all-buffers ()
+    "Refreshes all open buffers from their respective files."
+    (interactive)
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
+          (revert-buffer t t t) )))
+    (message "all buffers refreshed"))
 
-;; winner mode allows easy undo/redo of window changes
-(when (fboundp 'winner-mode)
-  (winner-mode 1))
+  (defmacro require-install (PCK)
+    "Require package PCK, install via \"package-install\" if missing."
+    `(unless (require ,PCK nil t)
+       (package-install ,PCK)
+       (require ,PCK))))
 
-;; Require-install Macro
-(defmacro require-install (PCK)
-  "Require package PCK, install via \"package-install\" if missing."
-  `(unless (require ,PCK nil t)
-     (package-install ,PCK)
-     (require ,PCK)))
+;; Change startup messages
+(progn
+  (defun display-startup-echo-area-message ()
+    "Change the startup message."
+    ;; Print deathday from https://www.death-clock.org/
+    (message "Sunday, 28th June 2071"))
+
+  (setq initial-scratch-message
+        (concat
+         (replace-regexp-in-string
+          "^" ";; "                     ; comment each line
+          (replace-regexp-in-string
+           "\n$" ""                     ; remove trailing linebreak
+           (get-string-from-file "/etc/motd")))
+         "\n\n")))
+
+(load-if-exists "~/.admin/sec.el")
 
 ;; use mepla and marmalade for package
-(require-install 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
-(require-install 'use-package)
-(setq-default use-package-always-ensure t)
+(progn
+  (require-install 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+  (package-initialize)
+  (require-install 'use-package)
+  (setq-default use-package-always-ensure t)
 
-;; env vars for osx
-(use-package exec-path-from-shell
-  :if (memq window-system '(ns))
-  :config
-  (exec-path-from-shell-initialize))
+  (use-package try
+    :commands try))
 
-;; try runs emacs packages without installing them
-(use-package try
-  :commands try)
+;; settings for osx
+(progn
+  (setq-default mac-command-modifier 'meta)
+  (use-package exec-path-from-shell
+    :if (memq window-system '(ns))
+    :config
+    (exec-path-from-shell-initialize)))
 
-;;; Themes and UI
+;; Themes and UI tweaks
+(progn
+  (use-package powerline)
 
-(use-package powerline)
+  (use-package delight
+    :config
+    (delight 'eldoc-mode nil 'eldoc)
+    (delight 'undo-tree-mode nil 'undo-tree)
+    (delight 'auto-revert-mode nil 'autorevert))
 
-(use-package delight
-  :config
-  (delight 'eldoc-mode nil 'eldoc)
-  (delight 'undo-tree-mode nil 'undo-tree)
-  (delight 'auto-revert-mode nil 'autorevert))
+  ;; Theme
+  (defadvice load-theme (before theme-dont-propagate activate)
+    "Change the theme."
+    (mapc #'disable-theme custom-enabled-themes))
 
-;; Theme
-(defadvice load-theme (before theme-dont-propagate activate)
-  "Change the theme."
-  (mapc #'disable-theme custom-enabled-themes))
+  (use-package moe-theme
+    :if window-system
+    :ensure t
+    :load-path "themes"
+    :config
+    (moe-theme-set-color 'cyan)
+    (powerline-moe-theme))
 
-(use-package moe-theme
-  :if window-system
-  :ensure t
-  :load-path "themes"
-  :config
-  (moe-theme-set-color 'cyan)
-  (powerline-moe-theme))
+  (use-package farmhouse-theme
+    :if window-system
+    :ensure t
+    :defer t
+    :load-path "themes")
 
-(use-package farmhouse-theme
-  :if window-system
-  :ensure t
-  :defer t
-  :load-path "themes")
+  (use-package circadian
+    :if window-system
+    :ensure t
+    :config
+    (setq-default circadian-themes '(("07:30" . farmhouse-light)
+                                     ("18:00" . moe-dark)))
+    (circadian-setup))
 
-(use-package circadian
-  :if window-system
-  :ensure t
-  :config
-  (setq-default circadian-themes '(("07:30" . farmhouse-light)
-                                   ("18:00" . moe-dark)))
-  (circadian-setup))
 
-(defun toggle-window-split ()
-  "Toggle two-window split between horizontal and vertical."
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
+  ;; Maximize emacs window
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-(defun revert-all-buffers ()
-  "Refreshes all open buffers from their respective files."
-  (interactive)
-  (dolist (buf (buffer-list))
-    (with-current-buffer buf
-      (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
-        (revert-buffer t t t) )))
-  (message "all buffers refreshed"))
+  ;; winner mode allows easy undo/redo of window changes
+  (winner-mode 1)
 
-;; use ace-window
-(use-package ace-window)
+  ;; use ace-window
+  (use-package ace-window))
 
-(defun select-current-line ()
-  "Select the current line."
-  (end-of-line) ; move to end of line
-  (set-mark (line-beginning-position)))
+;; comment toggling
+(progn
+  (defun select-current-line ()
+    "Select the current line."
+    (end-of-line)                       ; move to end of line
+    (set-mark (line-beginning-position)))
 
-(defun toggle-comment-region-or-line ()
-  "Comment or uncomment the selected region.  If no region is selected use the current line."
-  (interactive)
-  (if (not mark-active)
-      (select-current-line))
-  (when nil ; TODO DWIM lisp comment
-    (if (boundp-and-true smartparens-mode)
-        (save-excursion
-          (message "TODO sp-comment")
-          ;; go to end of region
-          ;; for each line going up:
-          ;;   if not commented
-          ;;      goto beginning of line
-          ;;      sp-comment
-          (beginning-of-line)
-          ;; (save-excursion
-          ;;   ;; (let ((start (region-beginning))
-          ;;   ;;       (end (region-end)))
-          ;;   ;;   (deactivate-mark)
-          ;;   ;;   ;; (while (<=  (mark) start)
-          ;;   ;;   ;;   (beginning-of-line)
-          ;;   ;;   ;;   (lispy-comment)
-          ;;   ;;   ;;   (forward-line -1))
-          ;;   ;;   (message "TODO: lispy!!"))
-          ;;   )
-          (sp-comment))))
-  (comment-or-uncomment-region (region-beginning) (region-end)))
+  (defun toggle-comment-region-or-line ()
+    "Comment or uncomment the selected region.  If no region is selected use the current line."
+    (interactive)
+    (if (not mark-active)
+        (select-current-line))
+    (when nil                           ; TODO DWIM lisp comment
+      (if (boundp-and-true smartparens-mode)
+          (save-excursion
+            (message "TODO sp-comment")
+            ;; go to end of region
+            ;; for each line going up:
+            ;;   if not commented
+            ;;      goto beginning of line
+            ;;      sp-comment
+            (beginning-of-line)
+            ;; (save-excursion
+            ;;   ;; (let ((start (region-beginning))
+            ;;   ;;       (end (region-end)))
+            ;;   ;;   (deactivate-mark)
+            ;;   ;;   ;; (while (<=  (mark) start)
+            ;;   ;;   ;;   (beginning-of-line)
+            ;;   ;;   ;;   (lispy-comment)
+            ;;   ;;   ;;   (forward-line -1))
+            ;;   ;;   (message "TODO: lispy!!"))
+            ;;   )
+            (sp-comment))))
+    (comment-or-uncomment-region (region-beginning) (region-end))))
 
 ;; Options for M-x rgrep
-(eval-after-load 'grep
-  '(when (boundp 'grep-find-ignored-files)
-     (mapc (lambda (file-regex)
-             (add-to-list 'grep-find-ignored-files file-regex))
-           '("*.fasl"
-             "*.class"))))
-(eval-after-load 'grep
-  '(when (boundp 'grep-find-ignored-directories)
-     (mapc (lambda (dir-regex)
-             (add-to-list 'grep-find-ignored-directories dir-regex))
-           '("target"
-             "build"
-             "bin"))))
+(progn
+  (eval-after-load 'grep
+    '(when (boundp 'grep-find-ignored-files)
+       (mapc (lambda (file-regex)
+               (add-to-list 'grep-find-ignored-files file-regex))
+             '("*.fasl"
+               "*.class"))))
+  (eval-after-load 'grep
+    '(when (boundp 'grep-find-ignored-directories)
+       (mapc (lambda (dir-regex)
+               (add-to-list 'grep-find-ignored-directories dir-regex))
+             '("target"
+               "build"
+               "bin")))))
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
