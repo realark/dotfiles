@@ -155,19 +155,19 @@ export LC_ALL="$LANG"
 export PATH=~/scripts:$PATH
 
 #zsh-syntax-highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 #Git Prompt
-source ~/.zsh/git-prompt/zshrc.sh
-username_prompt='%n'
-if [ `whoami` = "root" ]; then
-        username_prompt='$fg[red]'$username_prompt'$reset_color'
-fi
-PROMPT=$username_prompt'@%B%m%~%b$(git_super_status) %# '
+#source ~/.zsh/git-prompt/zshrc.sh
+#username_prompt='%n'
+#if [ `whoami` = "root" ]; then
+#        username_prompt='$fg[red]'$username_prompt'$reset_color'
+#fi
+#PROMPT=$username_prompt'@%B%m%~%b$(git_super_status) %# '
 
 #Smartcd
 #source $HOME/.smartcd/lib/core/smartcd
-source $HOME/.smartcd_config
+#source $HOME/.smartcd_config
 
 ##############Custom Functions
 
