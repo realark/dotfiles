@@ -9,7 +9,7 @@
 ;;; Code:
 
 
-;;; Standard options:
+;;; Standard options and util functions
 
 (setq inhibit-startup-message t)
 ;; Format the title-bar to always include the buffer name
@@ -54,8 +54,12 @@
  lazy-highlight-cleanup nil
  lazy-highlight-initial-delay 0)
 
-(when (file-exists-p "~/.sec.el")
-  (load "~/.sec.el"))
+(defun load-if-exists (file)
+  "If FILE exists load it."
+  (when (file-exists-p file)
+    (load file)))
+
+(load-if-exists "~/.admin/sec.el")
 
 (defun my-minibuffer-setup-hook ()
   "Disable GC in the minibuffer."
@@ -73,10 +77,11 @@
 
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 
-                                        ; change the minbuffer startup message
+;; Change the minbuffer startup message
 (defun display-startup-echo-area-message ()
   "Change the startup message."
-  (message "Welcome"))
+  ;; Print deathday from https://www.death-clock.org/
+  (message "Sunday, 28th June 2071"))
 
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
@@ -115,7 +120,6 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
-
 ;; winner mode allows easy undo/redo of window changes
 (when (fboundp 'winner-mode)
   (winner-mode 1))
@@ -143,6 +147,8 @@
 ;; try runs emacs packages without installing them
 (use-package try
   :commands try)
+
+;;; Themes and UI
 
 (use-package powerline)
 
@@ -852,9 +858,7 @@ Otherwise, send an interrupt to slime."
                 (slime-open-inspector result (pop slime-inspector-mark-stack))
               (quit-window)))))
 
-  (let ((cl-annot-slime-helper "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el"))
-    (when (file-exists-p cl-annot-slime-helper)
-      (load cl-annot-slime-helper))))
+  (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el"))
 
 (use-package elisp-slime-nav
   :mode ("\\.el$" . emacs-lisp-mode))
@@ -1366,15 +1370,12 @@ that deletes the trailing whitespace in the current unstaged magit hunk:
    'aggressive-indent-dont-indent-if
    'company-candidates))
 
-(setq-default custom-file "~/.emacs.d/custom.el")
-(when (file-exists-p custom-file)
-  (load custom-file))
+(load-if-exists "~/.emacs.d/custom.el")
 
 (let ((project-customizations nil))
   (ignore-errors
-    (setf project-customizations (concat (projectile-project-root) "./.custom.el")))
-  (when (and project-customizations (file-exists-p project-customizations))
-    (load project-customizations)))
+    ;; projectile-project-root will throw an error outside of projectile
+    (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el")))))
 
 
 ;; will eventually add hooks to switch to the appropriate newline encoding
