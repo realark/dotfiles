@@ -9,7 +9,8 @@
 ;;; Code:
 
 
-;; Tweak Standard options:
+;;; Standard options:
+
 (setq inhibit-startup-message t)
 ;; Format the title-bar to always include the buffer name
 (setq frame-title-format "emacs - %b")
@@ -25,8 +26,6 @@
 (menu-bar-mode -1)
 ;; Use y or n instead of yes or not
 (fset 'yes-or-no-p 'y-or-n-p)
-;; Insert closing bracket
-(electric-pair-mode 1)
 (show-paren-mode 1) ; turn on paren match highlighting
 (setq-default show-paren-style 'expression) ; highlight entire bracket expression
 ;; Don't tell me what I can't do!
@@ -43,9 +42,9 @@
 (setq help-window-select t)
 (setq echo-keystrokes 0.1)
 
-(mouse-avoidance-mode 'banish)
+(mouse-avoidance-mode 'exile)
 
-(setq mac-command-modifier 'meta)
+(setq-default mac-command-modifier 'meta)
 
 (global-visual-line-mode 1)
 (setq-default line-move-visual t)
@@ -72,7 +71,7 @@
               c-basic-offset 2
               tab-width 2)
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
 
                                         ; change the minbuffer startup message
 (defun display-startup-echo-area-message ()
@@ -423,18 +422,11 @@ WINDOW: %(buffer-name)
 
 (use-package smartparens
   :init
-  (add-hook 'lisp-mode-hook                          #'smartparens-global-strict-mode)
-  (add-hook 'emacs-lisp-mode-hook                    #'smartparens-global-strict-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook   #'smartparens-global-strict-mode)
-  (add-hook 'ielm-mode-hook                          #'smartparens-global-strict-mode)
-  (add-hook 'lisp-mode-hook                          #'smartparens-global-strict-mode)
-  (add-hook 'lisp-interaction-mode-hook              #'smartparens-global-strict-mode)
-  (add-hook 'slime-repl-mode                         #'smartparens-global-strict-mode)
-  (add-hook 'scheme-mode-hook                        #'smartparens-global-strict-mode)
+  (smartparens-global-strict-mode)
   :delight smartparens-mode
   :config
-  (electric-pair-mode 0) ; doesn't play nice with smartparens
-  (smartparens-global-strict-mode))
+  (sp-pair "'" nil :actions nil)
+  (sp-pair "`" nil :actions nil))
 
 (use-package lispyville
   :delight lispyville-mode
