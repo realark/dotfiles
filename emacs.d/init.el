@@ -900,7 +900,9 @@ Otherwise, send an interrupt to slime."
                           'magit-insert-unpushed-to-upstream-or-recent
                           'replace))
 
-(use-package git-link)
+(use-package git-link
+  :config
+  (setq git-link-default-branch "master"))
 
 (use-package hideshow
   :delight hs-minor-mode
