@@ -52,6 +52,12 @@
  lazy-highlight-cleanup nil
  lazy-highlight-initial-delay 0)
 
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t))
+      backup-by-copying t)
+
 (defun my-minibuffer-setup-hook ()
   "Disable GC in the minibuffer."
   (setq gc-cons-threshold most-positive-fixnum))
@@ -926,6 +932,7 @@ Otherwise, send an interrupt to slime."
                 (hs-toggle-hiding)))))
 
 (use-package multi-term
+  :defer t
   :init
   (setq-default multi-term-program "/bin/zsh")
   (defun last-term-buffer (l)
@@ -995,56 +1002,6 @@ Otherwise, send an interrupt to slime."
     (eshell/alias 'll 'ls '-l))
 
   (add-hook 'eshell-mode-hook #'my-eshell-hook))
-
-;;;;; Buffer navigation
-;; necessary support function for buffer burial
-(defun crs-delete-these (delete-these from-this-list)
-  "Delete DELETE-THESE FROM-THIS-LIST."
-  (cond
-   ((car delete-these)
-    (if (member (car delete-these) from-this-list)
-        (crs-delete-these (cdr delete-these) (delete (car delete-these)
-                                                     from-this-list))
-      (crs-delete-these (cdr delete-these) from-this-list)))
-   (t from-this-list)))
-;; buffer regexes to skip while cycling
-(defvar crs-hated-buffers
-  '("^\*.*\*$"
-    "help"
-    "KILL"
-    "TAGS"
-    "^ .*"))
-(defun crs-hated-buffers ()
-  "List of buffers I never want to see, converted from names to buffers."
-  (delete nil
-          (append
-           (mapcar (lambda (this-buffer)
-                     (let (badbuffer)
-                       (dolist (hated-buffer-regex crs-hated-buffers badbuffer)
-                         (if (string-match hated-buffer-regex (buffer-name this-buffer))
-                             (setq badbuffer this-buffer)))
-                       badbuffer))
-                   (buffer-list)))))
-
-(defun crs-bury-buffer (&optional n)
-  (interactive)
-  (unless n
-    (setq n 1))
-  (let ((my-buffer-list (crs-delete-these (crs-hated-buffers)
-                                          (buffer-list (selected-frame)))))
-    (switch-to-buffer
-     (if (< n 0)
-         (nth (+ (length my-buffer-list) n)
-              my-buffer-list)
-       (bury-buffer)
-       (nth n my-buffer-list)))))
-
-;; Backup files
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-(setq backup-by-copying t)
 
 ;; erc
 (use-package erc
