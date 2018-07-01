@@ -627,12 +627,19 @@ WINDOW: %(buffer-name)
   (set-face-foreground 'tabbar-selected "white")
   (set-face-background 'tabbar-selected "DarkBlue")
 
+  ;; TODO: session tabs with hydra-tab support
+  (defvar my-tabbar-groups
+    (list "emacs" "org" "other"))
+
+  (defvar active-tabbar-group nil)
+
   (defun my-tabbar-buffer-groups ()
     "Show all normal files in one group"
     (list (cond ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
                 ((string-prefix-p "TAGS" (buffer-name)) "emacs")
                 ((string-prefix-p "magit" (buffer-name)) "emacs")
                 ((eq major-mode 'dired-mode) "emacs")
+                ((string-match-p "Documents/org-files" default-directory) "org")
                 (t "user"))))
   (setq tabbar-buffer-groups-function 'my-tabbar-buffer-groups)
 
