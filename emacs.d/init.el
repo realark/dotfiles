@@ -58,6 +58,12 @@
       `((".*" ,temporary-file-directory t))
       backup-by-copying t)
 
+;; pretty lambda
+(setq-default prettify-symbols-alist
+              ;; lambda -> λ
+              '(("lambda" . 955)))
+(global-prettify-symbols-mode 1)
+
 (defun my-minibuffer-setup-hook ()
   "Disable GC in the minibuffer."
   (setq gc-cons-threshold most-positive-fixnum))
@@ -1003,7 +1009,7 @@ Otherwise, send an interrupt to slime."
 
   (add-hook 'eshell-mode-hook #'my-eshell-hook))
 
-;; erc
+;; irc client
 (use-package erc
   :ensure t
   :defer t
@@ -1099,21 +1105,9 @@ Otherwise, send an interrupt to slime."
   :mode (("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode)))
 
-;; elfeed
-(use-package elfeed
-  :defer t
-  :config
-  (elfeed-load-opml "~/.admin/arks_feeds.opml"))
-
 (use-package rainbow-delimiters
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
-
-;; pretty lambda
-(setq-default prettify-symbols-alist
-              ;; lambda -> λ
-              '(("lambda" . 955)))
-(global-prettify-symbols-mode 1)
 
 ;; Flycheck
 (use-package flycheck
