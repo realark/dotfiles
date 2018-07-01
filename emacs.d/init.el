@@ -910,11 +910,19 @@ Otherwise, send an interrupt to slime."
   (add-hook 'prog-mode-hook 'hs-minor-mode)
   (add-hook 'hs-minor-mode-hook 'hs-hide-initial-comment-block)
   :config
+
+  (defun end-of-line-before-comment ()
+    "Move the end of the line, or just before a comment character if the line ends in a comment."
+    (when (comment-search-forward (line-end-position) t)
+      (goto-char (match-beginning 0))
+      (skip-syntax-backward " " (line-beginning-position))
+      (backward-char)))
+
   (general-def 'normal hs-minor-mode-map
     "<tab>" (lambda ()
               (interactive)
               (save-excursion
-                (end-of-line)
+                (end-of-line-before-comment)
                 (hs-toggle-hiding)))))
 
 (use-package multi-term
