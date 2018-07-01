@@ -386,6 +386,19 @@
             (windmove-find-other-window 'up))
           (shrink-window arg)
         (enlarge-window arg))))
+
+  (defhydra hydra-tabs (:color amaranth :hint nil)
+    "
+TABS: %(buffer-name)
+-------------------------------------------------------------
+ Move:        _l_right _h_left
+ Change:      _L_right _H_left"
+    ("l" tabbar-forward-tab)
+    ("h" tabbar-backward-tab)
+    ("L" (my-tabbar-move-current-tab-one-place :right))
+    ("H" (my-tabbar-move-current-tab-one-place :left))
+    ("q" nil))
+
   (general-define-key
    "C-x w"
    (defhydra hydra-window (:color amaranth :hint nil)
@@ -396,10 +409,14 @@ WINDOW: %(buffer-name)
  Delete:       _o_nly  _d_window
  Change:       _s_wap _b_uffer
 
+ Tabs:         _t_ab hydra
+
  Move:         _h_left _j_up _k_down _l_right
  Nudge:        _H_left _J_down _K_down _L_right
 
  Winner:       _u_ndo  _C-r_edo"
+     ("t" hydra-tabs/body :exit t)
+     ("v" split-window-right)
      ("v" split-window-right)
      ("x" split-window-below)
      ("s" ace-swap-window)
@@ -618,6 +635,51 @@ WINDOW: %(buffer-name)
                 ((eq major-mode 'dired-mode) "emacs")
                 (t "user"))))
   (setq tabbar-buffer-groups-function 'my-tabbar-buffer-groups)
+
+  (defun my-tabbar-move-current-tab-one-place (direction)
+    "Move current tab one place. DIRECTION must be :LEFT or :RIGHT."
+    ;; bufset == (list  (buffer . (group-list)) ...)
+    (let* ((bufset (tabbar-current-tabset t))
+           (old-bufs (tabbar-tabs bufset))
+           (first-buf (car old-bufs))
+           (last-buf (car (last old-bufs)))
+           (new-bufs (list)))
+      (ecase direction
+        (:left
+         (unless (string= (buffer-name) (format "%s" (car first-buf)))
+           (setq not-yet-this-buf first-buf)
+           (setq old-bufs (cdr old-bufs))
+           (while (and old-bufs
+                       (not (string= (buffer-name) (format "%s" (car (car old-bufs))))))
+             (push not-yet-this-buf new-bufs)
+             (setq not-yet-this-buf (car old-bufs))
+             (setq old-bufs (cdr old-bufs)))
+           (if old-bufs ; if this is false, then the current tab's buffer name is mysteriously missing
+               (progn
+                 (push (car old-bufs) new-bufs) ; this is the tab that was to be moved
+                 (push not-yet-this-buf new-bufs)
+                 (setq new-bufs (reverse new-bufs))
+                 (setq new-bufs (append new-bufs (cdr old-bufs))))
+             (error "Error: current buffer's name was not found in Tabbar's buffer list."))))
+        (:right
+         (while (and
+                 old-bufs
+                 (not (string= (buffer-name) (format "%s" (car (car old-bufs))))))
+           (push (car old-bufs) new-bufs)
+           (setq old-bufs (cdr old-bufs)))
+         (if old-bufs ; if this is false, then the current tab's buffer name is mysteriously missing
+             (progn
+               (setq the-buffer (car old-bufs))
+               (setq old-bufs (cdr old-bufs))
+               (if old-bufs ; if this is false, then the current tab is the rightmost
+                   (push (car old-bufs) new-bufs))
+               (push the-buffer new-bufs)) ; this is the tab that was to be moved
+           (error "Error: current buffer's name was not found in Tabbar's buffer list."))
+         (setq new-bufs (reverse new-bufs))
+         (setq new-bufs (append new-bufs (cdr old-bufs)))))
+      (set bufset new-bufs)
+      (tabbar-set-template bufset nil)
+      (tabbar-display-update)))
 
   (general-def
     :states '(normal)
