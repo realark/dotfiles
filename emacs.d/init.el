@@ -1261,35 +1261,8 @@ Otherwise, send an interrupt to slime."
    'aggressive-indent-dont-indent-if
    'company-candidates))
 
-(load-if-exists "~/.emacs.d/custom.el")
-
-(let ((project-customizations nil))
-  (ignore-errors
-    ;; projectile-project-root will throw an error outside of projectile
-    (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el")))))
-
-
-;; will eventually add hooks to switch to the appropriate newline encoding
-;;(defun unix-file ()
-;;  "Change the current buffer to Latin 1 with Unix line-ends."
-;;  (interactive)
-;;  (set-buffer-file-coding-system 'iso-latin-1-unix t))
-;;
-;;(defun dos-file ()
-;;  "Change the current buffer to Latin 1 with DOS line-ends."
-;;  (interactive)
-;;  (set-buffer-file-coding-system 'iso-latin-1-dos t))
-;;
-;;(defun mac-file ()
-;;  "Change the current buffer to Latin 1 with Mac line-ends."
-;;  (interactive)
-;;  (set-buffer-file-coding-system 'iso-latin-1-mac t))
-;;
-
 (use-package lsp-mode
   :config
-  (use-package lsp-intellij)
-  (add-hook 'java-mode-hook #'lsp-intellij-enable)
   (use-package lsp-ui)
   (add-hook 'lsp-after-open-hook #'lsp-ui-mode)
 
@@ -1297,11 +1270,22 @@ Otherwise, send an interrupt to slime."
   (setq company-lsp-enable-snippet t
         company-lsp-cache-candidates t)
   (push 'company-lsp company-backends)
-  ;; (push 'java-mode company-global-modes)
-  )
 
+  (use-package lsp-intellij)
+  (add-hook 'java-mode-hook
+            (lambda ()
+              (message "in my hook")
+              (lsp-intellij-enable)
+              (lsp-ui-sideline-enable nil))))
 
+;; Finally, apply host and project custom settings
+(progn
+  (load-if-exists "~/.emacs.d/custom.el")
 
+  (let ((project-customizations nil))
+    (ignore-errors
+      ;; projectile-project-root will throw an error outside of projectile
+      (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el"))))))
 
 
 ;;; init.el ends here
