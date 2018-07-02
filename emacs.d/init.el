@@ -391,12 +391,18 @@
     "
 TABS: %(buffer-name)
 -------------------------------------------------------------
- Move:        _l_right _h_left
- Change:      _L_right _H_left"
+ Move:        _L_:right _H_:left
+ Switch:      _l_:right _h_:left _k_:up-group _j_:down-group
+ Manage:      _c_reate-group _s_witch-group
+EOF"
     ("l" tabbar-forward-tab)
     ("h" tabbar-backward-tab)
+    ("j" tabbar-backward-group)
+    ("k" tabbar-forward-group)
     ("L" (my-tabbar-move-current-tab-one-place :right))
     ("H" (my-tabbar-move-current-tab-one-place :left))
+    ("c" (my-create-tabbar-group (read-from-minibuffer "Enter new group name: ")) :exit t)
+    ("s" (error "TODO") :exit t)
     ("q" nil))
 
   (general-define-key
@@ -414,7 +420,8 @@ WINDOW: %(buffer-name)
  Move:         _h_left _j_up _k_down _l_right
  Nudge:        _H_left _J_down _K_down _L_right
 
- Winner:       _u_ndo  _C-r_edo"
+ Winner:       _u_ndo  _C-r_edo
+EOF"
      ("t" hydra-tabs/body :exit t)
      ("v" split-window-right)
      ("v" split-window-right)
@@ -624,23 +631,54 @@ WINDOW: %(buffer-name)
   :init
   (tabbar-mode t)
   :config
+  (setq frame-title-format '("emacs <" (:eval (symbol-name tabbar-current-tabset)) "> - %b"))
+
   (set-face-foreground 'tabbar-selected "white")
   (set-face-background 'tabbar-selected "DarkBlue")
 
   ;; TODO: session tabs with hydra-tab support
   (defvar my-tabbar-groups
-    (list "emacs" "org" "other"))
+    "Additional tabbar groups (session-persistence only)"
+    (list ))
 
-  (defvar active-tabbar-group nil)
+  (defun my-create-tabbar-group (group-name)
+    (interactive)
+    (unless (or (find group-name my-tabbar-groups)
+                (find group-name '("emacs" "org" "other")))
+      (push (cons group-name (list (current-buffer))) my-tabbar-groups)))
+
+  (defun find-group-for-buffer (buffer)
+    (cl-loop for group in my-tabbar-groups do
+             (when (find buffer (cdr group))
+               (cl-return (car group)))))
+
+  (add-hook 'kill-buffer-hook
+            (lambda ()
+              (cl-loop for group in my-tabbar-groups do
+                       (setf (cdr group) (remove (current-buffer) (cdr group))))))
+
+  ;; tabbar-current-tabset  == current tab set
 
   (defun my-tabbar-buffer-groups ()
     "Show all normal files in one group"
-    (list (cond ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
-                ((string-prefix-p "TAGS" (buffer-name)) "emacs")
-                ((string-prefix-p "magit" (buffer-name)) "emacs")
-                ((eq major-mode 'dired-mode) "emacs")
-                ((string-match-p "Documents/org-files" default-directory) "org")
-                (t "user"))))
+    (list
+     (cond ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
+           ((string-prefix-p "TAGS" (buffer-name)) "emacs")
+           ((string-prefix-p "magit" (buffer-name)) "emacs")
+           ((eq major-mode 'dired-mode) "emacs")
+           ((string-match-p "Documents/org-files" default-directory) "org")
+           ((find-group-for-buffer (current-buffer)) (find-group-for-buffer (current-buffer)))
+           ((null (tabbar-current-tabset))
+            (let ((buf (current-buffer))
+                  (prev-group nil))
+              (switch-to-buffer (other-buffer (current-buffer) 1))
+              (setq prev-group (symbol-name (tabbar-current-tabset)))
+              (switch-to-buffer buf)
+              (cl-loop for group in my-tabbar-groups do
+                       (when (string-equal (car group) prev-group)
+                         (return (push buf (cdr group)))))
+              prev-group))
+           (t "other"))))
   (setq tabbar-buffer-groups-function 'my-tabbar-buffer-groups)
 
   (defun my-tabbar-move-current-tab-one-place (direction)
