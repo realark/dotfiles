@@ -1297,6 +1297,7 @@ Otherwise, send an interrupt to slime."
   (customize-set-variable 'jdecomp-decompiler-type 'procyon)
   (customize-set-variable 'jdecomp-decompiler-paths
                           `((procyon . ,(first-existing-file "/usr/share/java/procyon-decompiler/procyon-decompiler.jar"
+                                                             "/opt/procyon/procyon-decompiler-0.5.30.jar"
                                                              "/usr/local/Cellar/procyon-decompiler/0.5.30/libexec/procyon-decompiler-0.5.30.jar"))))
   (defun my-jdecomp-bytecode ()
     "Decompile the current file into raw bytecode"
