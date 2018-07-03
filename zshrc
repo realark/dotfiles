@@ -12,7 +12,7 @@ compinit
 zstyle ':completion:*' menu select=2
 
 #Colors
-if [ $(which gdircolors) != "" ]; then
+if which gdircolors >/dev/null 2>&1; then
   alias dircolors=gdircolors
 fi
 eval `dircolors -b`
