@@ -87,6 +87,12 @@
     (when (file-exists-p file)
       (load file)))
 
+  (defun first-existing-file (&rest files)
+    "Return the first existing file in FILE-LIST or nil of no file in the list exists."
+    (cl-loop for file in files do
+             (when (file-exists-p file)
+               (cl-return file))))
+
   (defun get-string-from-file (file-path)
     "Return the contents of FILE-PATH as a string."
     (with-temp-buffer
@@ -1290,7 +1296,8 @@ Otherwise, send an interrupt to slime."
   :config
   (customize-set-variable 'jdecomp-decompiler-type 'procyon)
   (customize-set-variable 'jdecomp-decompiler-paths
-                          '((procyon . "/usr/share/java/procyon-decompiler/procyon-decompiler.jar")))
+                          `((procyon . ,(first-existing-file "/usr/share/java/procyon-decompiler/procyon-decompiler.jar"
+                                                             "/usr/local/Cellar/procyon-decompiler/0.5.30/libexec/procyon-decompiler-0.5.30.jar"))))
   (defun my-jdecomp-bytecode ()
     "Decompile the current file into raw bytecode"
     (interactive)
