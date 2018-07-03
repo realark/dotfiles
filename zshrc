@@ -1,3 +1,5 @@
+# -*- mode: shell-script -*-
+
 # COMPLETION SETTINGS
 # add custom completion scripts
 fpath=(~/.zsh/completion $fpath)
@@ -10,6 +12,9 @@ compinit
 zstyle ':completion:*' menu select=2
 
 #Colors
+if [ $(which gdircolors) != "" ]; then
+  alias dircolors=gdircolors
+fi
 eval `dircolors -b`
 #Colors for man pages
 export LESS_TERMCAP_mb=$(tput bold; tput setaf 2) # green
