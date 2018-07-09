@@ -649,7 +649,7 @@ EOF"
 
   (defun my-create-tabbar-group (group-name)
     (interactive)
-    (unless (or (find group-name my-tabbar-groups)
+    (unless (or (ignore-errors (assoc group-name my-tabbar-groups))
                 (find group-name '("emacs" "org" "other")))
       (push (cons group-name (list (current-buffer))) my-tabbar-groups)))
 
