@@ -812,7 +812,19 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     ;; ("i"  (my-ide-interaction) "Interaction (repl, shell)" :exit t)
     ;; ("t"  (my-ide-test-repeat) "test re-run" :exit t)
     ;; ("T"  (my-ide-test) "Test thing at point" :exit t)
-    ("q"  nil "Cancel" :color red)))
+    ("q"  nil "Cancel" :color red))
+
+  (general-def
+    :states '(normal insert)
+    "C-x i" #'hydra-ide/body
+    "M-." (lambda ()
+            (interactive)
+            (mode-case
+             ('emacs-lisp-mode (call-interactively #'find-function-at-point)
+                               ;; delete extra window created by find-function-at-point
+                               (delete-window))
+             ('lisp-mode (call-interactively #'slime-edit-definition))
+             ('java-mode (call-interactively #'xref-find-definitions))))))
 
 ;; comint bindings
 (progn
