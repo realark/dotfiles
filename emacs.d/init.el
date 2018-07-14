@@ -794,41 +794,25 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
 ;; IDE hydra
 (progn
-  (defun my-ide-type-hierarchy ()
-    (warn "Not Implemented"))
-  (defun my-ide-callers ()
-    (warn "Not Implemented"))
-  (defun my-ide-documentation ()
-    (warn "Not Implemented"))
-  (defun my-ide-interaction ()
-    (warn "Not Implemented"))
-  (defun my-ide-test-repeat ()
-    (warn "Not Implemented"))
-  (defun my-ide-test ()
-    (warn "Not Implemented"))
-  (defun my-ide-usage ()
-    (warn "Not Implemented"))
+  (defmacro mode-case (&rest body)
+    "Execute a different body depending on the active major-mode."
+    `(pcase major-mode
+       ,@body
+       (unhandled-mode (warn (format "No handler for mode: %s" unhandled-mode)))))
 
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
-    ("h"  (my-ide-type-hierarchy) "Type Hierarchy" :exit t)
-    ("c"  (my-ide-callers) "Callers" :exit t)
-    ("u"  (my-ide-usage) "Usage" :exit t)
-    ("d"  (my-ide-documentation) "Documentation" :exit t)
-    ("i"  (my-ide-interaction) "Interaction (repl, shell)" :exit t)
-    ("t"  (my-ide-test-repeat) "test re-run" :exit t)
-    ("T"  (my-ide-test) "Test thing at point" :exit t)
-    ("q"  nil "Cancel" :color red))
-
-  (defmacro ide-hydra-impl ()
-    nil)
-
-  (when nil
-    ;; implement in buffer-local functions
-    (ide-hydra-impl lisp-mode
-                    (my-ide-type-hierarchy slime-browse-classes))
-    )
-  )
+    ("h" (mode-case
+          ('java-mode (lsp-goto-implementation))
+          ('lisp-mode (slime-browse-classes (slime-read-symbol-name "Class Name: "))))
+     "Type Hierarchy" :exit t)
+    ;; ("c"  (my-ide-callers) "Callers" :exit t)
+    ;; ("u"  (my-ide-usage) "Usage" :exit t)
+    ;; ("d"  (my-ide-documentation) "Documentation" :exit t)
+    ;; ("i"  (my-ide-interaction) "Interaction (repl, shell)" :exit t)
+    ;; ("t"  (my-ide-test-repeat) "test re-run" :exit t)
+    ;; ("T"  (my-ide-test) "Test thing at point" :exit t)
+    ("q"  nil "Cancel" :color red)))
 
 ;; comint bindings
 (progn
@@ -1396,7 +1380,6 @@ Otherwise, send an interrupt to slime."
   (use-package lsp-intellij)
   (add-hook 'java-mode-hook
             (lambda ()
-              (message "in my hook")
               (lsp-intellij-enable)
               (lsp-ui-sideline-enable nil))))
 
