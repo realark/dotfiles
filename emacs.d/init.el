@@ -1166,6 +1166,9 @@ Otherwise, send an interrupt to slime."
   (setq-default org-log-done 'time)
   (setq-default org-enforce-todo-dependencies t)
 
+  (setq-default org-startup-with-inline-images t)
+  (setq-default org-image-actual-width nil)
+
   (setq-default org-refile-targets '((nil :maxlevel . 9)))
   (setq-default org-outline-path-complete-in-steps nil) ; Refile in a single go
   (setq-default org-refile-use-outline-path t) ; Show full paths for refiling
