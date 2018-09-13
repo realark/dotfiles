@@ -44,6 +44,8 @@
 
 (mouse-avoidance-mode 'exile)
 
+(setq completion-ignore-case t)
+
 (global-visual-line-mode 1)
 (setq-default line-move-visual t)
 
