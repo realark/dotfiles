@@ -1223,8 +1223,13 @@ Otherwise, send an interrupt to slime."
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
-  :mode (("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode)))
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :general
+  (general-def 'normal markdown-mode-map
+    "TAB" #'markdown-cycle)
+  :init (setq-default markdown-command "multimarkdown"))
 
 (use-package rainbow-delimiters
   :init
