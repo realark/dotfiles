@@ -805,11 +805,15 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
     ("h" (mode-case
-          ('java-mode (lsp-goto-implementation))
+          ('java-mode (lsp-ui-peek-find-implementation))
           ('lisp-mode (slime-browse-classes (slime-read-symbol-name "Class Name: "))))
      "Type Hierarchy" :exit t)
-    ;; ("c"  (my-ide-callers) "Callers" :exit t)
-    ;; ("u"  (my-ide-usage) "Usage" :exit t)
+    ("r" (mode-case
+          ('java-mode (lsp-ui-peek-find-references)))
+     "References" :exit t)
+    ("g" (mode-case
+          ('java-mode (lsp-ui-peek-find-definitions)))
+     "Go to definition" :exit t)
     ;; ("d"  (my-ide-documentation) "Documentation" :exit t)
     ;; ("i"  (my-ide-interaction) "Interaction (repl, shell)" :exit t)
     ;; ("t"  (my-ide-test-repeat) "test re-run" :exit t)
@@ -826,7 +830,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                                ;; delete extra window created by find-function-at-point
                                (delete-window))
              ('lisp-mode (call-interactively #'slime-edit-definition))
-             ('java-mode (call-interactively #'xref-find-definitions))))))
+             ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))))))
 
 ;; comint bindings
 (progn
@@ -1391,8 +1395,15 @@ Otherwise, send an interrupt to slime."
 
 (use-package lsp-mode
   :config
-  (use-package lsp-ui)
-  (add-hook 'lsp-after-open-hook #'lsp-ui-mode)
+  (use-package lsp-ui
+    :general
+    (:keymaps 'lsp-ui-peek-mode-map
+              "M-j" #'lsp-ui-peek--select-next
+              "M-k" #'lsp-ui-peek--select-prev)
+    :config
+    (setq-default lsp-ui-peek-list-width 130)
+    (lsp-ui-sideline-mode -1))
+  (add-hook 'lsp-mode-hook #'lsp-ui-mode)
 
   (use-package company-lsp)
   (setq company-lsp-enable-snippet t
@@ -1403,7 +1414,7 @@ Otherwise, send an interrupt to slime."
   (add-hook 'java-mode-hook
             (lambda ()
               (lsp-intellij-enable)
-              (lsp-ui-sideline-enable nil))))
+              (lsp-ui-sideline-mode -1))))
 
 ;; Finally, apply host and project custom settings
 (progn
