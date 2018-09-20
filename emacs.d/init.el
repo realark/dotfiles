@@ -1401,7 +1401,8 @@ Otherwise, send an interrupt to slime."
               "M-j" #'lsp-ui-peek--select-next
               "M-k" #'lsp-ui-peek--select-prev)
     :config
-    (setq-default lsp-ui-peek-list-width 130)
+    (setq-default lsp-ui-sideline-enable nil
+                  lsp-ui-peek-list-width 130)
     (lsp-ui-sideline-mode -1))
   (add-hook 'lsp-mode-hook #'lsp-ui-mode)
 
@@ -1413,8 +1414,7 @@ Otherwise, send an interrupt to slime."
   (use-package lsp-intellij)
   (add-hook 'java-mode-hook
             (lambda ()
-              (lsp-intellij-enable)
-              (lsp-ui-sideline-mode -1))))
+              (lsp-intellij-enable))))
 
 ;; Finally, apply host and project custom settings
 (progn
