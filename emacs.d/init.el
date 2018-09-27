@@ -1034,6 +1034,10 @@ Otherwise, send an interrupt to slime."
                           'magit-insert-unpushed-to-upstream-or-recent
                           'replace))
 
+(use-package magithub
+  :after magit
+  :config (magithub-feature-autoinject t))
+
 (use-package git-link
   :config
   (setq git-link-default-branch "master"))
