@@ -56,3 +56,5 @@
 	templatedir = ~/.git_template
 [github]
 	user = realark
+[magithub]
+	cache = always

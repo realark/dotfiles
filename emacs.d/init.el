@@ -1429,5 +1429,6 @@ Otherwise, send an interrupt to slime."
       ;; projectile-project-root will throw an error outside of projectile
       (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el"))))))
 
+(server-start)
 
 ;;; init.el ends here

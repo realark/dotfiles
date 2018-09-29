@@ -1,5 +1,13 @@
 # -*- mode: shell-script -*-
 
+case "$(uname -a)" in
+    Linux*)     machine=linux;;
+    Darwin*)    machine=mac;;
+    CYGWIN*)    machine=cygwin;;
+    MINGW*)     machine=mingw;;
+    *)          machine="unknown"
+esac
+
 # COMPLETION SETTINGS
 # add custom completion scripts
 fpath=(~/.zsh/completion $fpath)
@@ -55,9 +63,11 @@ setopt nohup
 setopt print_exit_value
 
 # Vars used later on by Zsh
-export EDITOR="vim"
 export BROWSER="links"
 export PAGER="less"
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
+export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
 
 ##################################################################
 # Tab completions
@@ -113,7 +123,13 @@ bindkey -v
 
 ##################################################################
 # Some aliases
-alias ls='ls --color=auto -F'
+if [ "$machine" = "linux" ]; then
+  alias ls='ls --color=auto -F'
+else
+  if [ "$machine" = "mac" ]; then
+    alias ls='ls -G -F'
+  fi
+fi
 alias top='htop'
 alias minicom='sudo minicom'
 alias open='xdg-open'
@@ -142,6 +158,7 @@ alias sqlplus="launch_sqlplus"
 alias sbcl="rlwrap -c -H ~/.sbcl_history sbcl --noinform"
 alias sudo='sudo ';
 alias mtial='multitail'
+alias emacs='emacsclient -create-frame --alternate-editor=""'
 alias cliemacs='emacs -nw'
 alias idemacs='emacs >/dev/null 2>&1 &'
 alias vimacs='emacs --no-desktop'
