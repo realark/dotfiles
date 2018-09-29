@@ -24,6 +24,8 @@
 ;; Remove icons toolbar
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
 ;; Use y or n instead of yes or not
 (fset 'yes-or-no-p 'y-or-n-p)
 (show-paren-mode 1) ; turn on paren match highlighting
@@ -1410,10 +1412,13 @@ Otherwise, send an interrupt to slime."
     (lsp-ui-sideline-mode -1))
   (add-hook 'lsp-mode-hook #'lsp-ui-mode)
 
-  (use-package company-lsp)
-  (setq company-lsp-enable-snippet t
-        company-lsp-cache-candidates t)
-  (push 'company-lsp company-backends)
+  (use-package company-lsp
+    :after company
+    :config
+    (setq company-lsp-enable-snippet t
+          company-lsp-cache-candidates t)
+    ;; (push 'java-mode company-global-modes)
+    (push 'company-lsp company-backends))
 
   (use-package lsp-intellij)
   (add-hook 'java-mode-hook
@@ -1421,13 +1426,11 @@ Otherwise, send an interrupt to slime."
               (lsp-intellij-enable))))
 
 ;; Finally, apply host and project custom settings
-(progn
-  (load-if-exists "~/.emacs.d/custom.el")
 
-  (let ((project-customizations nil))
-    (ignore-errors
-      ;; projectile-project-root will throw an error outside of projectile
-      (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el"))))))
+(let ((project-customizations nil))
+  (ignore-errors
+    ;; projectile-project-root will throw an error outside of projectile
+    (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el")))))
 
 (server-start)
 
