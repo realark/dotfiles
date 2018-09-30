@@ -307,6 +307,13 @@
   (setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
   (setq-default evil-motion-state-modes '()))
 
+(use-package evil-collection
+  :after evil
+  :config
+  (with-eval-after-load 'ediff
+    (require 'evil-collection-ediff)
+    (evil-collection-ediff-setup)))
+
 ;; general for keybindings
 (use-package general
   :init
