@@ -1045,7 +1045,10 @@ Otherwise, send an interrupt to slime."
 
 (use-package magithub
   :after magit
-  :config (magithub-feature-autoinject t))
+  :config (magithub-feature-autoinject t)
+  (defun my-magithub-refresh ()
+    (interactive)
+    (magithub--refresh)))
 
 (use-package git-link
   :config
