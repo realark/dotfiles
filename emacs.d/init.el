@@ -1251,6 +1251,9 @@ Otherwise, send an interrupt to slime."
     "TAB" #'markdown-cycle)
   :init (setq-default markdown-command "multimarkdown"))
 
+(use-package graphviz-dot-mode
+  :mode ("\\.dot$" . graphviz-dot-mode))
+
 (use-package rainbow-delimiters
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
