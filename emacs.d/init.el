@@ -1445,6 +1445,15 @@ Otherwise, send an interrupt to slime."
     ;; projectile-project-root will throw an error outside of projectile
     (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el")))))
 
+(progn ; settings for emacs-anywhere
+  (defun popup-handler (app-name window-title x y w h)
+    (cond
+     ;; default to markdown mode
+     (t (markdown-mode t))))
+
+  (add-hook 'ea-popup-hook 'popup-handler))
+
+;; start the emacs daemon
 (server-start)
 
 ;;; init.el ends here
