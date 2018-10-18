@@ -1152,14 +1152,17 @@ Otherwise, send an interrupt to slime."
   :ensure t
   :defer t
   :init
-  (setq-default erc-nick "_ark_"
-                erc-server-reconnect-timeout 5
+  (setq-default erc-server-reconnect-timeout 5
                 erc-server-reconnect-attempts 3
                 erc-prompt-for-nickserv-password nil)
+
   :config
   (use-package erc-hl-nicks :ensure t)
   (require 'erc-services)
-  (erc-services-mode 1))
+  (erc-services-mode 1)
+  (require 'erc-log)
+  (setq-default erc-log-channels-directory "~/.emacs.d/erc/logs/"
+                erc-save-buffer-on-part t))
 
 ;; Org mode
 (use-package org
