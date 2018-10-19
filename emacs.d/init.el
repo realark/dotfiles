@@ -24,8 +24,6 @@
 ;; Remove icons toolbar
 (tool-bar-mode -1)
 (menu-bar-mode -1)
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
 ;; Use y or n instead of yes or not
 (fset 'yes-or-no-p 'y-or-n-p)
 (show-paren-mode 1) ; turn on paren match highlighting
@@ -122,32 +120,6 @@
             (set-visited-file-name new-name)
             (set-buffer-modified-p nil))))))
 
-  (defun toggle-window-split ()
-    "Toggle two-window split between horizontal and vertical."
-    (interactive)
-    (if (= (count-windows) 2)
-        (let* ((this-win-buffer (window-buffer))
-               (next-win-buffer (window-buffer (next-window)))
-               (this-win-edges (window-edges (selected-window)))
-               (next-win-edges (window-edges (next-window)))
-               (this-win-2nd (not (and (<= (car this-win-edges)
-                                           (car next-win-edges))
-                                       (<= (cadr this-win-edges)
-                                           (cadr next-win-edges)))))
-               (splitter
-                (if (= (car this-win-edges)
-                       (car (window-edges (next-window))))
-                    'split-window-horizontally
-                  'split-window-vertically)))
-          (delete-other-windows)
-          (let ((first-win (selected-window)))
-            (funcall splitter)
-            (if this-win-2nd (other-window 1))
-            (set-window-buffer (selected-window) this-win-buffer)
-            (set-window-buffer (next-window) next-win-buffer)
-            (select-window first-win)
-            (if this-win-2nd (other-window 1))))))
-
   (defun revert-all-buffers ()
     "Refreshes all open buffers from their respective files."
     (interactive)
@@ -157,17 +129,22 @@
           (revert-buffer t t t) )))
     (message "all buffers refreshed"))
 
-  (defmacro require-install (PCK)
-    "Require package PCK, install via \"package-install\" if missing."
-    `(unless (require ,PCK nil t)
-       (package-install ,PCK)
-       (require ,PCK))))
+  (defun select-current-line ()
+    "Select the current line."
+    (end-of-line)                       ; move to end of line
+    (set-mark (line-beginning-position)))
+
+  (defun toggle-comment-region-or-line ()
+    "Comment or uncomment the selected region.  If no region is selected use the current line."
+    (interactive)
+    (if (not mark-active)
+        (select-current-line))
+    (comment-or-uncomment-region (region-beginning) (region-end))))
 
 ;; Change startup messages
 (progn
   (defun display-startup-echo-area-message ()
     "Change the startup message."
-    ;; Print deathday from https://www.death-clock.org/
     (message "Sunday, 28th June 2071"))
 
   (setq initial-scratch-message
@@ -179,21 +156,28 @@
            (get-string-from-file "/etc/motd")))
          "\n\n")))
 
-(load-if-exists "~/.admin/sec.el")
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
 
 ;; use mepla and marmalade for package
-(progn
+(eval-when-compile
+  (defmacro require-install (PCK)
+    "Require package PCK, install via \"package-install\" if missing."
+    `(unless (require ,PCK nil t)
+       (package-install ,PCK)
+       (require ,PCK)))
   (require-install 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
   (package-initialize)
   (require-install 'use-package)
   (setq-default use-package-always-ensure t)
+  (setq-default use-package-always-defer t)
 
   (use-package try
     :commands try))
 
 ;; settings for osx
-(progn
+(when (memq window-system '(ns))
   (setq-default mac-command-modifier 'meta)
   (use-package exec-path-from-shell
     :if (memq window-system '(ns))
@@ -202,9 +186,11 @@
 
 ;; Themes and UI tweaks
 (progn
-  (use-package powerline)
+  (use-package powerline
+    :defer nil)
 
   (use-package delight
+    :defer nil
     :config
     (delight 'eldoc-mode nil 'eldoc)
     (delight 'undo-tree-mode nil 'undo-tree)
@@ -212,31 +198,29 @@
 
   ;; Theme
   (defadvice load-theme (before theme-dont-propagate activate)
-    "Change the theme."
+    "Reset to standard theme before switching to a new one"
     (mapc #'disable-theme custom-enabled-themes))
 
   (use-package moe-theme
+    :defer t
     :if window-system
-    :ensure t
     :load-path "themes"
     :config
     (moe-theme-set-color 'cyan)
     (powerline-moe-theme))
 
   (use-package farmhouse-theme
-    :if window-system
-    :ensure t
     :defer t
+    :if window-system
     :load-path "themes")
 
   (use-package circadian
+    :demand t
     :if window-system
-    :ensure t
     :config
     (setq-default circadian-themes '(("07:30" . farmhouse-light)
                                      ("18:00" . moe-dark)))
     (circadian-setup))
-
 
   ;; Maximize emacs window
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -245,70 +229,22 @@
   (winner-mode 1)
 
   ;; use ace-window
-  (use-package ace-window))
-
-;; comment toggling
-(progn
-  (defun select-current-line ()
-    "Select the current line."
-    (end-of-line)                       ; move to end of line
-    (set-mark (line-beginning-position)))
-
-  (defun toggle-comment-region-or-line ()
-    "Comment or uncomment the selected region.  If no region is selected use the current line."
-    (interactive)
-    (if (not mark-active)
-        (select-current-line))
-    (when nil                           ; TODO DWIM lisp comment
-      (if (boundp-and-true smartparens-mode)
-          (save-excursion
-            (message "TODO sp-comment")
-            ;; go to end of region
-            ;; for each line going up:
-            ;;   if not commented
-            ;;      goto beginning of line
-            ;;      sp-comment
-            (beginning-of-line)
-            ;; (save-excursion
-            ;;   ;; (let ((start (region-beginning))
-            ;;   ;;       (end (region-end)))
-            ;;   ;;   (deactivate-mark)
-            ;;   ;;   ;; (while (<=  (mark) start)
-            ;;   ;;   ;;   (beginning-of-line)
-            ;;   ;;   ;;   (lispy-comment)
-            ;;   ;;   ;;   (forward-line -1))
-            ;;   ;;   (message "TODO: lispy!!"))
-            ;;   )
-            (sp-comment))))
-    (comment-or-uncomment-region (region-beginning) (region-end))))
-
-;; Options for M-x rgrep
-(progn
-  (eval-after-load 'grep
-    '(when (boundp 'grep-find-ignored-files)
-       (mapc (lambda (file-regex)
-               (add-to-list 'grep-find-ignored-files file-regex))
-             '("*.fasl"
-               "*.class"))))
-  (eval-after-load 'grep
-    '(when (boundp 'grep-find-ignored-directories)
-       (mapc (lambda (dir-regex)
-               (add-to-list 'grep-find-ignored-directories dir-regex))
-             '("target"
-               "build"
-               "bin")))))
+  (use-package ace-window
+    :defer nil))
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
+  :defer nil
   :init
-  (evil-mode 1)
-  ;; Default to normal mode most of the time
-  (setq-default evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode eshell-mode))
-  (setq-default evil-emacs-state-modes '(magit-mode magit-popup-mode))
-  (setq-default evil-motion-state-modes '()))
+  (setq-default ;; Default to normal mode most of the time
+                evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode eshell-mode)
+                evil-emacs-state-modes '(magit-mode magit-popup-mode)
+                evil-motion-state-modes '())
+  (evil-mode 1))
 
 (use-package evil-collection
   :after evil
+  :defer nil
   :config
   (with-eval-after-load 'ediff
     (require 'evil-collection-ediff)
@@ -316,47 +252,42 @@
 
 ;; general for keybindings
 (use-package general
+  :defer nil
   :init
   (general-evil-setup t)
   :config
-  (general-define-key "<escape>" (general-simulate-keys "C-g"))
+  (general-def
+    "<escape>" (general-simulate-key "C-g")
+    "C-+" #'text-scale-adjust
+    )
 
-  (general-define-key "C-+" 'text-scale-adjust)
+  (general-def :states '(normal insert) :keymaps '(help-mode-map org-agenda-mode-map)
+    "q" (general-simulate-keys "q" t)
+    "RET" (general-simulate-keys "RET" t))
 
-  (general-nmap "/" (general-simulate-keys "C-s" t))
-  (general-nmap "C-j" (general-simulate-keys "n" t))
-  (general-nmap "C-k" (general-simulate-keys "p" t))
+  (general-def
+    :states '(normal visual)
+    "/" (general-simulate-key "C-s")
+    "<SPC>"  (general-simulate-keys "C-x"))
 
-  (general-nmap :mode 'help-mode "q" (general-simulate-keys "q" t))
-  (general-nmap :mode 'help-mode "RET" (general-simulate-keys "RET" t))
-
-  (general-define-key
-   :states '(normal visual)
-   "<SPC>"  (general-simulate-keys "C-x"))
-
-  (general-define-key
-   :prefix "C-x"
-   "4"      #'toggle-window-split
-   "x"      #'execute-extended-command
-   "l"      (lambda ()
-              (interactive)
-              (if (bound-and-true-p whitespace-mode)
-                  (progn
-                    (whitespace-mode 0)
-                    (linum-mode 0))
-                (progn
-                  (message "nil branch")
-                  (whitespace-mode 1)
-                  (linum-mode 1))))
-   "f"      #'indent-region
-   ";"      #'toggle-comment-region-or-line
-   "g"      #'magit-status
-   "B"      #'magit-blame)
-
-  (general-define-key "C-x <SPC>" #'find-file))
+  (general-def
+    :prefix "C-x"
+    "l"      (lambda ()
+               (interactive)
+               (if (bound-and-true-p whitespace-mode)
+                   (progn
+                     (whitespace-mode 0)
+                     (linum-mode 0))
+                 (progn
+                   (message "nil branch")
+                   (whitespace-mode 1)
+                   (linum-mode 1))))
+    "f"      #'indent-region
+    ";"      #'toggle-comment-region-or-line))
 
 ;; Hydras
 (use-package hydra
+  :defer nil
   :config
   (general-define-key
    "C-x t"
@@ -512,6 +443,7 @@ EOF"
 
 ;; ivy and friends
 (use-package ivy
+  :demand t
   :delight ivy-mode
   :init
   (ivy-mode t)
@@ -1021,7 +953,8 @@ Otherwise, send an interrupt to slime."
 
 (use-package magit
   :general
-  ("C-x g" 'magit-status)
+  ("C-x g" #'magit-status
+   "C-x B" #'magit-blame)
   :config
   (setq-default magit-completing-read-function 'ivy-completing-read)
   (setq-default magit-last-seen-setup-instructions "1.4.0")
@@ -1029,7 +962,8 @@ Otherwise, send an interrupt to slime."
   (setq-default magit-fetch-arguments '("--prune"))
   (setq-default magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
   (put 'magit-clean 'disabled nil)
-  (use-package evil-magit)
+
+  (use-package evil-magit :demand t)
 
   (defun magit-blame-toggle ()
     "Toggle magit-blame-mode on and off interactively."
@@ -1044,6 +978,7 @@ Otherwise, send an interrupt to slime."
                           'replace))
 
 (use-package magithub
+  :demand t
   :after magit
   :config (magithub-feature-autoinject t)
   (defun my-magithub-refresh ()
@@ -1168,6 +1103,7 @@ Otherwise, send an interrupt to slime."
 (use-package org
   :mode ("\\.org$" . org-mode)
   :general
+  ("C-x c" #'hydra-orgmode/body)
   (:states 'normal :keymaps 'org-mode-map
            "D" #'org-cut-subtree)
   :delight org-indent-mode nil org-indent
@@ -1182,8 +1118,6 @@ Otherwise, send an interrupt to slime."
      "Weekly calendar" :exit t)
     ("C"  (org-capture) "Capture" :exit t)
     ("q"  nil "Cancel" :color red))
-  :general
-  ("C-x c" #'hydra-orgmode/body)
   :config
   (setq-default org-startup-indented t)
   ;; fontify code in code blocks
