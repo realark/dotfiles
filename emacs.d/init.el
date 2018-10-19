@@ -262,17 +262,16 @@
   :config
   (general-def
     "<escape>" (general-simulate-key "C-g")
-    "C-+" #'text-scale-adjust
-    )
+    "C-+" #'text-scale-adjust)
 
   (general-def :states '(normal insert) :keymaps '(help-mode-map org-agenda-mode-map)
-    "q" (general-simulate-keys "q" t)
-    "RET" (general-simulate-keys "RET" t))
+    "q" (general-simulate-key "q")
+    "RET" (general-simulate-key "RET"))
 
   (general-def
     :states '(normal visual)
     "/" (general-simulate-key "C-s")
-    "<SPC>"  (general-simulate-keys "C-x"))
+    "<SPC>"  (general-simulate-key "C-x"))
 
   (general-def
     :prefix "C-x"
@@ -790,8 +789,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                          (kill-buffer-and-window))
                 (delete-char arg))))
     "C-c" #'comint-kill-input
-    "C-j" (general-simulate-keys "M-n")
-    "C-k" (general-simulate-keys "M-p")))
+    "C-j" (general-simulate-key "M-n")
+    "C-k" (general-simulate-key "M-p")))
 
 (use-package ansi-color)
 
@@ -916,30 +915,30 @@ Otherwise, send an interrupt to slime."
 
   ;; sldb evil bindings
   (general-def 'normal sldb-mode-map
-    "C-j" (general-simulate-keys "n" t)
-    "C-k" (general-simulate-keys "p" t)
-    "j" (general-simulate-keys "C-n" t)
-    "k" (general-simulate-keys "C-p" t)
-    "l" (general-simulate-keys "C-f" t)
-    "h" (general-simulate-keys "C-b" t)
-    "0" (general-simulate-keys "0" t)
-    "1" (general-simulate-keys "1" t)
-    "2" (general-simulate-keys "2" t)
-    "3" (general-simulate-keys "3" t)
-    "4" (general-simulate-keys "4" t)
-    "5" (general-simulate-keys "5" t)
-    "6" (general-simulate-keys "6" t)
-    "7" (general-simulate-keys "7" t)
-    "8" (general-simulate-keys "8" t)
-    "9" (general-simulate-keys "9" t)
-    "v" (general-simulate-keys "v" t))
+    "C-j" (general-simulate-key "n")
+    "C-k" (general-simulate-key "p")
+    "j" (general-simulate-key "C-n")
+    "k" (general-simulate-key "C-p")
+    "l" (general-simulate-key "C-f")
+    "h" (general-simulate-key "C-b")
+    "0" (general-simulate-key "0")
+    "1" (general-simulate-key "1")
+    "2" (general-simulate-key "2")
+    "3" (general-simulate-key "3")
+    "4" (general-simulate-key "4")
+    "5" (general-simulate-key "5")
+    "6" (general-simulate-key "6")
+    "7" (general-simulate-key "7")
+    "8" (general-simulate-key "8")
+    "9" (general-simulate-key "9")
+    "v" (general-simulate-key "v"))
 
   ;; slime xref evil bindings
 
   (general-def 'normal slime-xref-mode-map
     "j" #'slime-xref-next-line
     "k" #'slime-xref-prev-line
-    "RET" (general-simulate-keys "RET" t))
+    "RET" (general-simulate-key "RET"))
 
   ;; evil keys for slime inspector
   (evil-set-initial-state 'slime-inspector-mode 'normal)
