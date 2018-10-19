@@ -139,7 +139,11 @@
     (interactive)
     (if (not mark-active)
         (select-current-line))
-    (comment-or-uncomment-region (region-beginning) (region-end))))
+    (comment-or-uncomment-region (region-beginning) (region-end)))
+
+  (defun first (list)
+    "Get the first element in LIST."
+    (nth 0 list)))
 
 ;; Change startup messages
 (progn
