@@ -1167,6 +1167,9 @@ Otherwise, send an interrupt to slime."
 ;; Org mode
 (use-package org
   :mode ("\\.org$" . org-mode)
+  :general
+  (:states 'normal :keymaps 'org-mode-map
+           "D" #'org-cut-subtree)
   :delight org-indent-mode nil org-indent
   :init
   (defhydra hydra-orgmode (:color amaranth :columns 1)
