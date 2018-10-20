@@ -139,11 +139,9 @@
     (interactive)
     (if (not mark-active)
         (select-current-line))
-    (comment-or-uncomment-region (region-beginning) (region-end)))
+    (comment-or-uncomment-region (region-beginning) (region-end))))
 
-  (defun first (list)
-    "Get the first element in LIST."
-    (nth 0 list)))
+(require 'cl)
 
 ;; Change startup messages
 (progn
@@ -264,12 +262,12 @@
     "<escape>" (general-simulate-key "C-g")
     "C-+" #'text-scale-adjust)
 
-  (general-def :states '(normal insert) :keymaps '(help-mode-map org-agenda-mode-map)
-    "q" (general-simulate-key "q")
-    "RET" (general-simulate-key "RET"))
+  (general-def :states '(normal) :keymaps '(help-mode-map org-agenda-mode-map)
+    "q" (general-simulate-key "q" :state 'emacs)
+    "RET" (general-simulate-key "RET" :state 'emacs))
 
   (general-def
-    :states '(normal visual)
+    :states '(normal)
     "/" (general-simulate-key "C-s")
     "<SPC>"  (general-simulate-key "C-x"))
 
@@ -292,16 +290,6 @@
 (use-package hydra
   :defer nil
   :config
-  (general-define-key
-   "C-x t"
-   (defhydra hydra-test (:color blue :columns 1)
-     "Run Tests"
-     ("t"   #'single-test                "Run a single test")
-     ("u"   #'run-unit-tests             "Unit")
-     ("i"   #'run-integration-tests      "Integration")
-     ("p"   #'run-performance-tests      "Performance")
-     ("r"   #'reload-systems             "Reload Systems")
-     ("q"   nil "Cancel" :exit t)))
   (progn
     ;; Window moving helpers for hydra
     (require 'windmove)
@@ -338,25 +326,7 @@
           (shrink-window arg)
         (enlarge-window arg))))
 
-  (defhydra hydra-tabs (:color amaranth :hint nil)
-    "
-TABS: %(buffer-name)
--------------------------------------------------------------
- Move:        _L_:right _H_:left
- Switch:      _l_:right _h_:left _k_:up-group _j_:down-group
- Manage:      _c_reate-group _s_witch-group
-EOF"
-    ("l" tabbar-forward-tab)
-    ("h" tabbar-backward-tab)
-    ("j" tabbar-backward-group)
-    ("k" tabbar-forward-group)
-    ("L" (my-tabbar-move-current-tab-one-place :right))
-    ("H" (my-tabbar-move-current-tab-one-place :left))
-    ("c" (my-create-tabbar-group (read-from-minibuffer "Enter new group name: ")) :exit t)
-    ("s" (error "TODO") :exit t)
-    ("q" nil))
-
-  (general-define-key
+  (general-def
    "C-x w"
    (defhydra hydra-window (:color amaranth :hint nil)
      "
@@ -392,31 +362,7 @@ EOF"
      ;; winner-mode must be enabled
      ("u" winner-undo)
      ("C-r" winner-redo)
-     ("q" nil)))
-  (general-define-key
-   "C-x p"
-   (defhydra hydra-projectile (:color blue :hint nil)
-     "
-     PROJECTILE: %(or (ignore-errors (projectile-project-root)) \"(Not in a project)\")
-
- Find/Replace         Tasks                   Buffers
-----------------------------------------------------------------------------------
- _f_: file find         _t_: test project         _k_: Kill all buffers
- _t_: find tag          _c_: command run
- _g_: grep all files
- _r_: replace
- _R_: replace regex
-
-"
-     ("f"   projectile-find-file)
-     ("t"   projectile-find-tag)
-     ("g"   projectile-grep)
-     ("r"   projectile-replace)
-     ("R"   projectile-replace-regexp)
-     ("t"   projectile-test-project)
-     ("c"   projectile-run-project)
-     ("k"   projectile-kill-buffers)
-     ("q"   nil "Cancel" :color red))))
+     ("q" nil))))
 
 (use-package smartparens
   :init
@@ -428,15 +374,13 @@ EOF"
 
 (use-package lispyville
   :delight lispyville-mode
-  :init
-  (add-hook 'lisp-mode-hook                          #'lispyville-mode)
-  (add-hook 'emacs-lisp-mode-hook                    #'lispyville-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook   #'lispyville-mode)
-  (add-hook 'ielm-mode-hook                          #'lispyville-mode)
-  (add-hook 'lisp-mode-hook                          #'lispyville-mode)
-  (add-hook 'lisp-interaction-mode-hook              #'lispyville-mode)
-  (add-hook 'slime-repl-mode                         #'lispyville-mode)
-  (add-hook 'scheme-mode-hook                        #'lispyville-mode)
+  :hook ((lisp-mode . lispyville-mode)
+         (emacs-lisp-mode . lispyville-mode)
+         (eval-expression-minibuffer-setup . lispyville-mode)
+         (ielm-mode . lispyville-mode)
+         (lisp-interaction-mode . lispyville-mode)
+         (slime-repl-mode . lispyville-mode)
+         (scheme-mode . lispyville-mode))
   :config
   (lispyville-set-key-theme '(operators
                               (escape insert)
@@ -445,57 +389,53 @@ EOF"
                               (additional-movement normal visual motion))))
 
 ;; ivy and friends
-(use-package ivy
-  :demand t
-  :delight ivy-mode
-  :init
-  (ivy-mode t)
-  :general
-  ("C-s" #'swiper
-   "M-x" #'counsel-M-x
-   "C-x C-f" #'counsel-find-file)
-  (:keymaps 'ivy-minibuffer-map
-            "M-j"     #'ivy-next-line
-            "M-k"     #'ivy-previous-line
-            "M-S-j"   #'ivy-scroll-up-command
-            "M-S-k"   #'ivy-scroll-down-command
-            "C-j"     #'ivy-next-history-element
-            "C-k"     #'ivy-previous-history-element)
-  (:keymaps 'counsel-find-file-map
-            "<return>" #'ivy-alt-done)
-  :config
-  (use-package swiper
+(progn
+  (use-package ivy
+    :demand t
+    :delight ivy-mode
     :init
-    (setq-default swiper-action-recenter t))
-  (use-package counsel)
+    (ivy-mode t)
+    :general
+    (:keymaps 'ivy-minibuffer-map
+              "M-j"     #'ivy-next-line
+              "M-k"     #'ivy-previous-line
+              "M-S-j"   #'ivy-scroll-up-command
+              "M-S-k"   #'ivy-scroll-down-command
+              "C-j"     #'ivy-next-history-element
+              "C-k"     #'ivy-previous-history-element)
+    (:keymaps 'counsel-find-file-map
+              "<return>" #'ivy-alt-done)
+    :config
+    (setq-default ivy-wrap t
+                  ivy-use-virtual-buffers t
+                  ivy-height 10
+                  ivy-count-format "(%d/%d) "
+                  ivy-extra-directories nil
+                  ivy-re-builders-alist '((t . ivy--regex-plus))))
 
-  (setq-default ivy-wrap t)
-  (setq-default ivy-use-virtual-buffers t)
-  (setq-default ivy-height 10)
-  (setq-default ivy-count-format "(%d/%d) ")
-  (setq-default ivy-extra-directories nil)
-  (setq-default ivy-re-builders-alist '((t . ivy--regex-plus)))
-  ;; isearch-forward seems to get stuck in the wrong state with swiper.
-  ;; Manually setting it to T seems to work around the problem.
-  ;; This is probably a problem with my config
-  (setq isearch-forward t))
+  (use-package swiper
+    :demand t
+    :general
+    ("C-s" #'swiper)
+    :init
+    (setq-default swiper-action-recenter t)
+    :config
+    ;; isearch-forward seems to get stuck in the wrong state with swiper.
+    ;; Manually setting it to T seems to work around the problem.
+    ;; https://github.com/emacs-evil/evil/issues/712
+    ;; This is probably a problem with my config
+    (setq isearch-forward t))
 
-;; yasnippet
-(use-package yasnippet
-  :delight yas-minor-mode
-  :init
-  (yas-global-mode 1)
-  :config
-  ;; don't turn on yas if there are no snippets
-  (defun disable-yas-if-no-snippets ()
-    (when (and yas-minor-mode (null (yas--get-snippet-tables)))
-      (yas-minor-mode -1)))
-  (add-hook 'yas-minor-mode-hook #'disable-yas-if-no-snippets)
-  (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
-  (use-package common-lisp-snippets))
+  (use-package counsel
+    :demand t
+    :general
+    ("M-x" #'counsel-M-x
+     "C-x <SPC>" #'counsel-find-file
+     "C-x C-f" #'counsel-find-file)))
 
 ;; company mode
 (use-package company
+  :demand t
   :delight company-mode
   :init
   (global-company-mode)
@@ -516,21 +456,20 @@ EOF"
 
 ;; Projectile
 (use-package projectile
+  :demand t
   :init
   (projectile-mode)
   :config
-  (setq-default projectile-completion-system 'ivy)
-  (setq-default projectile-globally-ignored-directories
-                (append projectile-globally-ignored-directories
-                        '(".git" ".ensime_cache.d" ".gradle"
-                          ".recommenders" ".metadata" "dist")))
-  (setq-default projectile-globally-ignored-files
-                (append projectile-globally-ignored-files
-                        '(".ensime" "*.war" "*.jar" "*.zip"
-                          "*.png" "*.gif" "*.vsd" "*.svg"
-                          "*.exe" "eclimd.log" "workbench.xmi"
-                          ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
-  (setq-default projectile-enable-caching t)
+  (setq-default projectile-completion-system 'ivy
+                projectile-globally-ignored-directories (append projectile-globally-ignored-directories
+                                                                '(".git" ".ensime_cache.d" ".gradle"
+                                                                  ".recommenders" ".metadata" "dist"))
+                projectile-globally-ignored-files (append projectile-globally-ignored-files
+                                                          '(".ensime" "*.war" "*.jar" "*.zip"
+                                                            "*.png" "*.gif" "*.vsd" "*.svg"
+                                                            "*.exe" "eclimd.log" "workbench.xmi"
+                                                            ".emacs.desktop" "*.deb" "*.gz" "*.fasl"))
+                projectile-enable-caching t)
 
   (progn
     (defun gradle-command-alias (cmd)
@@ -563,10 +502,49 @@ EOF"
     (advice-add 'magit-checkout
                 :after #'%run-projectile-invalidate-cache)
     (advice-add 'magit-branch-and-checkout ; This is `b c'.
-                :after #'%run-projectile-invalidate-cache)))
+                :after #'%run-projectile-invalidate-cache))
+
+  (general-def
+   "C-x p"
+   (defhydra hydra-projectile (:color blue :hint nil)
+     "
+     PROJECTILE: %(or (ignore-errors (projectile-project-root)) \"(Not in a project)\")
+
+ Find/Replace         Tasks                   Buffers
+----------------------------------------------------------------------------------
+ _f_: file find         _t_: test project         _k_: Kill all buffers
+ _t_: find tag          _c_: command run
+ _g_: grep all files
+ _r_: replace
+ _R_: replace regex
+
+"
+     ("f"   projectile-find-file)
+     ("t"   projectile-find-tag)
+     ("g"   projectile-grep)
+     ("r"   projectile-replace)
+     ("R"   projectile-replace-regexp)
+     ("t"   projectile-test-project)
+     ("c"   projectile-run-project)
+     ("k"   projectile-kill-buffers)
+     ("q"   nil "Cancel" :color red))))
+
+;; yasnippet
+(use-package yasnippet
+  :demand t
+  :delight yas-minor-mode
+  :init
+  (yas-global-mode 1)
+  :config
+  ;; don't turn on yas if there are no snippets
+  (defun disable-yas-if-no-snippets ()
+    (when (and yas-minor-mode (null (yas--get-snippet-tables)))
+      (yas-minor-mode -1)))
+  (add-hook 'yas-minor-mode-hook #'disable-yas-if-no-snippets)
+  (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
+  (use-package common-lisp-snippets))
 
 (use-package treemacs
-  :defer t
   :general
   ("<f6>" #'treemacs)
   :config
@@ -580,9 +558,29 @@ EOF"
   (treemacs-filewatch-mode t))
 
 (use-package tabbar
+  :demand t
   :init
   (tabbar-mode t)
   :config
+
+  (defhydra hydra-tabs (:color amaranth :hint nil)
+    "
+TABS: %(buffer-name)
+-------------------------------------------------------------
+ Move:        _L_:right _H_:left
+ Switch:      _l_:right _h_:left _k_:up-group _j_:down-group
+ Manage:      _c_reate-group _s_witch-group
+EOF"
+    ("l" tabbar-forward-tab)
+    ("h" tabbar-backward-tab)
+    ("j" tabbar-backward-group)
+    ("k" tabbar-forward-group)
+    ("L" (my-tabbar-move-current-tab-one-place :right))
+    ("H" (my-tabbar-move-current-tab-one-place :left))
+    ("c" (my-create-tabbar-group (read-from-minibuffer "Enter new group name: ")) :exit t)
+    ("s" (error "TODO") :exit t)
+    ("q" nil))
+
   (setq frame-title-format '("emacs <" (:eval (symbol-name tabbar-current-tabset)) "> - %b"))
 
   (set-face-foreground 'tabbar-selected "white")
@@ -735,7 +733,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                        (toggle-or-start-interaction buffer-major-mode (lambda))
                        (return t))))))
         (message "No interactive mode for %s" current-buffer-major-mode))))
-  (general-define-key
+  (general-def
    "<f9>" #'toggle-interact-with-buffer))
 
 ;; IDE hydra
@@ -792,7 +790,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     "C-j" (general-simulate-key "M-n")
     "C-k" (general-simulate-key "M-p")))
 
-(use-package ansi-color)
+(use-package ansi-color
+  :demand t)
 
 ;;Slime
 (use-package slime
@@ -843,7 +842,9 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
         (when slime-colors
           (ansi-color-apply-on-region slime-output-start
                                       slime-output-end)))))
-  (use-package slime-company)
+  (use-package slime-company
+    :demand t
+    :after slime)
   (make-directory "/tmp/slime-fasls/" t)
   (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
 
