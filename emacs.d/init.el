@@ -262,12 +262,12 @@
     "<escape>" (general-simulate-key "C-g")
     "C-+" #'text-scale-adjust)
 
-  (general-def :states '(normal) :keymaps '(help-mode-map org-agenda-mode-map)
+  (general-def :states '(normal)
     "q" (general-simulate-key "q" :state 'emacs)
     "RET" (general-simulate-key "RET" :state 'emacs))
 
   (general-def
-    :states '(normal)
+    :states '(normal visual)
     "/" (general-simulate-key "C-s")
     "<SPC>"  (general-simulate-key "C-x"))
 
@@ -774,230 +774,222 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
              ('lisp-mode (call-interactively #'slime-edit-definition))
              ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))))))
 
-;; comint bindings
-(progn
-  (general-def 'insert comint-mode-map
-    "C-r" #'comint-history-isearch-backward-regexp
-    "C-d" (lambda ()
-            (interactive)
-            (let ((proc (get-buffer-process (current-buffer))))
-              (if (and (eobp) proc (= (point) (marker-position (process-mark proc))))
-                  (progn (comint-send-eof)
-                         (sleep-for .200)
-                         (kill-buffer-and-window))
-                (delete-char arg))))
-    "C-c" #'comint-kill-input
-    "C-j" (general-simulate-key "M-n")
-    "C-k" (general-simulate-key "M-p")))
-
 (use-package ansi-color
   :demand t)
 
+;; comint bindings
+(general-def 'insert comint-mode-map
+  "C-r" #'comint-history-isearch-backward-regexp
+  "C-d" (lambda ()
+          (interactive)
+          (let ((proc (get-buffer-process (current-buffer))))
+            (if (and (eobp) proc (= (point) (marker-position (process-mark proc))))
+                (progn (comint-send-eof)
+                       (sleep-for .200)
+                       (kill-buffer-and-window))
+              (delete-char arg))))
+  "C-c" #'comint-kill-input
+  "C-j" (general-simulate-key "M-n")
+  "C-k" (general-simulate-key "M-p"))
+
 ;;Slime
-(use-package slime
-  :delight slime
-  :commands (slime slime-connect)
-  :init
-  (defun print-help ()
-    (print "No override. Check for .custom.el?"))
-  (defun single-test ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help))
-  (defun run-unit-tests ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help)
-    nil)
-  (defun run-integration-tests ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help)
-    nil)
-  (defun run-performance-tests ()
-    "Function for running unit test(s).  This should be overridden by a directory local definition."
-    (interactive)
-    (print-help)
-    nil)
-  (defun reload-systems ()
-    "Delete packages and reload asdf systems."
-    (interactive)
-    (print-help)
-    nil)
-  :config
-  (progn
-    ;; emit ansi colors in slime repl
-    (defvar slime-colors t "If non-nil, emit ansi colors in the slime repl.")
-    (defun slime-colors-on ()
-      "Enable ansi colors in the slime repl."
+(progn
+  (use-package slime
+    :delight slime
+    :commands (slime slime-connect)
+    :init
+    (defun print-help ()
+      (print "No override. Check for .custom.el?"))
+    (defun single-test ()
+      "Function for running unit test(s).  This should be overridden by a directory local definition."
       (interactive)
-      (setq slime-colors t))
-    (defun slime-colors-off ()
-      "Disable ansi colors in the slime repl."
+      (print-help))
+    (defun run-unit-tests ()
+      "Function for running unit test(s).  This should be overridden by a directory local definition."
       (interactive)
-      (setq slime-colors nil))
-    (defadvice slime-repl-emit (around slime-repl-ansi-colorize activate compile)
-      (with-current-buffer (slime-output-buffer)
-        (setq ad-return-value ad-do-it)
-        (when slime-colors
-          (ansi-color-apply-on-region slime-output-start
-                                      slime-output-end)))))
-  (use-package slime-company
-    :demand t
-    :after slime)
-  (make-directory "/tmp/slime-fasls/" t)
-  (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
+      (print-help)
+      nil)
+    (defun run-integration-tests ()
+      "Function for running unit test(s).  This should be overridden by a directory local definition."
+      (interactive)
+      (print-help)
+      nil)
+    (defun run-performance-tests ()
+      "Function for running unit test(s).  This should be overridden by a directory local definition."
+      (interactive)
+      (print-help)
+      nil)
+    (defun reload-systems ()
+      "Delete packages and reload asdf systems."
+      (interactive)
+      (print-help)
+      nil)
+    :config
+    (progn ; emit ansi colors in slime repl
+      (defvar slime-colors t "If non-nil, emit ansi colors in the slime repl.")
+      (defun slime-colors-on ()
+        "Enable ansi colors in the slime repl."
+        (interactive)
+        (setq slime-colors t))
+      (defun slime-colors-off ()
+        "Disable ansi colors in the slime repl."
+        (interactive)
+        (setq slime-colors nil))
+      (defadvice slime-repl-emit (around slime-repl-ansi-colorize activate compile)
+        (with-current-buffer (slime-output-buffer)
+          (setq ad-return-value ad-do-it)
+          (when slime-colors
+            (ansi-color-apply-on-region slime-output-start
+                                        slime-output-end)))))
+    (make-directory "/tmp/slime-fasls/" t)
+    (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
 
+    (load (expand-file-name "~/.roswell/helper.el"))
+    (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run")
+    (slime-setup '(slime-fancy
+                   slime-highlight-edits
+                   slime-asdf
+                   slime-xref-browser
+                   slime-company))
+    ;; This is a hack. slime-setup should enable slime-company
+    (slime-company-init)
 
-  (load (expand-file-name "~/.roswell/helper.el"))
-  (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run")
-  (slime-setup '(slime-fancy
-                 slime-highlight-edits
-                 slime-asdf
-                 slime-xref-browser
-                 slime-company))
-  ;; This is a hack. slime-setup should enable slime-company
-  (slime-company-init)
+    (load "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
 
-  (load "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
+    (setq-default inhibit-splash-screen t)
 
-  (setq-default inhibit-splash-screen t)
+    ;; stop slime from complaining about version mismatch
+    (setq-default slime-protocol-version 'ignore)
 
-  ;; stop slime from complaining about version mismatch
-  (setq-default slime-protocol-version 'ignore)
-
-  (defun my-slime-repl-kill-or-interrupt ()
-    "If the user has entered text in the prompt, remove the text before and after point.
+    (defun my-slime-repl-kill-or-interrupt ()
+      "If the user has entered text in the prompt, remove the text before and after point.
 Otherwise, send an interrupt to slime."
-    (interactive)
-    (cond ((= (marker-position slime-repl-input-start-mark) (point))
-           (slime-interrupt))
-          (t (slime-repl-kill-input)
-             (slime-repl-kill-input))))
+      (interactive)
+      (cond ((= (marker-position slime-repl-input-start-mark) (point))
+             (slime-interrupt))
+            (t (slime-repl-kill-input)
+               (slime-repl-kill-input))))
 
-  (general-def 'normal slime-repl-mode-map
-    "q" (lambda ()
-          (interactive)
-          (end-of-buffer)
-          (evil-insert-state)
-          (toggle-interact-with-buffer))
-    [return]  #'slime-inspect-presentation-at-point
-    "C-<return>" #'slime-expand-1)
+    (general-def :states 'normal :keymaps 'slime-repl-mode-map
+      "q" (lambda ()
+            (interactive)
+            (end-of-buffer)
+            (evil-insert-state)
+            (toggle-interact-with-buffer))
+      [return]  #'slime-inspect-presentation-at-point
+      "C-<return>" #'slime-expand-1-inplace)
 
-  ;; macroexpansion keys not working
-  ;; defaults are C-c <ret> == exapnd, C-/ == undo
-  (general-def 'normal slime-macroexpansion-minor-mode-map
-    "u" #'slime-macroexpand-undo
-    "C-<return>" #'slime-expand-1-inplace)
+    (general-def :states 'insert :keymaps 'slime-repl-mode-map
+      ;; insert a newline instead of evaluating the expression
+      "S-<return>" #'newline-and-indent
+      "C-c" #'my-slime-repl-kill-or-interrupt
+      "C-d" (lambda () (interactive)
+              (when (y-or-n-p "Quit slime?")
+                (and (slime-repl-quit) (delete-window))))
+      "C-r" #'slime-repl-previous-matching-input
+      "TAB" #'completion-at-point
+      "C-S-l" #'slime-repl-clear-buffer
+      "C-k" #'slime-repl-previous-input
+      "C-j" #'slime-repl-next-input)
 
-  (general-def 'insert slime-repl-mode-map
-    "C-c" #'my-slime-repl-kill-or-interrupt
-    "C-d" (lambda () (interactive)
-            (when (y-or-n-p "Quit slime?")
-              (and (slime-repl-quit) (delete-window))))
-    "C-r" #'slime-repl-previous-matching-input
-    "TAB" #'completion-at-point
-    "C-S-l" #'slime-repl-clear-buffer
-    "C-k" #'slime-repl-previous-input
-    "C-j" #'slime-repl-next-input)
+    ;; slime xref browser evil bindings
+    (general-def :states 'normal :keymaps 'slime-browser-map
+      "j" 'widget-forward
+      "k" 'widget-backward
+      "M-." (lambda () (interactive)
+              (end-of-line)
+              (slime-edit-definition (slime-symbol-at-point)))
+      "q" 'bury-buffer)
 
-  (general-def 'normal lisp-mode-map
-    "<f4>" #'slime-browse-classes
-    "M-." 'slime-edit-definition)
+    ;; sldb evil bindings
+    (general-def :states 'normal :keymaps 'sldb-mode-map
+      "C-j" (general-simulate-key "n" :state 'emacs)
+      "C-k" (general-simulate-key "p" :state 'emacs)
+      "j" (general-simulate-key "C-n" :state 'emacs)
+      "k" (general-simulate-key "C-p" :state 'emacs)
+      "l" (general-simulate-key "C-f" :state 'emacs)
+      "h" (general-simulate-key "C-b" :state 'emacs)
+      "0" (general-simulate-key "0" :state 'emacs)
+      "1" (general-simulate-key "1" :state 'emacs)
+      "2" (general-simulate-key "2" :state 'emacs)
+      "3" (general-simulate-key "3" :state 'emacs)
+      "4" (general-simulate-key "4" :state 'emacs)
+      "5" (general-simulate-key "5" :state 'emacs)
+      "6" (general-simulate-key "6" :state 'emacs)
+      "7" (general-simulate-key "7" :state 'emacs)
+      "8" (general-simulate-key "8" :state 'emacs)
+      "9" (general-simulate-key "9" :state 'emacs)
+      "v" (general-simulate-key "v" :state 'emacs))
 
-  ;; slime xref browser evil bindings
-  (general-def 'normal slime-browser-map
-    "j" 'widget-forward
-    "k" 'widget-backward
-    "M-." (lambda () (interactive)
-            (end-of-line)
-            (slime-edit-definition (slime-symbol-at-point)))
-    "q" 'bury-buffer)
+    ;; slime xref evil bindings
 
-  ;; sldb evil bindings
-  (general-def 'normal sldb-mode-map
-    "C-j" (general-simulate-key "n")
-    "C-k" (general-simulate-key "p")
-    "j" (general-simulate-key "C-n")
-    "k" (general-simulate-key "C-p")
-    "l" (general-simulate-key "C-f")
-    "h" (general-simulate-key "C-b")
-    "0" (general-simulate-key "0")
-    "1" (general-simulate-key "1")
-    "2" (general-simulate-key "2")
-    "3" (general-simulate-key "3")
-    "4" (general-simulate-key "4")
-    "5" (general-simulate-key "5")
-    "6" (general-simulate-key "6")
-    "7" (general-simulate-key "7")
-    "8" (general-simulate-key "8")
-    "9" (general-simulate-key "9")
-    "v" (general-simulate-key "v"))
+    (general-def :states 'normal :keymaps 'slime-xref-mode-map
+      "j" #'slime-xref-next-line
+      "k" #'slime-xref-prev-line)
 
-  ;; slime xref evil bindings
+    ;; evil keys for slime inspector
+    (evil-set-initial-state 'slime-inspector-mode 'normal)
+    (general-def 'normal slime-inspector-mode-map
+      "q" (lambda ()
+            "Reinspect the previous object or close the window if there is no previous object"
+            ;; mostly copied from slime-inspector-pop
+            (interactive)
+            (let ((result (slime-eval `(swank:inspector-pop))))
+              (if result
+                  (slime-open-inspector result (pop slime-inspector-mark-stack))
+                (quit-window)))))
 
-  (general-def 'normal slime-xref-mode-map
-    "j" #'slime-xref-next-line
-    "k" #'slime-xref-prev-line
-    "RET" (general-simulate-key "RET"))
+    (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el"))
 
-  ;; evil keys for slime inspector
-  (evil-set-initial-state 'slime-inspector-mode 'normal)
-  (general-def 'normal slime-inspector-mode-map
-    "q" (lambda ()
-          "Reinspect the previous object or close the window if there is no previous object"
-          ;; mostly copied from slime-inspector-pop
-          (interactive)
-          (let ((result (slime-eval `(swank:inspector-pop))))
-            (if result
-                (slime-open-inspector result (pop slime-inspector-mark-stack))
-              (quit-window)))))
+    (use-package slime-company
+      :demand t
+      :after slime))
 
-  (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el"))
+(progn ; magit and other git utils
+  (use-package magit
+    :general
+    ("C-x g" #'magit-status
+     "C-x B" #'magit-blame)
+    :config
+    (setq-default magit-completing-read-function 'ivy-completing-read)
+    (setq-default magit-last-seen-setup-instructions "1.4.0")
+    (setq-default magit-push-always-verify nil)
+    (setq-default magit-fetch-arguments '("--prune"))
+    (setq-default magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
+    (put 'magit-clean 'disabled nil)
 
-(use-package magit
-  :general
-  ("C-x g" #'magit-status
-   "C-x B" #'magit-blame)
-  :config
-  (setq-default magit-completing-read-function 'ivy-completing-read)
-  (setq-default magit-last-seen-setup-instructions "1.4.0")
-  (setq-default magit-push-always-verify nil)
-  (setq-default magit-fetch-arguments '("--prune"))
-  (setq-default magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
-  (put 'magit-clean 'disabled nil)
+    (defun magit-blame-toggle ()
+      "Toggle magit-blame-mode on and off interactively."
+      (interactive)
+      (if (boundp-and-true magit-blame-mode)
+          (magit-blame-quit)
+        (call-interactively 'magit-blame)))
 
-  (use-package evil-magit :demand t)
+    (magit-add-section-hook 'magit-status-sections-hook
+                            'magit-insert-unpushed-to-upstream
+                            'magit-insert-unpushed-to-upstream-or-recent
+                            'replace))
 
-  (defun magit-blame-toggle ()
-    "Toggle magit-blame-mode on and off interactively."
-    (interactive)
-    (if (boundp-and-true magit-blame-mode)
-        (magit-blame-quit)
-      (call-interactively 'magit-blame)))
+  (use-package evil-magit
+    :demand t
+    :after magit)
 
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-unpushed-to-upstream
-                          'magit-insert-unpushed-to-upstream-or-recent
-                          'replace))
+  (use-package magithub
+    :demand t
+    :after magit
+    :config (magithub-feature-autoinject t)
+    (defun my-magithub-refresh ()
+      (interactive)
+      (magithub--refresh)))
 
-(use-package magithub
-  :demand t
-  :after magit
-  :config (magithub-feature-autoinject t)
-  (defun my-magithub-refresh ()
-    (interactive)
-    (magithub--refresh)))
-
-(use-package git-link
-  :config
-  (setq git-link-default-branch "master"))
+  (use-package git-link
+    :config
+    (setq git-link-default-branch "master")))
 
 (use-package hideshow
   :delight hs-minor-mode
-  :init
-  (add-hook 'prog-mode-hook 'hs-minor-mode)
-  (add-hook 'hs-minor-mode-hook 'hs-hide-initial-comment-block)
+  :hook ((prog-mode . hs-minor-mode)
+         (hs-minor-mode . hs-hide-initial-comment-block))
   :config
 
   (defun end-of-line-before-comment ()
@@ -1007,48 +999,12 @@ Otherwise, send an interrupt to slime."
       (skip-syntax-backward " " (line-beginning-position))
       (backward-char)))
 
-  (general-def 'normal hs-minor-mode-map
+  (general-def :states 'normal :keymaps 'hs-minor-mode-map
     "<tab>" (lambda ()
               (interactive)
               (save-excursion
                 (end-of-line-before-comment)
                 (hs-toggle-hiding)))))
-
-(use-package multi-term
-  :defer t
-  :init
-  (setq-default multi-term-program "/bin/zsh")
-  (defun last-term-buffer (l)
-    "Return most recently used term buffer from the list of buffers, \"L\"."
-    (when l
-      (if (eq 'term-mode (with-current-buffer (car l) major-mode))
-          (car l) (last-term-buffer (cdr l)))))
-  (defun get-term ()
-    "Switch to the term buffer last used, or create a new one if none exists, or if the current buffer is already a term."
-    (interactive)
-    (let ((b (last-term-buffer (buffer-list))))
-      (if (or (not b) (eq 'term-mode major-mode))
-          (multi-term)
-        (switch-to-buffer b))))
-  ;; :general
-  ;; ("C-x s" #'get-term)
-  :config
-  ;; might want to later set up auto term-line-mode and term-char-mode
-  ;; depending on evil state
-  (evil-define-key 'normal term-raw-map
-    (kbd "p") 'term-paste
-    (kbd "RET") 'term-send-return
-    (kbd "C-x d") 'term-send-eof
-    (kbd "C-d") 'term-send-eof)
-
-  (evil-define-key 'insert term-raw-map
-    (kbd "C-c") 'term-interrupt-subjob
-    (kbd "C-r") 'term-send-reverse-search-history
-    (kbd "C-k") 'term-send-up
-    (kbd "C-j") 'term-send-down
-    (kbd "C-v") 'term-paste
-    (kbd "C-d") 'term-send-eof
-    (kbd "C-a") 'term-send-raw))
 
 (use-package eshell
   :general
