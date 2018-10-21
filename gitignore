@@ -8,6 +8,6 @@ workbench.xmi
 *.fasl
 .tagskip
 .projectile
-.custom.el
+.dir-locals.el
 eclimd.log
 gh-drafts/
