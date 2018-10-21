@@ -139,7 +139,14 @@
     (interactive)
     (if (not mark-active)
         (select-current-line))
-    (comment-or-uncomment-region (region-beginning) (region-end))))
+    (comment-or-uncomment-region (region-beginning) (region-end)))
+
+(defun current-line-starts-with (char)
+  (let (line-starts-with-char)
+    (save-excursion
+      (beginning-of-line)
+      (setq line-starts-with-char (string-equal (thing-at-point 'char) char)))
+    line-starts-with-char)))
 
 (require 'cl)
 
@@ -1064,8 +1071,6 @@ Otherwise, send an interrupt to slime."
   :mode ("\\.org$" . org-mode)
   :general
   ("C-x c" #'hydra-orgmode/body)
-  (:states 'normal :keymaps 'org-mode-map
-           "D" #'org-cut-subtree)
   :delight org-indent-mode nil org-indent
   :init
   (defhydra hydra-orgmode (:color amaranth :columns 1)
@@ -1103,21 +1108,29 @@ Otherwise, send an interrupt to slime."
                    "* TODO %?")
                   ("m" "Misc" entry (file ,(concat org-directory "orgzly/" "refile.org"))
                    "* %?")))
-  (add-hook 'org-capture-mode-hook 'evil-insert-state)
-  (use-package evil-org
-    :delight
-    evil-org-mode
-    :general
-    (general-evil-define-key 'insert evil-org-mode-map
-      "M-h"     #'org-metaleft
-      "M-l"     #'org-metaright)
-    (general-evil-define-key 'normal evil-org-mode-map
-      "S-h"     #'org-shiftleft
-      "S-l"     #'org-shiftright)
-    :init (add-hook 'org-mode-hook (lambda () (evil-org-mode 1))))
-  (use-package org-bullets
-    :init
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
+  (add-hook 'org-capture-mode-hook 'evil-insert-state))
+
+(use-package evil-org
+  :hook ((org-mode . evil-org-mode))
+  :delight
+  evil-org-mode
+  :general
+  (:states 'insert :keymaps 'evil-org-mode-map
+           "M-h"     #'org-metaleft
+           "M-l"     #'org-metaright)
+  (:states 'normal :keymaps 'evil-org-mode-map
+    "L" #'org-shiftleft
+    "H" #'org-shiftright
+    "K" #'org-shiftup
+    "J" (lambda ()
+            (interactive)
+            (if (current-line-starts-with "*")
+                (call-interactively #'org-shiftdown)
+              (call-interactively #'evil-join)))
+    "D" #'org-cut-subtree))
+
+(use-package org-bullets
+  :hook ((org-mode . org-bullets-mode)))
 
 (use-package org-trello
   :mode ("\\.trello$" . org-mode)
@@ -1131,15 +1144,23 @@ Otherwise, send an interrupt to slime."
     (interactive)
     (org-trello-sync-buffer t)))
 
-(use-package calfw
-  :config
-  (use-package calfw-org)
-  (use-package calfw-ical)
+(progn ; calfw calendar
+  (use-package calfw
+    :commands (cfw:open-calendar-buffer cfw:org-create-source)
+    :config
 
-  ;; default calendar view to week instead of month
-  (defun my--cfw:open-calendar-buffer-view (orig-func &rest args &allow-other-keys)
-    (apply orig-func :view 'week :allow-other-keys t args))
-  (advice-add 'cfw:open-calendar-buffer :around #'my--cfw:open-calendar-buffer-view))
+    ;; default calendar view to week instead of month
+    (defun my--cfw:open-calendar-buffer-view (orig-func &rest args &allow-other-keys)
+      (apply orig-func :view 'week :allow-other-keys t args))
+    (advice-add 'cfw:open-calendar-buffer :around #'my--cfw:open-calendar-buffer-view))
+
+  (use-package calfw-org
+    :after calfw
+    :demand t)
+
+  (use-package calfw-ical
+    :after calfw
+    :demand t))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
