@@ -186,12 +186,12 @@
     :commands try))
 
 ;; settings for osx
-(when (memq window-system '(ns))
-  (setq-default mac-command-modifier 'meta)
-  (use-package exec-path-from-shell
-    :if (memq window-system '(ns))
-    :config
-    (exec-path-from-shell-initialize)))
+(use-package exec-path-from-shell
+  :defer nil
+  :if (memq window-system '(ns))
+  :config
+  (exec-path-from-shell-initialize)
+  (setq-default mac-command-modifier 'meta))
 
 ;; Themes and UI tweaks
 (progn
@@ -535,6 +535,28 @@ EOF"
      ("c"   projectile-run-project)
      ("k"   projectile-kill-buffers)
      ("q"   nil "Cancel" :color red))))
+
+;; Flycheck
+(use-package flycheck
+  :demand t
+  :delight flycheck-mode
+  :config
+  (global-flycheck-mode)
+  (delight 'flyspell-mode nil 'flyspell)
+  (delight 'flyspell-prog-mode nil 'flyspell)
+  ;; spellcheck
+  (mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-prog-mode))
+        '(emacs-lisp-mode-hook
+          lisp-mode-hook
+          clojure-mode-hook
+          java-mode-hook
+          scala-mode-hook
+          groovy-mode-hook))
+
+  (mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-mode))
+        '(org-mode-hook
+          markdown-mode-hook
+          text-mode-hook)))
 
 ;; yasnippet
 (use-package yasnippet
@@ -1179,40 +1201,18 @@ Otherwise, send an interrupt to slime."
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
-;; Flycheck
-(use-package flycheck
-  :delight flycheck-mode
-  :config
-  (global-flycheck-mode)
-  (delight 'flyspell-mode nil 'flyspell)
-  (delight 'flyspell-prog-mode nil 'flyspell)
-  ;; spellcheck
-  (mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-prog-mode))
-        '(emacs-lisp-mode-hook
-          lisp-mode-hook
-          clojure-mode-hook
-          java-mode-hook
-          scala-mode-hook
-          groovy-mode-hook))
+(progn
+  ;; ctags
+  (setq-default path-to-ctags "/usr/bin/ctags")
 
-  (mapc (lambda (mode-hook) (add-hook mode-hook 'flyspell-mode))
-        '(org-mode-hook
-          markdown-mode-hook
-          text-mode-hook)))
+  (defun create-tags (dir-name)
+    "Create tags file for the project in \"DIR-NAME\"."
+    (interactive "DDirectory: ")
+    (shell-command
+     (format "ctags -f %s -e -R %s" path-to-ctags (directory-file-name dir-name))))
 
-;; ctags
-(setq-default path-to-ctags "/usr/bin/ctags")
-
-(defun create-tags (dir-name)
-  "Create tags file for the project in \"DIR-NAME\"."
-  (interactive "DDirectory: ")
-  (shell-command
-   (format "ctags -f %s -e -R %s" path-to-ctags (directory-file-name dir-name))))
-
-(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
-(add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode)
-
-;;;;;;;;;;;;;;
+  (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
+  (add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode))
 
 (use-package gradle-mode
   :mode (("\\.java$" . java-mode)
@@ -1259,56 +1259,61 @@ Otherwise, send an interrupt to slime."
 (use-package thread-dump
   :commands (thread-dump-open-file thread-dump-open-files thread-dump-open-dir))
 
-(use-package sql
-  :mode ("\\.sql$" . sql-mode)
-  :general
-  (general-evil-define-key 'insert sql-interactive-mode-map
-    "C-S-r" #'comint-history-isearch-backward-regexp
-    "C-l" #'comint-clear-buffer
-    "C-k" #'comint-previous-input
-    "C-j" #'comint-next-input
-    "C-d" (lambda ()
-            (interactive)
-            (when (yes-or-no-p "Quit Sql session?")
-              (comint-delchar-or-maybe-eof 0)
-              (delete-window))))
-  (general-evil-define-key '(insert normal) sql-mode-map
-    "C-c C-c" #'sql-send-paragraph)
-  :config
-  (add-hook 'sql-interactive-mode-hook
-            (lambda ()
-              (setq-default sql-buffer (get-buffer "*SQL*"))
-              (toggle-truncate-lines t)))
+(progn ; sql and db
+  (use-package sql
+    :mode ("\\.sql$" . sql-mode)
+    :general
+    (:states 'insert :keymaps 'sql-interactive-mode-map
+             "C-S-r" #'comint-history-isearch-backward-regexp
+             "C-l" #'comint-clear-buffer
+             "C-k" #'comint-previous-input
+             "C-j" #'comint-next-input
+             "C-d" (lambda ()
+                     (interactive)
+                     (when (yes-or-no-p "Quit Sql session?")
+                       (comint-delchar-or-maybe-eof 0)
+                       (delete-window))))
+    (:state '(insert normal) :keymaps 'sql-mode-map
+            "C-c C-c" #'sql-send-paragraph)
+    :config
+    (add-hook 'sql-interactive-mode-hook
+              (lambda ()
+                (setq-default sql-buffer (get-buffer "*SQL*"))
+                (toggle-truncate-lines t)))
+
+    (sql-set-sqli-buffer-generally)
+
+    (make-directory "~/.emacs.d/sql" :parents)
+    (assert (file-exists-p "~/.emacs.d/sql")
+            T
+            "Unable to create or find sql history dir.")
+    (defun my-sql-save-history-hook ()
+      (let ((lval 'sql-input-ring-file-name)
+            (rval 'sql-product))
+        (if (symbol-value rval)
+            (let ((filename
+                   (concat "~/.emacs.d/sql/"
+                           (symbol-name (symbol-value rval))
+                           "-history.sql")))
+              (set (make-local-variable lval) filename))
+          (error
+           (format "SQL history will not be saved because %s is nil"
+                   (symbol-name rval))))))
+    (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook))
 
   (use-package sql-indent
+    :defer nil
+    :after sql
     :init (add-hook 'sql-mode-hook 'sql-indent))
 
   (use-package sqlup-mode
+    :defer nil
+    :after sql
     :init
     (add-hook 'sql-mode-hook 'sqlup-mode)
     (add-hook 'sql-interactive-mode-hook 'sqlup-mode)
     :config
-    (add-to-list 'sqlup-blacklist "name"))
-
-  (sql-set-sqli-buffer-generally)
-
-  (make-directory "~/.emacs.d/sql" :parents)
-  (assert (file-exists-p "~/.emacs.d/sql")
-          T
-          "Unable to create or find sql history dir.")
-  (defun my-sql-save-history-hook ()
-    (let ((lval 'sql-input-ring-file-name)
-          (rval 'sql-product))
-      (if (symbol-value rval)
-          (let ((filename
-                 (concat "~/.emacs.d/sql/"
-                         (symbol-name (symbol-value rval))
-                         "-history.sql")))
-            (set (make-local-variable lval) filename))
-        (error
-         (format "SQL history will not be saved because %s is nil"
-                 (symbol-name rval))))))
-  (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook))
+    (add-to-list 'sqlup-blacklist "name")))
 
 (use-package aggressive-indent
   :delight aggressive-indent-mode
@@ -1358,13 +1363,6 @@ Otherwise, send an interrupt to slime."
   (add-hook 'java-mode-hook
             (lambda ()
               (lsp-intellij-enable))))
-
-;; Finally, apply host and project custom settings
-
-(let ((project-customizations nil))
-  (ignore-errors
-    ;; projectile-project-root will throw an error outside of projectile
-    (load-if-exists (load-if-exists (concat (projectile-project-root) "./.custom.el")))))
 
 (progn ; settings for emacs-anywhere
   (defun popup-handler (app-name window-title x y w h)
