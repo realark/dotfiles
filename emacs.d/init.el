@@ -1141,8 +1141,8 @@ Otherwise, send an interrupt to slime."
            "M-h"     #'org-metaleft
            "M-l"     #'org-metaright)
   (:states 'normal :keymaps 'evil-org-mode-map
-    "L" #'org-shiftleft
-    "H" #'org-shiftright
+    "H" #'org-shiftleft
+    "L" #'org-shiftright
     "K" #'org-shiftup
     "J" (lambda ()
             (interactive)
