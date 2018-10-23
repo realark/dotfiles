@@ -185,13 +185,14 @@
   (use-package try
     :commands try))
 
-;; settings for osx
-(use-package exec-path-from-shell
-  :defer nil
-  :if (memq window-system '(ns))
-  :config
-  (exec-path-from-shell-initialize)
-  (setq-default mac-command-modifier 'meta))
+(progn ; settings for osx
+  (setq-default mac-command-modifier 'meta)
+
+  (use-package exec-path-from-shell
+    :defer nil
+    :if (memq window-system '(ns))
+    :config
+    (exec-path-from-shell-initialize)))
 
 ;; Themes and UI tweaks
 (progn
