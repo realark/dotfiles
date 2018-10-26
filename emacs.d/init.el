@@ -1170,6 +1170,10 @@ Otherwise, send an interrupt to slime."
 (progn ; calfw calendar
   (use-package calfw
     :commands (cfw:open-calendar-buffer cfw:org-create-source)
+    :general
+    (:states 'normal :keymaps 'cfw:calendar-mode-map
+             ">"     (general-simulate-key ">" :state 'emacs)
+             "<"     (general-simulate-key "<" :state 'emacs))
     :config
 
     ;; default calendar view to week instead of month
