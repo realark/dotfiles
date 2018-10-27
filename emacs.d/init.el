@@ -462,6 +462,23 @@ EOF"
     (setq-default company-idle-delay 0.25)
     (setq-default company-minimum-prefix-length 2)))
 
+
+;; Options for M-x rgrep
+(use-package grep
+  :commands (grep)
+  :config
+  (when (boundp 'grep-find-ignored-files)
+    (mapc (lambda (file-regex)
+            (add-to-list 'grep-find-ignored-files file-regex))
+          '("*.fasl"
+            "*.class")))
+  (when (boundp 'grep-find-ignored-directories)
+    (mapc (lambda (dir-regex)
+            (add-to-list 'grep-find-ignored-directories dir-regex))
+          '("target"
+            "build"
+            "bin"))))
+
 ;; Projectile
 (use-package projectile
   :demand t
