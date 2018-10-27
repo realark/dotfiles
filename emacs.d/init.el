@@ -591,18 +591,14 @@ EOF"
   (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
   (use-package common-lisp-snippets))
 
-(use-package treemacs
-  :general
-  ("<f6>" #'treemacs)
-  :config
-  (use-package treemacs-evil)
-  (use-package treemacs-projectile
-    :config
-    (setq-default treemacs-header-function #'treemacs-projectile-create-header))
-  (setq-default treemacs-git-integration t)
-  (treemacs-git-mode 'extended)
-  (treemacs-follow-mode t)
-  (treemacs-filewatch-mode t))
+
+(use-package dired-sidebar
+  :general ("<f6>" #'dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode)))))
 
 (use-package tabbar
   :demand t
@@ -663,6 +659,7 @@ EOF"
            ((string-prefix-p "TAGS" (buffer-name)) "emacs")
            ((string-prefix-p "magit" (buffer-name)) "emacs")
            ((eq major-mode 'dired-mode) "emacs")
+           ((eq major-mode 'dired-sidebar-mode) "emacs")
            ((string-match-p "Documents/org-files" default-directory) "org")
            ((find-group-for-buffer (current-buffer)) (find-group-for-buffer (current-buffer)))
            ((null (tabbar-current-tabset))
