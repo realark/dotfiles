@@ -270,8 +270,14 @@
     "<escape>" (general-simulate-key "C-g")
     "C-+" #'text-scale-adjust)
 
+  (defun widen-or-quit-window ()
+    (interactive)
+    (if (buffer-narrowed-p)
+        (call-interactively #'widen)
+      (call-interactively #'quit-window)))
+
   (general-def :states '(normal)
-    "q" (general-simulate-key "q" :state 'emacs)
+    "q" #'widen-or-quit-window
     "RET" (general-simulate-key "RET" :state 'emacs))
 
   (general-def
@@ -1107,7 +1113,8 @@ Otherwise, send an interrupt to slime."
 (use-package org
   :mode ("\\.org$" . org-mode)
   :general
-  ("C-x c" #'hydra-orgmode/body)
+  ("C-x c" #'hydra-orgmode/body
+   "C-x n" #'org-narrow-to-subtree)
   :delight org-indent-mode nil org-indent
   :init
   (defhydra hydra-orgmode (:color amaranth :columns 1)
