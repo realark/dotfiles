@@ -1220,6 +1220,10 @@ Otherwise, send an interrupt to slime."
     "TAB" #'markdown-cycle)
   :init (setq-default markdown-command "multimarkdown"))
 
+(use-package yaml-mode
+  :mode (("\\.yaml\\'" . yaml-mode)
+         ("\\.yml\\'" . yaml-mode)))
+
 (use-package graphviz-dot-mode
   :mode ("\\.dot$" . graphviz-dot-mode))
 
