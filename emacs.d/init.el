@@ -794,6 +794,11 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
        ,@body
        (unhandled-mode (warn (format "No handler for mode: %s" unhandled-mode)))))
 
+  (defun single-test ()
+    "Run or rerun a single test."
+    (interactive)
+    (message "Not implemented for current mode. Override with dir local."))
+
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
     ("h" (mode-case
@@ -809,7 +814,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     ;; ("d"  (my-ide-documentation) "Documentation" :exit t)
     ;; ("i"  (my-ide-interaction) "Interaction (repl, shell)" :exit t)
     ;; ("t"  (my-ide-test-repeat) "test re-run" :exit t)
-    ;; ("T"  (my-ide-test) "Test thing at point" :exit t)
+    ("i"  (single-test) "Test thing at point" :exit t)
     ("q"  nil "Cancel" :color red))
 
   (general-def
