@@ -1160,7 +1160,8 @@ Otherwise, send an interrupt to slime."
   (add-hook 'org-capture-mode-hook 'evil-insert-state))
 
 (use-package evil-org
-  :hook ((org-mode . evil-org-mode))
+  :hook ((org-mode . evil-org-mode)
+         (org-trello-mode . evil-org-mode))
   :delight
   evil-org-mode
   :general
@@ -1184,6 +1185,14 @@ Otherwise, send an interrupt to slime."
 (use-package org-trello
   :mode ("\\.trello$" . org-mode)
   :delight org-trello-mode
+  :general
+  (:keymaps 'org-trello-mode-map
+            "C-x C-s"
+            (lambda ()
+              (interactive)
+              (when my-org-trello-online
+                (call-interactively #'org-trello-sync-buffer ))
+              (call-interactively #'save-buffer)))
   :init
   (add-hook 'org-mode-hook (lambda ()
                              (when (string-suffix-p ".trello" (buffer-name))
@@ -1191,7 +1200,13 @@ Otherwise, send an interrupt to slime."
   (defun org-trello-personal-fetch-buffer ()
     "Fetch data from trello and populate the buffer"
     (interactive)
-    (org-trello-sync-buffer t)))
+    (org-trello-sync-buffer t))
+  (defvar my-org-trello-online t
+    "Automatically sync org trello files when non-nil.")
+  (add-hook 'org-trello-mode-hook
+            (lambda ()
+              (when my-org-trello-online
+                (org-trello-sync-buffer t)))))
 
 (progn ; calfw calendar
   (use-package calfw
