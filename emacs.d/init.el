@@ -60,6 +60,9 @@
       `((".*" ,temporary-file-directory t))
       backup-by-copying t)
 
+;; automatic reload from disk
+(global-auto-revert-mode t)
+
 ;; pretty lambda
 (setq-default prettify-symbols-alist
               ;; lambda -> λ
@@ -1261,6 +1264,7 @@ Otherwise, send an interrupt to slime."
     (shell-command
      (format "ctags -f %s -e -R %s" path-to-ctags (directory-file-name dir-name))))
 
+  (setq-default tags-add-tables nil)
   (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
   (add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode))
 
