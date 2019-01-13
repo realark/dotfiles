@@ -1007,6 +1007,7 @@ Otherwise, send an interrupt to slime."
   (use-package magit
     :general
     ("C-x g" #'magit-status
+     "C-x G" #'magit-file-popup
      "C-x B" #'magit-blame)
     :config
     (setq-default magit-completing-read-function 'ivy-completing-read)
