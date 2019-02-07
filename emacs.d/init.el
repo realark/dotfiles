@@ -997,7 +997,11 @@ Otherwise, send an interrupt to slime."
                   (slime-open-inspector result (pop slime-inspector-mark-stack))
                 (quit-window)))))
 
-    (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el"))
+    (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
+    (add-hook 'slime-connected-hook
+              (lambda ()
+                (when (file-exists-p (concat default-directory "slime-init.lisp"))
+                  (slime-eval-print  (get-string-from-file (concat default-directory "slime-init.lisp")))))))
 
     (use-package slime-company
       :demand t
@@ -1156,8 +1160,6 @@ Otherwise, send an interrupt to slime."
                 `(("s" "Syn Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "syn")
                    "* TODO %?")
                   ("l" "Life Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "life")
-                   "* TODO %?")
-                  ("d" "Datadog Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "datadog")
                    "* TODO %?")
                   ("m" "Misc" entry (file ,(concat org-directory "orgzly/" "refile.org"))
                    "* %?")))

@@ -12,13 +12,13 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
+(ql:quickload :cl-annot)
+(annot:enable-annot-syntax)
 
-(defmacro notes (&body body)
-  "Macro for writing un-eval'd notes and pseudo code."
-  (declare (ignore body))
-  '())
+(defpackage :ark (:use :cl))
+(in-package :ark)
 
-
+@export
 (defmacro dis (args &rest body)
   "Disassemble a lambda expression."
   (flet ((arg-name (arg)
@@ -36,6 +36,7 @@
           (declare ,@(remove nil declarations))
           ,@body)))))
 
+@export
 (defmacro disasm-method (name &rest specializers)
   "Disassemble a method.
 Usage: (disasm-method #'package:generic-fun '(integer))"
