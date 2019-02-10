@@ -11,3 +11,5 @@ workbench.xmi
 .dir-locals.el
 eclimd.log
 gh-drafts/
+.custom-slime-init.lisp
+.slime-initial-package

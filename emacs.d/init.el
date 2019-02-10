@@ -994,11 +994,18 @@ Otherwise, send an interrupt to slime."
                   (slime-open-inspector result (pop slime-inspector-mark-stack))
                 (quit-window)))))
 
+    (defun slime-post-connect ()
+      (when (file-exists-p "~/.emacs.d/slime-init.lisp")
+        (slime-eval-async (car (read-from-string (get-string-from-file "~/.emacs.d/slime-init.lisp")))))
+      (when (file-exists-p (concat default-directory ".custom-slime-init.lisp"))
+        (slime-eval-async (car (read-from-string (get-string-from-file (concat default-directory ".custom-slime-init.lisp"))))
+          (lambda (&rest args)
+            (when (file-exists-p (concat default-directory ".slime-initial-package"))
+              (slime-repl-set-package (get-string-from-file (concat default-directory ".slime-initial-package"))))
+            (message "custom slime init complete")))))
+
     (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
-    (add-hook 'slime-connected-hook
-              (lambda ()
-                (when (file-exists-p (concat default-directory "slime-init.lisp"))
-                  (slime-eval-print  (get-string-from-file (concat default-directory "slime-init.lisp")))))))
+    (add-hook 'slime-repl-mode-hook #'slime-post-connect))
 
     (use-package slime-company
       :demand t
