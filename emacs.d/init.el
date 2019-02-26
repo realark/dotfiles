@@ -827,6 +827,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                                ;; delete extra window created by find-function-at-point
                                (delete-window))
              ('lisp-mode (call-interactively #'slime-edit-definition))
+             ('slime-repl-mode (call-interactively #'slime-edit-definition))
              ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))))))
 
 (use-package ansi-color
