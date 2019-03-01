@@ -212,25 +212,30 @@
     (mapc #'disable-theme custom-enabled-themes))
 
   (use-package moe-theme
-    :defer t
+    :ensure :defer
     :if window-system
     :load-path "themes"
     :config
     (moe-theme-set-color 'cyan)
     (powerline-moe-theme))
 
+  (use-package nimbus-theme
+    :ensure :defer
+    :if window-system
+    :load-path "themes")
+
   (use-package farmhouse-theme
-    :defer t
+    :ensure :defer
     :if window-system
     :load-path "themes")
 
   (use-package circadian
-    :demand t
-    :if window-system
-    :config
-    (setq-default circadian-themes '(("07:30" . farmhouse-light)
-                                     ("18:00" . moe-dark)))
-    (circadian-setup))
+    :ensure t
+    :if window-system)
+
+  (setq-default circadian-themes '(("07:30" . farmhouse-light)
+                                   ("16:00" . nimbus)))
+  (circadian-setup)
 
   ;; Maximize emacs window
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
