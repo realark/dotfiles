@@ -548,15 +548,15 @@ EOF"
 
  Find/Replace         Tasks                   Buffers
 ----------------------------------------------------------------------------------
- _f_: file find         _t_: test project         _k_: Kill all buffers
- _t_: find tag          _c_: command run
+ _f_: file find         _t_: test project     _k_: Kill all buffers
+ _T_: find tag          _c_: command run
  _g_: grep all files
  _r_: replace
  _R_: replace regex
 
 "
      ("f"   projectile-find-file)
-     ("t"   projectile-find-tag)
+     ("T"   projectile-find-tag)
      ("g"   projectile-grep)
      ("r"   projectile-replace)
      ("R"   projectile-replace-regexp)
