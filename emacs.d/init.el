@@ -604,7 +604,7 @@ EOF"
 
 
 (use-package dired-sidebar
-  :general ("<f6>" #'dired-sidebar-toggle-sidebar)
+  :general ("<f8>" #'dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
             (lambda ()
