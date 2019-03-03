@@ -611,19 +611,41 @@ EOF"
               (unless (file-remote-p default-directory)
                 (auto-revert-mode)))))
 
+
+(progn
+  ;; TODO: Once on melpa
+  ;; use-package torus
+  ;; :config
+  (load-file "~/tmp/torus/torus.el")
+
+  ;; torus groups buffers.
+  ;; location = (filename . position)
+  ;; circle = group of locations (i.e. buffers)
+  ;; torus = group of all circles
+  :config
+  ;; Created if non existent
+  (setq-default torus-dirname "~/.emacs.d/torus/"
+                torus-save-on-exit t
+                torus-history-maximum-elements 30
+                torus-maximum-horizontal-split 3
+                torus-maximum-vertical-split 3)
+
+  (torus-init))
+
 (use-package tabbar
   :demand t
   :init
   (tabbar-mode t)
+  :general
+  ("C-x t" #'hydra-tabs/body)
   :config
-
   (defhydra hydra-tabs (:color amaranth :hint nil)
     "
-TABS: %(buffer-name)
+TABS: %(buffer-name) -- %(car (car torus-torus))
 -------------------------------------------------------------
  Move:        _L_:right _H_:left
  Switch:      _l_:right _h_:left _k_:up-group _j_:down-group
- Manage:      _c_reate-group _s_witch-group
+ Manage:      _c_reate-torus-circle _C_:create-location _t_:switch-torus-circle
 EOF"
     ("l" tabbar-forward-tab)
     ("h" tabbar-backward-tab)
@@ -631,7 +653,9 @@ EOF"
     ("k" tabbar-forward-group)
     ("L" (my-tabbar-move-current-tab-one-place :right))
     ("H" (my-tabbar-move-current-tab-one-place :left))
-    ("c" (my-create-tabbar-group (read-from-minibuffer "Enter new group name: ")) :exit t)
+    ("c" torus-add-circle :exit t)
+    ("C" torus-add-location :exit t)
+    ("t" torus-switch-circle :exit t)
     ("s" (error "TODO") :exit t)
     ("q" nil))
 
@@ -640,50 +664,27 @@ EOF"
   (set-face-foreground 'tabbar-selected "white")
   (set-face-background 'tabbar-selected "DarkBlue")
 
-  ;; TODO: session tabs with hydra-tab support
-  (defvar my-tabbar-groups
-    "Additional tabbar groups (session-persistence only)"
-    (list ))
-
-  (defun my-create-tabbar-group (group-name)
-    (interactive)
-    (unless (or (ignore-errors (assoc group-name my-tabbar-groups))
-                (find group-name '("emacs" "org" "other")))
-      (push (cons group-name (list (current-buffer))) my-tabbar-groups)))
-
-  (defun find-group-for-buffer (buffer)
-    (cl-loop for group in my-tabbar-groups do
-             (when (find buffer (cdr group))
-               (cl-return (car group)))))
-
-  (add-hook 'kill-buffer-hook
-            (lambda ()
-              (cl-loop for group in my-tabbar-groups do
-                       (setf (cdr group) (remove (current-buffer) (cdr group))))))
-
   ;; tabbar-current-tabset  == current tab set
+
+  (defun my-torus-circle-for-buffer (file-path)
+    (cl-loop for circle-list in torus-torus do
+             (let ((circle-for-buffer (cl-loop for location in (rest circle-list) do
+                                               (when (string-equal file-path (car location))
+                                                 (return (car circle-list))))))
+               (when circle-for-buffer (return circle-for-buffer)))))
 
   (defun my-tabbar-buffer-groups ()
     "Show all normal files in one group"
     (list
-     (cond ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
+     (cond ((and (buffer-file-name)
+                 (my-torus-circle-for-buffer (file-truename (buffer-file-name))))
+            (my-torus-circle-for-buffer (file-truename (buffer-file-name))))
+           ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
            ((string-prefix-p "TAGS" (buffer-name)) "emacs")
            ((string-prefix-p "magit" (buffer-name)) "emacs")
            ((eq major-mode 'dired-mode) "emacs")
            ((eq major-mode 'dired-sidebar-mode) "emacs")
-           ((string-match-p "Documents/org-files" default-directory) "org")
-           ((find-group-for-buffer (current-buffer)) (find-group-for-buffer (current-buffer)))
-           ((null (tabbar-current-tabset))
-            (let ((buf (current-buffer))
-                  (prev-group nil))
-              (switch-to-buffer (other-buffer (current-buffer) 1))
-              (setq prev-group (symbol-name (tabbar-current-tabset)))
-              (switch-to-buffer buf)
-              (cl-loop for group in my-tabbar-groups do
-                       (when (string-equal (car group) prev-group)
-                         (return (push buf (cdr group)))))
-              prev-group))
-           (t "other"))))
+           (t "no-group"))))
   (setq tabbar-buffer-groups-function 'my-tabbar-buffer-groups)
 
   (defun my-tabbar-move-current-tab-one-place (direction)
