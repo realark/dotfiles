@@ -233,7 +233,7 @@
     :ensure t
     :if window-system)
 
-  (setq-default circadian-themes '(("07:30" . farmhouse-light)
+  (setq-default circadian-themes '(("07:30" . dichromacy)
                                    ("16:00" . nimbus)))
   (circadian-setup)
 
@@ -1434,9 +1434,7 @@ Otherwise, send an interrupt to slime."
 
 (progn ; settings for emacs-anywhere
   (defun popup-handler (app-name window-title x y w h)
-    (cond
-     ;; default to markdown mode
-     (t (markdown-mode t))))
+    (lisp-mode))
 
   (add-hook 'ea-popup-hook 'popup-handler))
 
