@@ -1049,13 +1049,14 @@ Otherwise, send an interrupt to slime."
     :demand t
     :after magit)
 
-  (use-package magithub
-    :demand t
-    :after magit
-    :config (magithub-feature-autoinject t)
-    (defun my-magithub-refresh ()
-      (interactive)
-      (magithub--refresh)))
+  ;; no longer works due to lack of magit-popup in latest magit release
+  ;; (use-package magithub
+  ;;   :demand t
+  ;;   :after magit
+  ;;   :config (magithub-feature-autoinject t)
+  ;;   (defun my-magithub-refresh ()
+  ;;     (interactive)
+  ;;     (magithub--refresh)))
 
   (use-package git-link
     :config
