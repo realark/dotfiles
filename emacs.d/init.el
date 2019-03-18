@@ -806,6 +806,16 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (interactive)
     (message "Not implemented for current mode. Override with dir local."))
 
+  (defun %my-go-to-definition ()
+    (interactive)
+    (mode-case
+     ('emacs-lisp-mode (call-interactively #'find-function-at-point)
+                       ;; delete extra window created by find-function-at-point
+                       (delete-window))
+     ('lisp-mode (call-interactively #'slime-edit-definition))
+     ('slime-repl-mode (call-interactively #'slime-edit-definition))
+     ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))))
+
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
     ("h" (mode-case
@@ -813,10 +823,10 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
           ('lisp-mode (slime-browse-classes (slime-read-symbol-name "Class Name: "))))
      "Type Hierarchy" :exit t)
     ("r" (mode-case
-          ('java-mode (lsp-ui-peek-find-references)))
+          ('java-mode (lsp-ui-peek-find-references))
+          ('lisp-mode (call-interactively #'slime-who-calls)))
      "References" :exit t)
-    ("g" (mode-case
-          ('java-mode (lsp-ui-peek-find-definitions)))
+    ("g" (%my-go-to-definition)
      "Go to definition" :exit t)
     ;; ("d"  (my-ide-documentation) "Documentation" :exit t)
     ;; ("i"  (my-ide-interaction) "Interaction (repl, shell)" :exit t)
@@ -827,15 +837,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (general-def
     :states '(normal insert)
     "C-x i" #'hydra-ide/body
-    "M-." (lambda ()
-            (interactive)
-            (mode-case
-             ('emacs-lisp-mode (call-interactively #'find-function-at-point)
-                               ;; delete extra window created by find-function-at-point
-                               (delete-window))
-             ('lisp-mode (call-interactively #'slime-edit-definition))
-             ('slime-repl-mode (call-interactively #'slime-edit-definition))
-             ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))))))
+    "M-." #'%my-go-to-definition))
 
 (use-package ansi-color
   :demand t)
