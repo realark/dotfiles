@@ -1175,6 +1175,7 @@ Otherwise, send an interrupt to slime."
                    "* TODO %?")
                   ("m" "Misc" entry (file ,(concat org-directory "orgzly/" "refile.org"))
                    "* %?")))
+  (setq-default org-duration-format (quote h:mm))
   (add-hook 'org-capture-mode-hook 'evil-insert-state))
 
 (use-package evil-org
