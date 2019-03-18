@@ -177,6 +177,7 @@
        (require ,PCK)))
   (require-install 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+  ;; initial setup will fail here. Run this block manually and at this point run: M-x package-refresh-contents RET
   (package-initialize)
   (require-install 'use-package)
   (setq-default use-package-always-ensure t)
@@ -253,7 +254,7 @@
   :init
   (setq-default ;; Default to normal mode most of the time
                 evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode eshell-mode)
-                evil-emacs-state-modes '(magit-mode magit-popup-mode)
+                evil-emacs-state-modes '(magit-mode)
                 evil-motion-state-modes '())
   (evil-mode 1))
 
