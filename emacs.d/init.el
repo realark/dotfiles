@@ -234,7 +234,7 @@
     :ensure t
     :if window-system)
 
-  (setq-default circadian-themes '(("07:30" . dichromacy)
+  (setq-default circadian-themes '(("07:30" . deeper-blue)
                                    ("16:00" . nimbus)))
   (circadian-setup)
 
