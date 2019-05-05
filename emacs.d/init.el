@@ -222,7 +222,12 @@
     (moe-theme-set-color 'cyan)
     (powerline-moe-theme))
 
-  (use-package nimbus-theme
+  (use-package nimbus
+    :ensure :defer
+    :if window-system
+    :load-path "themes")
+
+  (use-package cyberpunk-theme
     :ensure :defer
     :if window-system
     :load-path "themes")
@@ -237,7 +242,7 @@
     :if window-system)
 
   (setq-default circadian-themes '(("07:30" . deeper-blue)
-                                   ("16:00" . nimbus)))
+                                   ("16:00" . cyberpunk)))
   (circadian-setup)
 
   ;; Maximize emacs window
