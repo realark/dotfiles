@@ -45,6 +45,8 @@
 (mouse-avoidance-mode 'exile)
 
 (setq completion-ignore-case t)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
 
 (setq-default
  isearch-allow-scroll t
@@ -1260,7 +1262,10 @@ Otherwise, send an interrupt to slime."
   :general
   (general-def 'normal markdown-mode-map
     "TAB" #'markdown-cycle)
-  :init (setq-default markdown-command "multimarkdown"))
+  :init
+  ;; coleslaw blogging
+  (add-to-list 'auto-mode-alist '("\\.post\\'" . markdown-mode))
+  (setq-default markdown-command "multimarkdown"))
 
 (use-package yaml-mode
   :mode (("\\.yaml\\'" . yaml-mode)
