@@ -1171,6 +1171,7 @@ Otherwise, send an interrupt to slime."
   (setq-default org-default-notes-file (concat org-directory "notes.org"))
   (setq-default org-log-done 'time)
   (setq-default org-enforce-todo-dependencies t)
+  (setq-default org-catch-invisible-edits 'show-and-error)
 
   (setq-default org-startup-with-inline-images t)
   (setq-default org-image-actual-width nil)
