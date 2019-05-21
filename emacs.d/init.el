@@ -617,7 +617,9 @@ EOF"
   (add-hook 'dired-sidebar-mode-hook
             (lambda ()
               (unless (file-remote-p default-directory)
-                (auto-revert-mode)))))
+                (auto-revert-mode))))
+  :config
+  (setq-default dired-sidebar-should-follow-file t))
 
 
 (progn
