@@ -1,7 +1,7 @@
-(setf swank:*globally-redirect-io* T)
+(in-package :swank)
 
+(defvar *globally-redirect-io* T)
 
-;; Incudine settings
-;; Avoid problems in realtime because the default value is :SPAWN (each
-;; request in a separate thread)
-;;(setf swank:*communication-style* :sigio)
+;; will usually show slots in their source code order
+(defvar *inspector-slots-default-order* :unsorted)
+(defvar *inspector-slots-default-grouping* :inheritance)

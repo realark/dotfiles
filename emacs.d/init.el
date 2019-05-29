@@ -222,11 +222,6 @@
     (moe-theme-set-color 'cyan)
     (powerline-moe-theme))
 
-  (use-package nimbus
-    :ensure :defer
-    :if window-system
-    :load-path "themes")
-
   (use-package cyberpunk-theme
     :ensure :defer
     :if window-system
@@ -1165,6 +1160,7 @@ Otherwise, send an interrupt to slime."
     ("C"  (org-capture) "Capture" :exit t)
     ("q"  nil "Cancel" :color red))
   :config
+  (setq-default org-todo-keywords '("TODO" "DOING" "DONE"))
   (setq-default org-startup-indented t)
   ;; fontify code in code blocks
   (setq-default org-src-fontify-natively t)
@@ -1213,6 +1209,19 @@ Otherwise, send an interrupt to slime."
 
 (use-package org-bullets
   :hook ((org-mode . org-bullets-mode)))
+
+(use-package org-super-agenda
+  :hook ((org-agenda-mode . org-super-agenda-mode))
+  :general
+  (general-def :keymaps 'org-super-agenda-header-map
+    "j" #'evil-next-line
+    "k" #'evil-previous-line)
+  :config
+  (setq-default org-super-agenda-groups
+                '((:name "#### ACTIVE TASKS ####"
+                   :todo ("DOING")
+                   :face (:underline t))
+                  (:auto-category t))))
 
 (use-package org-trello
   :mode ("\\.trello$" . org-mode)
