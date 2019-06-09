@@ -1106,7 +1106,8 @@ Otherwise, send an interrupt to slime."
                   (kill-buffer)
                 (kill-buffer-and-window)))
       "C-j" #'eshell-next-input
-      "C-k" #'eshell-previous-input)
+      "C-k" #'eshell-previous-input
+      "S-<return>" #'company-complete)
 
     (if (boundp 'eshell-visual-commands)
         (add-to-list 'eshell-visual-commands "htop")
@@ -1123,6 +1124,9 @@ Otherwise, send an interrupt to slime."
     (eshell/alias 'll 'ls '-l))
 
   (add-hook 'eshell-mode-hook #'my-eshell-hook))
+
+(use-package esh-autosuggest
+  :hook (eshell-mode . esh-autosuggest-mode))
 
 ;; irc client
 (use-package erc
