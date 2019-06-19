@@ -1225,6 +1225,8 @@ Otherwise, send an interrupt to slime."
                 '((:name "#### ACTIVE TASKS ####"
                    :todo ("DOING")
                    :face (:underline t))
+                  (:name "Syn"
+                   :category "syn")
                   (:auto-category t))))
 
 (use-package org-trello
