@@ -684,11 +684,13 @@ EOF"
      (cond ((and (buffer-file-name)
                  (my-torus-circle-for-buffer (file-truename (buffer-file-name))))
             (my-torus-circle-for-buffer (file-truename (buffer-file-name))))
+           ((eq major-mode 'erc-mode) "IRC")
            ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
            ((string-prefix-p "TAGS" (buffer-name)) "emacs")
            ((string-prefix-p "magit" (buffer-name)) "emacs")
            ((eq major-mode 'dired-mode) "emacs")
            ((eq major-mode 'dired-sidebar-mode) "emacs")
+           ((eq major-mode 'org-mode) "org")
            (t "no-group"))))
   (setq tabbar-buffer-groups-function 'my-tabbar-buffer-groups)
 
@@ -1140,10 +1142,11 @@ Otherwise, send an interrupt to slime."
   :config
   (use-package erc-hl-nicks :ensure t)
   (require 'erc-services)
-  (erc-services-mode 1)
-  (require 'erc-log)
-  (setq-default erc-log-channels-directory "~/.emacs.d/erc/logs/"
-                erc-save-buffer-on-part t))
+  (erc-services-mode 1))
+
+(use-package znc
+  :defer t
+  :commands (znc-erc))
 
 ;; Org mode
 (use-package org
