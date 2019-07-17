@@ -156,7 +156,7 @@
 (progn
   (defun display-startup-echo-area-message ()
     "Change the startup message."
-    (message "Sunday, 28th June 2071"))
+    (message "(oo)"))
 
   (setq initial-scratch-message
         (concat
@@ -179,7 +179,7 @@
        (require ,PCK)))
   (require-install 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-  ;; initial setup will fail here. Run this block manually and at this point run: M-x package-refresh-contents RET
+  ;; a fresh setup will fail here. Run this block manually and at this point run: M-x package-refresh-contents RET
   (package-initialize)
   (require-install 'use-package)
   (setq-default use-package-always-ensure t)
@@ -1226,7 +1226,10 @@ Otherwise, send an interrupt to slime."
     "j" #'evil-next-line
     "k" #'evil-previous-line)
   :config
-  (setq-default org-super-agenda-groups
+  (setq-default org-super-agenda-header-separator "  --->"
+                org-agenda-skip-scheduled-if-done t
+                org-agenda-skip-deadline-if-done t
+                org-super-agenda-groups
                 '((:name "#### ACTIVE TASKS ####"
                    :todo ("DOING")
                    :face (:underline t))
