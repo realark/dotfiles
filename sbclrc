@@ -13,7 +13,8 @@
     (load quicklisp-init)))
 
 (ql:quickload :cl-annot)
-(ql:quickload :lisp-critic)
+(ql:quickload :clhs)
+;; (ql:quickload :lisp-critic)
 (annot:enable-annot-syntax)
 
 (defpackage :ark (:use :cl))
