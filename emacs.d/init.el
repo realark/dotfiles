@@ -473,7 +473,7 @@ EOF"
   (use-package company-quickhelp
     :config
     (company-quickhelp-mode t)
-    (setq-default company-idle-delay 0.25)
+    (setq-default company-idle-delay 1.00)
     (setq-default company-minimum-prefix-length 3)))
 
 
@@ -856,7 +856,10 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (:states 'insert :keymaps 'sly-mrepl-mode-map
              ;; insert a newline instead of evaluating the expression
              "S-<return>" #'newline-and-indent
-             "C-c"     #'comint-kill-input
+             "C-c"     (lambda ()
+                         (interactive)
+                         (end-of-buffer)
+                         (comint-kill-input))
              "C-r"     #'comint-history-isearch-backward-regexp
              "C-d"     #'sly-quit-lisp
              "C-S-l"   #'comint-clear-buffer
@@ -875,7 +878,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
              "v" (general-simulate-key "v" :state 'emacs)
              ":" #'sly-db-pprint-eval-in-frame)
     (:states 'normal :keymaps 'sly-inspector-mode-map
-             "Q" #'quit-window
+             "Q" #'sly-inspector-quit
              "q" #'sly-inspector-pop
              ":" #'sly-inspector-eval)
     ;; (general-def :states 'normal :keymaps 'slime-xref-mode-map
