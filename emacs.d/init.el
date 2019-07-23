@@ -841,7 +841,19 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     "M-." #'%my-go-to-definition))
 
 (use-package ansi-color
-  :demand t)
+  :demand t
+  :config
+  (defun my-ansi-color-region ()
+    (interactive)
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region (point-min) (point-max))))
+
+  (defun my-ansi-color-buffer ()
+    (interactive)
+    (let ((inhibit-read-only t))
+      (save-excursion
+        (mark-beginning-of-buffer)
+        (my-ansi-color-region)))))
 
 (progn
   (use-package sly
@@ -883,6 +895,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     ;; (load "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
     (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run")
 
+    (make-directory "/tmp/sly-fasls" :parents)
     (setq sly-compile-file-options '(:fasl-directory "/tmp/sly-fasls/"))
 
     (defun my-sly-post-connect ()
