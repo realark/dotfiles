@@ -440,13 +440,7 @@ EOF"
     :general
     ("C-s" #'swiper)
     :init
-    (setq-default swiper-action-recenter t)
-    :config
-    ;; isearch-forward seems to get stuck in the wrong state with swiper.
-    ;; Manually setting it to T seems to work around the problem.
-    ;; https://github.com/emacs-evil/evil/issues/712
-    ;; This is probably a problem with my config
-    (setq isearch-forward t))
+    (setq-default swiper-action-recenter t))
 
   (use-package counsel
     :demand t
