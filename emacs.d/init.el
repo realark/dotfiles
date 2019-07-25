@@ -954,10 +954,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (slime-setup '(slime-fancy
                    slime-highlight-edits
                    slime-asdf
-                   slime-xref-browser
-                   slime-company))
-    ;; hack. slime-setup should enable slime-company
-    (slime-company-init)
+                   slime-xref-browser))
     (slime-require :swank-listener-hooks)
 
     ;; keymap must go here after contrib loads
@@ -999,7 +996,10 @@ Otherwise, send an interrupt to slime."
 
   (use-package slime-company
     :demand t
-    :after slime))
+    :after slime
+    :config
+    (slime-setup '(slime-company))
+    (slime-company-init)))
 
 (progn ; magit and other git utils
   (use-package magit
