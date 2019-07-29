@@ -613,6 +613,7 @@ EOF"
   (dired-mode . centaur-tabs-local-mode)
   (magit-mode . centaur-tabs-local-mode)
   (org-agenda-mode . centaur-tabs-local-mode)
+  (slime-repl-mode . centaur-tabs-local-mode)
   :general
   (:states 'normal :keymaps 'centaur-tabs-mode-map
    "gT" #'centaur-tabs-backward-tab
@@ -626,6 +627,45 @@ EOF"
         centaur-tabs-set-close-button nil
         centaur-tabs-set-modified-marker t)
   (centaur-tabs-group-by-projectile-project)
+  (centaur-tabs-group-buffer-groups)
+  (defun centaur-tabs-buffer-groups ()
+    (list
+     (cond
+      ((or (string-equal "*" (substring (buffer-name) 0 1))
+           (string-equal "TAGS" (substring (buffer-name) 0 4))
+	         (memq major-mode '(magit-process-mode
+			                        magit-status-mode
+			                        magit-diff-mode
+			                        magit-log-mode
+			                        magit-file-mode
+			                        magit-blob-mode
+			                        magit-blame-mode)))
+       "Emacs")
+      ((derived-mode-p 'eshell-mode)
+       "EShell")
+      ((derived-mode-p 'emacs-lisp-mode)
+       "Elisp")
+      ((derived-mode-p 'dired-mode)
+       "Dired")
+      ((memq major-mode '(org-mode org-agenda-mode diary-mode))
+       "OrgMode")
+      (t
+       (centaur-tabs-get-group-name (current-buffer))))))
+
+  (defhydra hydra-tabs (:color amaranth :hint nil)
+    "
+TABS: %(buffer-name) -- %(centaur-tabs-current-tabset)
+-------------------------------------------------------------
+ Move:        _L_:right _H_:left
+ Switch:      _l_:right _h_:left _k_:forward-group _j_:backward-group
+EOF"
+    ("l" centaur-tabs-forward-tab)
+    ("h" centaur-tabs-backward-tab)
+    ("j" #'centaur-tabs-forward-group)
+    ("k" #'centaur-tabs-backward-group)
+    ("L" #'centaur-tabs-move-current-tab-to-right)
+    ("H" #'centaur-tabs-move-current-tab-to-left)
+    ("q" nil))
   (centaur-tabs-mode))
 
 ;; interactive mode toggling
