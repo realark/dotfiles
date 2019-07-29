@@ -603,132 +603,30 @@ EOF"
   (setq-default dired-sidebar-should-follow-file t))
 
 
-(progn
-  ;; TODO: Once on melpa
-  ;; use-package torus
-  ;; :config
-  (load-file "~/tmp/torus/torus.el")
+(use-package all-the-icons
+  ;; note: must run M-x all-the-icons-install-fonts
+  :demand t)
 
-  ;; torus groups buffers.
-  ;; location = (filename . position)
-  ;; circle = group of locations (i.e. buffers)
-  ;; torus = group of all circles
-  :config
-  ;; Created if non existent
-  (setq-default torus-dirname "~/.emacs.d/torus/"
-                torus-save-on-exit t
-                torus-history-maximum-elements 30
-                torus-maximum-horizontal-split 3
-                torus-maximum-vertical-split 3)
-
-  (torus-init))
-
-(use-package tabbar
+(use-package centaur-tabs
   :demand t
-  :init
-  (tabbar-mode t)
+  :hook
+  (dired-mode . centaur-tabs-local-mode)
+  (magit-mode . centaur-tabs-local-mode)
+  (org-agenda-mode . centaur-tabs-local-mode)
   :general
-  ("C-x t" #'hydra-tabs/body)
+  (:states 'normal :keymaps 'centaur-tabs-mode-map
+   "gT" #'centaur-tabs-backward-tab
+   "gt" #'centaur-tabs-forward-tab)
   :config
-  (defhydra hydra-tabs (:color amaranth :hint nil)
-    "
-TABS: %(buffer-name) -- %(car (car torus-torus))
--------------------------------------------------------------
- Move:        _L_:right _H_:left
- Switch:      _l_:right _h_:left _k_:up-group _j_:down-group
- Manage:      _c_reate-torus-circle _C_:create-location _t_:switch-torus-circle
-EOF"
-    ("l" tabbar-forward-tab)
-    ("h" tabbar-backward-tab)
-    ("j" tabbar-backward-group)
-    ("k" tabbar-forward-group)
-    ("L" (my-tabbar-move-current-tab-one-place :right))
-    ("H" (my-tabbar-move-current-tab-one-place :left))
-    ("c" torus-add-circle :exit t)
-    ("C" torus-add-location :exit t)
-    ("t" torus-switch-circle :exit t)
-    ("s" (error "TODO") :exit t)
-    ("q" nil))
-
-  (setq frame-title-format '("emacs <" (:eval (symbol-name tabbar-current-tabset)) "> - %b"))
-
-  (set-face-foreground 'tabbar-selected "white")
-  (set-face-background 'tabbar-selected "DarkBlue")
-
-  ;; tabbar-current-tabset  == current tab set
-
-  (defun my-torus-circle-for-buffer (file-path)
-    (cl-loop for circle-list in torus-torus do
-             (let ((circle-for-buffer (cl-loop for location in (rest circle-list) do
-                                               (when (string-equal file-path (car location))
-                                                 (return (car circle-list))))))
-               (when circle-for-buffer (return circle-for-buffer)))))
-
-  (defun my-tabbar-buffer-groups ()
-    "Show all normal files in one group"
-    (list
-     (cond ((and (buffer-file-name)
-                 (my-torus-circle-for-buffer (file-truename (buffer-file-name))))
-            (my-torus-circle-for-buffer (file-truename (buffer-file-name))))
-           ((eq major-mode 'erc-mode) "IRC")
-           ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
-           ((string-prefix-p "TAGS" (buffer-name)) "emacs")
-           ((string-prefix-p "magit" (buffer-name)) "emacs")
-           ((eq major-mode 'dired-mode) "emacs")
-           ((eq major-mode 'dired-sidebar-mode) "emacs")
-           ((eq major-mode 'org-mode) "org")
-           (t "no-group"))))
-  (setq tabbar-buffer-groups-function 'my-tabbar-buffer-groups)
-
-  (defun my-tabbar-move-current-tab-one-place (direction)
-    "Move current tab one place. DIRECTION must be :LEFT or :RIGHT."
-    ;; bufset == (list  (buffer . (group-list)) ...)
-    (let* ((bufset (tabbar-current-tabset t))
-           (old-bufs (tabbar-tabs bufset))
-           (first-buf (car old-bufs))
-           (last-buf (car (last old-bufs)))
-           (new-bufs (list)))
-      (ecase direction
-        (:left
-         (unless (string= (buffer-name) (format "%s" (car first-buf)))
-           (setq not-yet-this-buf first-buf)
-           (setq old-bufs (cdr old-bufs))
-           (while (and old-bufs
-                       (not (string= (buffer-name) (format "%s" (car (car old-bufs))))))
-             (push not-yet-this-buf new-bufs)
-             (setq not-yet-this-buf (car old-bufs))
-             (setq old-bufs (cdr old-bufs)))
-           (if old-bufs ; if this is false, then the current tab's buffer name is mysteriously missing
-               (progn
-                 (push (car old-bufs) new-bufs) ; this is the tab that was to be moved
-                 (push not-yet-this-buf new-bufs)
-                 (setq new-bufs (reverse new-bufs))
-                 (setq new-bufs (append new-bufs (cdr old-bufs))))
-             (error "Error: current buffer's name was not found in Tabbar's buffer list."))))
-        (:right
-         (while (and
-                 old-bufs
-                 (not (string= (buffer-name) (format "%s" (car (car old-bufs))))))
-           (push (car old-bufs) new-bufs)
-           (setq old-bufs (cdr old-bufs)))
-         (if old-bufs ; if this is false, then the current tab's buffer name is mysteriously missing
-             (progn
-               (setq the-buffer (car old-bufs))
-               (setq old-bufs (cdr old-bufs))
-               (if old-bufs ; if this is false, then the current tab is the rightmost
-                   (push (car old-bufs) new-bufs))
-               (push the-buffer new-bufs)) ; this is the tab that was to be moved
-           (error "Error: current buffer's name was not found in Tabbar's buffer list."))
-         (setq new-bufs (reverse new-bufs))
-         (setq new-bufs (append new-bufs (cdr old-bufs)))))
-      (set bufset new-bufs)
-      (tabbar-set-template bufset nil)
-      (tabbar-display-update)))
-
-  (general-def
-    :states '(normal)
-    "gT" #'tabbar-backward-tab
-    "gt" #'tabbar-forward-tab))
+  (setq centaur-tabs-set-icons t
+        entaur-tabs-gray-out-icons 'buffer
+        centaur-tabs-set-bar t
+        centaur-tabs-background-color (face-background 'default)
+        centaur-tabs-set-bar 'over
+        centaur-tabs-set-close-button nil
+        centaur-tabs-set-modified-marker t)
+  (centaur-tabs-group-by-projectile-project)
+  (centaur-tabs-mode))
 
 ;; interactive mode toggling
 (progn
