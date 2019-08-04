@@ -750,13 +750,15 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     "IDE Actions"
     ("h" (mode-case
           ('java-mode (lsp-ui-peek-find-implementation))
-          ;; ('lisp-mode (slime-browse-classes (slime-read-symbol-name "Class Name: ")))
-          )
+          ('lisp-mode (slime-browse-classes (slime-read-symbol-name "Class Name: "))))
      "Type Hierarchy" :exit t)
     ("r" (mode-case
           ('java-mode (lsp-ui-peek-find-references))
           ('lisp-mode (call-interactively #'slime-who-calls)))
      "References" :exit t)
+    ("d" (mode-case
+          ('lisp-mode (call-interactively #'slime-documentation)))
+     "Documentation" :exit t)
     ("g" (%my-go-to-definition)
      "Go to definition" :exit t)
     ;; ("d"  (my-ide-documentation) "Documentation" :exit t)
@@ -1384,6 +1386,12 @@ Otherwise, send an interrupt to slime."
   (add-hook 'java-mode-hook
             (lambda ()
               (lsp-intellij-enable))))
+
+(progn ; glsl-mode
+  (use-package glsl-mode)
+
+  (use-package company-glsl
+    :after glsl-mode))
 
 (progn ; settings for emacs-anywhere
   (defun popup-handler (app-name window-title x y w h)
