@@ -131,45 +131,30 @@ else
   fi
 fi
 alias top='htop'
-alias minicom='sudo minicom'
 alias open='xdg-open'
 
 alias histgrep="grep '$1' /home/ark/.zsh_history"
 alias grep="grep --color=auto"
 
 #alias engage="play -n -c1 synth whitenoise band -n 100 20 band -n 50 20 gain +25 fade h 1 864000 1"
-alias engage="mplayer -loop 0 ~/.sounds/enterprise_engine_sound.mp3"
-alias use_the_force="telnet towel.blinkenlights.nl"
 alias rsync="rsync -p -rh --partial --progress"
 alias se="sync && exit"
-alias minecraft="cd ~/minecraft && ./play_minecraft &"
 alias k="dolphin . >/dev/null 2>&1 & disown"
-alias wake_gc="ssh emergence './wake_gc'"
-alias kill9="kill -9"
-alias pacman="sudo pacman"
 alias ll="ls -l"
-alias fswebcam="fswebcam -r 960x720"
 alias blank="xset dpms force off"
-alias tvtimesound="padsp sox -r 49000 -t ossdsp /dev/dsp3 -t ossdsp /dev/dsp" #Do something with arecord | aplay
-alias pm-suspend="export DISPLAY=:0 ; qdbus org.freedesktop.PowerManagement /org/freedesktop/PowerManagement Suspend"
 alias crontab="fcrontab"
 alias duh="du -h --max-depth=0"
 alias sqlplus="launch_sqlplus"
 alias sbcl="rlwrap -c -H ~/.sbcl_history sbcl --noinform"
-alias sudo='sudo ';
 alias mtial='multitail'
 alias emacs='emacsclient -create-frame --alternate-editor=""'
-alias cliemacs='emacs -nw'
-alias idemacs='emacs >/dev/null 2>&1 &'
-alias vimacs='emacs --no-desktop'
 alias less='less -R'
-alias cless='isMore'
 alias yaourt='yaourt --noconfirm'
 alias telnet='rlwrap nc'
 alias diff='colordiff'
-GRADLE_BIN="/usr/bin/gradle"
-alias gradle='runGradle'
 alias journalctl='journalctl --pager-end --since "1 day ago"'
+alias myipaddress='curl ifconfig.me'
+alias myinternetspeed='speedtest-cli'
 
 # I don't want to set LC_ALL but perl and locale complain if I don't
 export LC_ALL="$LANG"
