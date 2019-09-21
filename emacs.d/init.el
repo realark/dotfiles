@@ -298,7 +298,8 @@
                    (whitespace-mode 1)
                    (linum-mode 1))))
     "f"      #'indent-region
-    ";"      #'toggle-comment-region-or-line))
+    ";"      #'toggle-comment-region-or-line
+    "x"      (general-simulate-key "M-x")))
 
 ;; Hydras
 (use-package hydra
