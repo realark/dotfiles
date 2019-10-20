@@ -870,6 +870,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
              "7" (general-simulate-key "7" :state 'emacs)
              "8" (general-simulate-key "8" :state 'emacs)
              "9" (general-simulate-key "9" :state 'emacs)
+             ":" #'sldb-pprint-eval-in-frame
              "v" (general-simulate-key "v" :state 'emacs))
     (:states 'normal :keymaps 'slime-xref-mode-map
              "j" #'slime-xref-next-line
