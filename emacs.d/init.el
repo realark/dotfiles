@@ -876,6 +876,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
              "j" #'slime-xref-next-line
              "k" #'slime-xref-prev-line)
     (:states 'normal :keymaps 'slime-inspector-mode-map
+             ":" #'slime-inspector-eval
              "q" (lambda ()
                    "Reinspect the previous object or close the window if there is no previous object"
                    ;; mostly copied from slime-inspector-pop
