@@ -699,6 +699,7 @@ TABS: %(buffer-name) -- %(centaur-tabs-current-tabset)
 -------------------------------------------------------------
  Move:        _L_:right _H_:left
  Switch:      _l_:right _h_:left _k_:forward-group _j_:backward-group
+ Kill:        _x_:current-buffer _X_:all-buffers-in-group
 EOF"
     ("l" centaur-tabs-forward-tab)
     ("h" centaur-tabs-backward-tab)
@@ -706,6 +707,10 @@ EOF"
     ("k" #'centaur-tabs-backward-group)
     ("L" #'centaur-tabs-move-current-tab-to-right)
     ("H" #'centaur-tabs-move-current-tab-to-left)
+    ("x" (lambda ()
+           (interactive)
+           (kill-buffer (current-buffer))))
+    ("X" #'centaur-tabs-kill-all-buffers-in-current-group)
     ("q" nil))
   (centaur-tabs-mode))
 
