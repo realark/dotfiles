@@ -677,8 +677,6 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
         centaur-tabs-set-bar 'over
         centaur-tabs-set-close-button nil
         centaur-tabs-set-modified-marker t)
-  (centaur-tabs-group-by-projectile-project)
-  (centaur-tabs-group-buffer-groups)
   (defun centaur-tabs-buffer-groups ()
     (list
      (cond
@@ -701,7 +699,7 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
       ((memq major-mode '(org-mode org-agenda-mode diary-mode))
        "OrgMode")
       (t
-       (centaur-tabs-get-group-name (current-buffer))))))
+       (centaur-tabs-project-name)))))
 
   (defhydra hydra-tabs (:color amaranth :hint nil)
     "
@@ -722,6 +720,8 @@ EOF"
            (kill-buffer (current-buffer))))
     ("X" #'centaur-tabs-kill-all-buffers-in-current-group)
     ("q" nil))
+  ;; (centaur-tabs-group-by-projectile-project)
+  (centaur-tabs-group-buffer-groups)
   (centaur-tabs-mode))
 
 ;; interactive mode toggling
