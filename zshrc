@@ -145,7 +145,6 @@ alias blank="xset dpms force off"
 alias crontab="fcrontab"
 alias duh="du -h --max-depth=0"
 alias sqlplus="launch_sqlplus"
-alias sbcl="rlwrap -c -H ~/.sbcl_history sbcl --noinform"
 alias mtial='multitail'
 alias emacs='emacsclient -create-frame --alternate-editor=""'
 alias less='less -R'

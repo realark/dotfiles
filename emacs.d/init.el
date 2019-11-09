@@ -599,6 +599,10 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
 (use-package flycheck
   :demand t
   :delight flycheck-mode
+  :general
+  (:states 'normal :keymaps 'flycheck-error-list-mode-map
+           "j" #'flycheck-error-list-next-error
+           "k" #'flycheck-error-list-previous-error)
   :config
   (global-flycheck-mode)
   (delight 'flyspell-mode nil 'flyspell)
@@ -616,6 +620,12 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
         '(org-mode-hook
           markdown-mode-hook
           text-mode-hook)))
+
+(use-package flycheck-pos-tip
+  :after flycheck
+  :init
+  (with-eval-after-load 'flycheck
+    (flycheck-pos-tip-mode)))
 
 ;; yasnippet
 (use-package yasnippet
@@ -805,6 +815,10 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     ("d" (mode-case
           ('lisp-mode (call-interactively #'slime-documentation)))
      "Documentation" :exit t)
+    ("e" (mode-case
+          ('lisp-mode (call-interactively #'slime-list-compiler-notes))
+          ('emacs-lisp-mode (call-interactively #'list-flycheck-errors)))
+     "Error List" :exit t)
     ("g" (%my-go-to-definition)
      "Go to definition" :exit t)
     ;; ("d"  (my-ide-documentation) "Documentation" :exit t)
