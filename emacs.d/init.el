@@ -677,29 +677,35 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
         centaur-tabs-set-bar 'over
         centaur-tabs-set-close-button nil
         centaur-tabs-set-modified-marker t)
+  (defvar my-cached-buffer-groups nil
+    "Cached value for custom buffer groups")
   (defun centaur-tabs-buffer-groups ()
-    (list
-     (cond
-      ((or (string-equal "*" (substring (buffer-name) 0 1))
-           (string-equal "TAGS" (substring (buffer-name) 0 4))
-	         (memq major-mode '(magit-process-mode
-			                        magit-status-mode
-			                        magit-diff-mode
-			                        magit-log-mode
-			                        magit-file-mode
-			                        magit-blob-mode
-			                        magit-blame-mode)))
-       "Emacs")
-      ((derived-mode-p 'eshell-mode)
-       "EShell")
-      ((derived-mode-p 'emacs-lisp-mode)
-       "Elisp")
-      ((derived-mode-p 'dired-mode)
-       "Dired")
-      ((memq major-mode '(org-mode org-agenda-mode diary-mode))
-       "OrgMode")
-      (t
-       (centaur-tabs-project-name)))))
+    (if my-cached-buffer-groups
+        (symbol-value 'my-cached-buffer-groups)
+      (set (make-local-variable 'my-cached-buffer-groups)
+           (list
+            (cond
+             ((or (memq major-mode '(magit-process-mode
+			                               magit-status-mode
+			                               magit-diff-mode
+			                               magit-log-mode
+			                               magit-file-mode
+			                               magit-blob-mode
+			                               magit-blame-mode))
+                  (string-equal "*" (substring (buffer-name) 0 1))
+	                (string-equal "TAGS" (substring (buffer-name) 0 4)))
+              "Emacs")
+             ((derived-mode-p 'eshell-mode)
+              "EShell")
+             ((derived-mode-p 'emacs-lisp-mode)
+              "Elisp")
+             ((derived-mode-p 'dired-mode)
+              "Dired")
+             ((memq major-mode '(org-mode org-agenda-mode diary-mode))
+              "OrgMode")
+             (t
+              (centaur-tabs-project-name)))))
+      (symbol-value 'my-cached-buffer-groups)))
 
   (defhydra hydra-tabs (:color amaranth :hint nil)
     "
