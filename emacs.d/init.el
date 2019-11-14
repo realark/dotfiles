@@ -669,6 +669,8 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
   (:states 'normal :keymaps 'centaur-tabs-mode-map
    "gT" #'centaur-tabs-backward-tab
    "gt" #'centaur-tabs-forward-tab)
+  :init
+  (centaur-tabs-mode 1)
   :config
   (setq centaur-tabs-set-icons t
         entaur-tabs-gray-out-icons 'buffer
@@ -727,8 +729,7 @@ EOF"
     ("X" #'centaur-tabs-kill-all-buffers-in-current-group)
     ("q" nil))
   ;; (centaur-tabs-group-by-projectile-project)
-  (centaur-tabs-group-buffer-groups)
-  (centaur-tabs-mode))
+  (centaur-tabs-group-buffer-groups))
 
 ;; interactive mode toggling
 (progn
