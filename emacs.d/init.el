@@ -520,6 +520,9 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
             "build"
             "bin"))))
 
+(use-package noflet
+  :commands (noflet))
+
 ;; Projectile
 (use-package projectile
   :demand t
@@ -570,6 +573,14 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
     (advice-add 'magit-branch-and-checkout ; This is `b c'.
                 :after #'%run-projectile-invalidate-cache))
 
+  (defun my/bypass-confirmation (function &rest args)
+    "Call FUNCTION with ARGS, bypassing all `y-or-n-p' prompts."
+    (require 'noflet)
+    (noflet
+     ((y-or-n-p (prompt) t))
+     (apply function args)))
+
+
   (general-def
    "C-x p"
    (defhydra hydra-projectile (:color blue :hint nil)
@@ -586,7 +597,10 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
 
 "
      ("f"   projectile-find-file)
-     ("T"   projectile-find-tag)
+     ("T"   (lambda ()
+              (interactive)
+              (my/bypass-confirmation #'projectile-regenerate-tags)
+              (projectile-find-tag)))
      ("g"   projectile-grep)
      ("r"   projectile-replace)
      ("R"   projectile-replace-regexp)
