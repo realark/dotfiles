@@ -701,6 +701,7 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
       (set (make-local-variable 'my-cached-buffer-groups)
            (list
             (cond
+             ((memq major-mode '(erc-mode)) "IRC")
              ((or (memq major-mode '(magit-process-mode
 			                               magit-status-mode
 			                               magit-diff-mode
