@@ -980,6 +980,11 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                    slime-asdf
                    slime-xref-browser))
     (slime-require :swank-listener-hooks)
+    ;; https://emacs.stackexchange.com/questions/9600/how-can-i-override-a-pre-defined-face-for-light-and-dark-backgrounds
+    (set-face-attribute 'slime-highlight-edits-face nil
+                        ;; :background "dimgray"
+                        ;; :background "lightgray"
+                        :background "purple4")
 
     ;; keymap must go here after contrib loads
     (general-def :states 'normal :keymaps 'slime-browser-map
