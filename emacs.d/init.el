@@ -282,7 +282,7 @@
 
   (general-def
     :states '(normal visual)
-    "/" (general-simulate-key "C-s")
+    "/" #'swiper
     "<SPC>"  (general-simulate-key "C-x"))
 
   (general-def
