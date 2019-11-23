@@ -835,7 +835,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
           ('lisp-mode (call-interactively #'slime-who-calls)))
      "References" :exit t)
     ("d" (mode-case
-          ('lisp-mode (call-interactively #'slime-documentation)))
+          ((or 'lisp-mode 'slime-repl-mode) (call-interactively #'slime-documentation)))
      "Documentation" :exit t)
     ("e" (mode-case
           ('lisp-mode (call-interactively #'slime-list-compiler-notes))
