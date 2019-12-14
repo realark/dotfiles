@@ -746,6 +746,11 @@ EOF"
   ;; (centaur-tabs-group-by-projectile-project)
   (centaur-tabs-group-buffer-groups))
 
+(use-package keycast
+  :demand t
+  :init
+  (keycast-mode))
+
 ;; interactive mode toggling
 (progn
   (defvar interactive-perspectives '()
@@ -1023,7 +1028,10 @@ Otherwise, send an interrupt to slime."
     (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
     (when (file-exists-p "~/.roswell/lisp/quicklisp/log4slime-setup.el")
       (load "~/.roswell/lisp/quicklisp/log4slime-setup.el")
-      (global-log4slime-mode 1))
+      ;; log4slime global mode is causing slime to error on slime startup, but works fine if enabled afterwards with a hook
+      ;; (global-log4slime-mode 1))
+      (add-hook 'lisp-mode-hook #'log4slime-mode)
+      (add-hook 'slime-repl-mode-hook #'log4slime-mode))
     (add-hook 'slime-repl-mode-hook #'slime-post-connect))
 
   (use-package slime-company
@@ -1230,6 +1238,9 @@ Otherwise, send an interrupt to slime."
   :general
   ("C-x c" #'hydra-orgmode/body
    "C-x n" #'org-narrow-to-subtree)
+  (:states 'normal :keymaps 'org-agenda-mode-map
+           "M-k"     #'org-agenda-drag-line-backward
+           "M-j"     #'org-agenda-drag-line-forward)
   :delight org-indent-mode nil org-indent
   :init
   (defhydra hydra-orgmode (:color amaranth :columns 1)
