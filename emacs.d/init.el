@@ -709,8 +709,12 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
 			                               magit-file-mode
 			                               magit-blob-mode
 			                               magit-blame-mode))
-                  (string-equal "*" (substring (buffer-name) 0 1))
-	                (string-equal "TAGS" (substring (buffer-name) 0 4)))
+                  (and (not (null (buffer-name)))
+                       (>= (length (buffer-name)) 1)
+                       (string-equal "*" (substring (buffer-name) 0 1)))
+                  (and (not (null (buffer-name)))
+                       (>= (length (buffer-name)) 4)
+                       (string-equal "TAGS" (substring (buffer-name) 0 4))))
               "Emacs")
              ((derived-mode-p 'eshell-mode)
               "EShell")
