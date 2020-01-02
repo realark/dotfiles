@@ -1021,21 +1021,18 @@ Otherwise, send an interrupt to slime."
 
     (defun slime-post-connect ()
       (when (file-exists-p "~/.emacs.d/slime-init.lisp")
-        (slime-eval-async (car (read-from-string (get-string-from-file "~/.emacs.d/slime-init.lisp")))))
+        (slime-eval (car (read-from-string (get-string-from-file "~/.emacs.d/slime-init.lisp")))))
       (when (file-exists-p (concat default-directory ".custom-slime-init.lisp"))
-        (slime-eval-async (car (read-from-string (get-string-from-file (concat default-directory ".custom-slime-init.lisp"))))
-                          (lambda (&rest args)
-                            (when (file-exists-p (concat default-directory ".slime-initial-package"))
-                              (slime-repl-set-package (get-string-from-file (concat default-directory ".slime-initial-package"))))
-                            (message "custom slime init complete")))))
+        (slime-eval (car (read-from-string (get-string-from-file (concat default-directory ".custom-slime-init.lisp"))))))
+      (when (file-exists-p (concat default-directory ".slime-initial-package"))
+        (slime-repl-set-package (get-string-from-file (concat default-directory ".slime-initial-package"))))
+      (message "custom slime init complete"))
 
     (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
     (when (file-exists-p "~/.roswell/lisp/quicklisp/log4slime-setup.el")
       (load "~/.roswell/lisp/quicklisp/log4slime-setup.el")
-      ;; log4slime global mode is causing slime to error on slime startup, but works fine if enabled afterwards with a hook
-      ;; (global-log4slime-mode 1))
-      (add-hook 'lisp-mode-hook #'log4slime-mode)
-      (add-hook 'slime-repl-mode-hook #'log4slime-mode))
+      (global-log4slime-mode 1))
+
     (add-hook 'slime-repl-mode-hook #'slime-post-connect))
 
   (use-package slime-company
