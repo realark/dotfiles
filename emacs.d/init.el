@@ -1247,14 +1247,17 @@ Otherwise, send an interrupt to slime."
   (defhydra hydra-orgmode (:color amaranth :columns 1)
     "Org Mode"
     ("a"  (org-agenda) "Agenda" :exit t)
-    ("c"  (cfw:open-calendar-buffer
-           :contents-sources
-           (list
-            (cfw:org-create-source "Green")))
+    ("c"  (progn
+            (cfw:open-calendar-buffer
+             :contents-sources
+             (list
+              (cfw:org-create-source "Green")))
+            (hydra-calfw/body))
      "Weekly calendar" :exit t)
     ("C"  (org-capture) "Capture" :exit t)
     ("q"  nil "Cancel" :color red))
   :config
+  (setq-default org-agenda-show-future-repeats nil)
   (setq-default org-todo-keywords '("TODO" "DOING" "DONE"))
   (setq-default org-startup-indented t)
   ;; fontify code in code blocks
@@ -1356,9 +1359,36 @@ Otherwise, send an interrupt to slime."
     :commands (cfw:open-calendar-buffer cfw:org-create-source)
     :general
     (:states 'normal :keymaps 'cfw:calendar-mode-map
-             ">"     (general-simulate-key ">" :state 'emacs)
-             "<"     (general-simulate-key "<" :state 'emacs))
+             ;; ">"     (general-simulate-key ">" :state 'emacs)
+             ;; "<"     (general-simulate-key "<" :state 'emacs)
+             "q"     #'cfw:org-clean-exit)
     :config
+    (defhydra hydra-calfw (:color amareth :columns 1)
+      "Calfw"
+      ("w" (cfw:change-view-week)
+       "week view")
+      ("m" (cfw:change-view-month)
+       "month view")
+      (">"
+       (progn
+         (if (eq 'week (cfw:cp-get-view (cfw:cp-get-component)))
+           (cfw:navi-next-week-command)
+           (cfw:navi-next-month-command)))
+       "Next")
+      ("<"
+       (progn
+         (if (eq 'week (cfw:cp-get-view (cfw:cp-get-component)))
+           (cfw:navi-previous-week-command)
+           (cfw:navi-previous-month-command)))
+       "Previous")
+      ("q"
+       ;; (progn
+       ;;   (cfw:org-clean-exit)
+       ;;   (hydra--body-exit))
+       nil
+       "quit hydra"
+       :color red
+       :exit t))
 
     ;; default calendar view to week instead of month
     (defun my--cfw:open-calendar-buffer-view (orig-func &rest args &allow-other-keys)
