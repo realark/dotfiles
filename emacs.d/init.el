@@ -1031,7 +1031,12 @@ Otherwise, send an interrupt to slime."
     (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
     (when (file-exists-p "~/.roswell/lisp/quicklisp/log4slime-setup.el")
       (load "~/.roswell/lisp/quicklisp/log4slime-setup.el")
-      (global-log4slime-mode 1))
+      (global-log4slime-mode 1)
+      (general-def :keymaps 'log4slime-mode-map
+        "C-c C-g" #'log4slime-level-selection))
+
+    ;; allow slime doc to resize the window
+    (setq-default eldoc-echo-area-use-multiline-p t)
 
     (add-hook 'slime-repl-mode-hook #'slime-post-connect))
 
@@ -1324,8 +1329,8 @@ Otherwise, send an interrupt to slime."
                 '((:name "#### ACTIVE TASKS ####"
                    :todo ("DOING")
                    :face (:underline t))
-                  (:name "Syn"
-                   :category "syn")
+                  (:name "SYN"
+                   :category "SYN")
                   (:auto-category t))))
 
 (use-package org-trello
