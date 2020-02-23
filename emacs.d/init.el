@@ -260,6 +260,39 @@
                 evil-motion-state-modes '())
   (evil-mode 1))
 
+(block narrow-utils
+  ;; https://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+  (defun narrow-or-widen-dwim (p)
+    "Widen if buffer is narrowed, narrow-dwim otherwise.
+Dwim means: region, org-src-block, org-subtree, or
+defun, whichever applies first. Narrowing to
+org-src-block actually calls `org-edit-src-code'.
+
+With prefix P, don't widen, just narrow even if buffer
+is already narrowed."
+    (interactive "P")
+    (declare (interactive-only))
+    (cond ((and (buffer-narrowed-p) (not p)) (widen))
+          ((region-active-p)
+           (narrow-to-region (region-beginning)
+                             (region-end)))
+          ((derived-mode-p 'org-mode)
+           ;; `org-edit-src-code' is not a real narrowing
+           ;; command. Remove this first conditional if
+           ;; you don't want it.
+           (cond ((ignore-errors (org-edit-src-code) t)
+                  (delete-other-windows))
+                 ((ignore-errors (org-narrow-to-block) t))
+                 (t (org-narrow-to-subtree))))
+          ((derived-mode-p 'latex-mode)
+           (LaTeX-narrow-to-environment))
+          (t (narrow-to-defun))))
+
+  (general-def :states '(normal)
+    "C-x n" #'narrow-or-widen-dwim)
+  (general-def :states '(normal) :keymaps '(org-src-mode-map)
+    "q" #'org-edit-src-exit))
+
 ;; general for keybindings
 (use-package general
   :defer nil
@@ -1242,8 +1275,7 @@ Otherwise, send an interrupt to slime."
 (use-package org
   :mode ("\\.org$" . org-mode)
   :general
-  ("C-x c" #'hydra-orgmode/body
-   "C-x n" #'org-narrow-to-subtree)
+  ("C-x c" #'hydra-orgmode/body)
   (:states 'normal :keymaps 'org-agenda-mode-map
            "M-k"     #'org-agenda-drag-line-backward
            "M-j"     #'org-agenda-drag-line-forward)
