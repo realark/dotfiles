@@ -689,7 +689,6 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
   (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
   (use-package common-lisp-snippets))
 
-
 (use-package dired-sidebar
   :general ("<f8>" #'dired-sidebar-toggle-sidebar)
   :init
@@ -699,7 +698,6 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
                 (auto-revert-mode))))
   :config
   (setq-default dired-sidebar-should-follow-file t))
-
 
 (use-package all-the-icons
   ;; note: must run M-x all-the-icons-install-fonts
@@ -1270,6 +1268,11 @@ Otherwise, send an interrupt to slime."
 (use-package znc
   :defer t
   :commands (znc-erc))
+
+(use-package hl-todo
+  :custom-face
+  (hl-todo ((t (:inherit hl-todo :italic t))))
+  :hook ((prog-mode . hl-todo-mode)))
 
 ;; Org mode
 (use-package org
