@@ -460,6 +460,10 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
   (sp-pair "'" nil :actions nil)
   (sp-pair "`" nil :actions nil))
 
+(use-package cl-font-lock
+  ;; :hook ((lisp-mode . cl-font-lock))
+  :demand t)
+
 (use-package lispyville
   :delight lispyville-mode
   :hook ((lisp-mode . lispyville-mode)
