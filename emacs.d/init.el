@@ -1371,8 +1371,10 @@ Otherwise, send an interrupt to slime."
                 org-super-agenda-groups
                 '((:name "#### ACTIVE TASKS ####"
                    :todo ("DOING")
+                   :time-grid t
                    :face (:underline t))
                   (:name "SYN"
+                   :time-grid t
                    :category "SYN")
                   (:auto-category t))))
 
