@@ -970,6 +970,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                      (if result
                          (slime-open-inspector result (pop slime-inspector-mark-stack))
                        (quit-window)))))
+    (:states 'normal :keymaps 'slime-sprof-browser-mode
+             "v" (general-simulate-key "v" :state 'emacs))
     :init
     (defun print-help ()
       (print "No override. Check for .custom.el?"))
@@ -1022,8 +1024,10 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (slime-setup '(slime-fancy
                    slime-highlight-edits
                    slime-asdf
+                   slime-sprof
                    slime-xref-browser))
     (slime-require :swank-listener-hooks)
+    (setq-default slime-sprof-exclude-swank t)
     ;; https://emacs.stackexchange.com/questions/9600/how-can-i-override-a-pre-defined-face-for-light-and-dark-backgrounds
     (set-face-attribute 'slime-highlight-edits-face nil
                         ;; :background "dimgray"
