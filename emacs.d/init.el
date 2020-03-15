@@ -1588,9 +1588,7 @@ Otherwise, send an interrupt to slime."
     :after sql
     :init
     (add-hook 'sql-mode-hook 'sqlup-mode)
-    (add-hook 'sql-interactive-mode-hook 'sqlup-mode)
-    :config
-    (add-to-list 'sqlup-blacklist "name")))
+    (add-hook 'sql-interactive-mode-hook 'sqlup-mode)))
 
 (use-package aggressive-indent
   :delight aggressive-indent-mode
