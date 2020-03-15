@@ -1330,8 +1330,8 @@ Otherwise, send an interrupt to slime."
                    "* TODO %?")
                   ("l" "Life Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "life")
                    "* TODO %?")
-                  ("m" "Misc" entry (file ,(concat org-directory "orgzly/" "refile.org"))
-                   "* %?")))
+                  ("b" "Backlog task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "backlog")
+                   "* TODO %?")))
   (setq-default org-duration-format (quote h:mm))
   (add-hook 'org-capture-mode-hook 'evil-insert-state))
 
