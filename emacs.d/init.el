@@ -209,7 +209,7 @@
     (delight 'undo-tree-mode nil 'undo-tree)
     (delight 'auto-revert-mode nil 'autorevert))
 
-  ;; Theme
+  ;; Theme. For ideas: https://emacsthemes.com/popular/index.html
   (defadvice load-theme (before theme-dont-propagate activate)
     "Reset to standard theme before switching to a new one"
     (mapc #'disable-theme custom-enabled-themes))
@@ -232,12 +232,23 @@
     :if window-system
     :load-path "themes")
 
+  (use-package zenburn-theme
+    :ensure :defer
+    :if window-system
+    :load-path "themes")
+
+  (use-package spacemacs-theme
+    :ensure :defer
+    :if window-system
+    :load-path "themes")
+
   (use-package circadian
     :ensure t
     :if window-system)
 
-  (setq-default circadian-themes '(("07:30" . deeper-blue)
-                                   ("16:00" . cyberpunk)))
+  (setq-default circadian-themes '(("07:30" . zenburn)
+                                   ("15:00" . spacemacs-dark)
+                                   ("20:00" . cyberpunk)))
   (circadian-setup)
 
   ;; Maximize emacs window
