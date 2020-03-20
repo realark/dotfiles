@@ -247,8 +247,8 @@
     :if window-system)
 
   (setq-default circadian-themes '(("07:30" . zenburn)
-                                   ("15:00" . spacemacs-dark)
-                                   ("20:00" . cyberpunk)))
+                                   ("17:00" . spacemacs-dark)
+                                   ("22:00" . cyberpunk)))
   (circadian-setup)
 
   ;; Maximize emacs window
@@ -768,7 +768,7 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
               "Elisp")
              ((derived-mode-p 'dired-mode)
               "Dired")
-             ((memq major-mode '(org-mode org-agenda-mode diary-mode))
+             ((memq major-mode '(org-agenda-mode diary-mode))
               "OrgMode")
              (t
               (centaur-tabs-project-name)))))
@@ -1322,7 +1322,8 @@ Otherwise, send an interrupt to slime."
   ;; fontify code in code blocks
   (setq-default org-src-fontify-natively t)
   (setq-default org-directory "~/Documents/org-files/")
-  (setq-default org-agenda-files (list (concat org-directory "tasks.org")))
+  (setq-default org-agenda-files (list (concat org-directory "tasks.org")
+                                       (concat org-directory "gcal-spark.org")))
   (setq-default org-default-notes-file (concat org-directory "notes.org"))
   (setq-default org-log-done 'time)
   (setq-default org-enforce-todo-dependencies t)
@@ -1380,7 +1381,10 @@ Otherwise, send an interrupt to slime."
                 org-agenda-skip-scheduled-if-done t
                 org-agenda-skip-deadline-if-done t
                 org-super-agenda-groups
-                '((:name "#### ACTIVE TASKS ####"
+                '((:name "TODAY'S CALENDAR"
+                         :time-grid t
+                         :file-path ".*gcal-.*.org")
+                  (:name "#### ACTIVE TASKS ####"
                    :todo ("DOING")
                    :time-grid t
                    :face (:underline t))
@@ -1463,6 +1467,14 @@ Otherwise, send an interrupt to slime."
   (use-package calfw-ical
     :after calfw
     :demand t))
+
+(use-package org-gcal
+  :ensure t
+  :config
+  (setq-default
+   org-gcal-client-id my-gcal-client-id
+   org-gcal-client-secret my-gcal-client-secret
+   org-gcal-file-alist my-gcal-file-alist))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
