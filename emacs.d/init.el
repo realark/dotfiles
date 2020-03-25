@@ -1381,7 +1381,7 @@ Otherwise, send an interrupt to slime."
                 org-agenda-skip-scheduled-if-done t
                 org-agenda-skip-deadline-if-done t
                 org-super-agenda-groups
-                '((:name "TODAY'S CALENDAR"
+                '((:name "CALENDAR"
                          :time-grid t
                          :file-path ".*gcal-.*.org")
                   (:name "#### ACTIVE TASKS ####"
