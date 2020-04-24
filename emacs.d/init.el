@@ -87,9 +87,10 @@
 ;; Misc elisp utils
 (progn
   (defun load-if-exists (file)
-    "If FILE exists load it."
+    "If FILE exists load it and return t. nil if file does not exist."
     (when (file-exists-p file)
-      (load file)))
+      (load file)
+      t))
 
   (defun first-existing-file (&rest files)
     "Return the first existing file in FILE-LIST or nil of no file in the list exists."
@@ -292,7 +293,7 @@ is already narrowed."
            ;; command. Remove this first conditional if
            ;; you don't want it.
            (cond ((ignore-errors (org-edit-src-code) t)
-                  (delete-other-windows))
+                  (sticky-window-delete-other-windows nil))
                  ((ignore-errors (org-narrow-to-block) t))
                  (t (org-narrow-to-subtree))))
           ((derived-mode-p 'latex-mode)
@@ -390,7 +391,6 @@ is already narrowed."
             (windmove-find-other-window 'up))
           (shrink-window arg)
         (enlarge-window arg))))
-
   (general-def
    "C-x w"
    (defhydra hydra-window (:color amaranth :hint nil)
@@ -414,8 +414,8 @@ EOF"
      ("x" split-window-below)
      ("s" ace-swap-window)
      ("b" switch-to-buffer)
-     ("o" delete-other-windows :exit t)
-     ("d" delete-window)
+     ("o" sticky-window-delete-other-windows :exit t)
+     ("d" sticky-window-delete-window)
      ("h" windmove-left)
      ("j" windmove-down)
      ("k" windmove-up)
@@ -807,6 +807,12 @@ EOF"
   :init
   (keycast-mode))
 
+;; sticky windows
+(when (load-if-exists "~/.emacs.d/sticky-windows.el")
+  (general-def
+    "C-x 0" #'sticky-window-delete-window
+    "C-x 1" #'sticky-window-delete-other-windows))
+
 ;; interactive mode toggling
 (progn
   (defvar interactive-perspectives '()
@@ -847,7 +853,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                      (return t))
                     ((string= current-buffer-major-mode interact-mode)
                      (if (> (count-windows) 1)
-                         (delete-window)
+                         (sticky-window-delete-window nil)
                        (bury-buffer))
                      (return t)))))
            ;; no interaction for buffer. Toggle first found interactive buffer
@@ -880,7 +886,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (mode-case
      ('emacs-lisp-mode (call-interactively #'find-function-at-point)
                        ;; delete extra window created by find-function-at-point
-                       (delete-window))
+                       (sticky-window-delete-window nil))
      ('lisp-mode (call-interactively #'slime-edit-definition))
      ('slime-repl-mode (call-interactively #'slime-edit-definition))
      ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))))
@@ -949,7 +955,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
              "C-c" #'my-slime-repl-kill-or-interrupt
              "C-d" (lambda () (interactive)
                      (when (y-or-n-p "Quit slime?")
-                       (and (slime-repl-quit) (delete-window))))
+                       (and (slime-repl-quit) (sticky-window-delete-window nil))))
              "C-r" #'slime-repl-previous-matching-input
              "TAB" #'completion-at-point
              "C-S-l" #'slime-repl-clear-buffer
@@ -1578,7 +1584,7 @@ Otherwise, send an interrupt to slime."
                      (interactive)
                      (when (yes-or-no-p "Quit Sql session?")
                        (comint-delchar-or-maybe-eof 0)
-                       (delete-window))))
+                       (sticky-window-delete-window nil))))
     (:state '(insert normal) :keymaps 'sql-mode-map
             "C-c C-c" #'sql-send-paragraph)
     :config
