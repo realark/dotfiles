@@ -330,6 +330,12 @@ is already narrowed."
     "<SPC>"  (general-simulate-key "C-x"))
 
   (general-def
+    :states '(normal insert)
+    :keymaps 'compilation-mode-map
+    "C-j" #'compilation-next-error
+    "C-k" #'compilation-previous-error)
+
+  (general-def
     :prefix "C-x"
     "l"      (lambda ()
                (interactive)
