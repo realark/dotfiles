@@ -1328,8 +1328,8 @@ Otherwise, send an interrupt to slime."
     ("C"  (org-capture) "Capture" :exit t)
     ("q"  nil "Cancel" :color red))
   :config
-  (setq-default org-agenda-show-future-repeats nil)
-  (setq-default org-todo-keywords '("TODO" "DOING" "DONE"))
+  (setq-default org-agenda-show-future-repeats t) ; will want to turn this off if I stop using org-habits
+  (setq-default org-todo-keywords '("TODO(t)" "DOING(o)" "|" "DONE(d!)" "SKIP(s!)"))
   (setq-default org-startup-indented t)
   ;; fontify code in code blocks
   (setq-default org-src-fontify-natively t)
@@ -1344,7 +1344,14 @@ Otherwise, send an interrupt to slime."
   (setq-default org-startup-with-inline-images t)
   (setq-default org-image-actual-width nil)
 
-  (setq-default org-log-repeat nil)
+  ;; (setq-default org-log-repeat nil)
+  (add-to-list 'org-modules 'org-habit t)
+  ;; show all habits in agenda, even if done
+  (setq-default org-habit-show-all-today nil)
+  ;; I don't like seeing red in the future
+  (setq-default org-habit-following-days 0)
+
+  (setq-default org-log-into-drawer t)
 
   (setq-default org-refile-targets '((nil :maxlevel . 9)))
   (setq-default org-outline-path-complete-in-steps nil) ; Refile in a single go
