@@ -983,6 +983,17 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (:states 'normal :keymaps 'slime-xref-mode-map
              "j" #'slime-xref-next-line
              "k" #'slime-xref-prev-line)
+    (:states 'normal :keymaps 'lisp-mode-map
+             "C-c C-c" (lambda ()
+                       (interactive)
+                       (slime-compile-defun)
+                       ;; (when my-slime-defun
+                       ;;   (slime-eval-async
+                       ;;       ;; DONTCOMMIT make project custom
+                       ;;       my-slime-defun
+                       ;;     nil
+                       ;;     #'cl-user))
+                       ))
     (:states 'normal :keymaps 'slime-inspector-mode-map
              ":" #'slime-inspector-eval
              "q" (lambda ()
@@ -1022,6 +1033,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
       (interactive)
       (print-help)
       nil)
+    (defvar my-slime-defun nil)
     :config
     (progn ; emit ansi colors in slime repl
       (defvar slime-colors t "If non-nil, emit ansi colors in the slime repl.")
@@ -1309,7 +1321,8 @@ Otherwise, send an interrupt to slime."
 (use-package org
   :mode ("\\.org$" . org-mode)
   :general
-  ("C-x c" #'hydra-orgmode/body)
+  ("C-x c" #'hydra-orgmode/body
+   "C-x a" #'org-agenda-list)
   (:states 'normal :keymaps 'org-agenda-mode-map
            "M-k"     #'org-agenda-drag-line-backward
            "M-j"     #'org-agenda-drag-line-forward)
