@@ -1251,8 +1251,8 @@ Otherwise, send an interrupt to slime."
   (add-hook 'hs-minor-mode-hook #'hs-hide-all)
   :general
   (:states '(normal) :keymaps 'hs-minor-mode-map
-            "<tab>" #'hs-cycle
-            "<backtab>" #'hs-cycle-all))
+            "<tab>" #'hs-toggle-hiding
+            "<backtab>" #'hs-show-all))
 
 (use-package eshell
   :general
