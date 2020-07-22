@@ -247,10 +247,10 @@
     :ensure t
     :if window-system)
 
-  (setq-default circadian-themes '(("07:30" . zenburn)
-                                   ("17:00" . spacemacs-dark)
-                                   ("22:00" . cyberpunk)))
-  (circadian-setup)
+  ;; (setq-default circadian-themes '(("07:30" . zenburn)
+  ;;                                  ("17:00" . spacemacs-dark)
+  ;;                                  ("22:00" . cyberpunk)))
+  ;; (circadian-setup)
 
   ;; Maximize emacs window
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
