@@ -1055,7 +1055,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
 
     (load (expand-file-name "~/.roswell/helper.el"))
-    (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run")
+    (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run --lose-on-corruption")
     (slime-setup '(slime-fancy
                    slime-highlight-edits
                    slime-asdf
