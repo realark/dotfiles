@@ -1147,6 +1147,12 @@ Otherwise, send an interrupt to slime."
                             'magit-insert-unpushed-to-upstream-or-recent
                             'replace))
 
+  (use-package magit-todos
+    :after magit
+    :demand t
+    :config
+    (magit-todos-mode))
+
   (use-package evil-magit
     :demand t
     :after magit)
