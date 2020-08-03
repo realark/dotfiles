@@ -247,6 +247,8 @@
     :ensure t
     :if window-system)
 
+  (load-theme 'spacemacs-dark)
+
   ;; (setq-default circadian-themes '(("07:30" . zenburn)
   ;;                                  ("17:00" . spacemacs-dark)
   ;;                                  ("22:00" . cyberpunk)))
@@ -694,6 +696,36 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
   :init
   (with-eval-after-load 'flycheck
     (flycheck-pos-tip-mode)))
+
+(use-package flyspell-correct
+  :after flyspell)
+
+(use-package frog-menu
+  :after flyspell-correct
+  :config
+  (require 'flyspell-correct)
+  (defun frog-menu-flyspell-correct (candidates word)
+    "Run `frog-menu-read' for the given CANDIDATES.
+
+List of CANDIDATES is given by flyspell for the WORD.
+
+Return selected word to use as a replacement or a tuple
+of (command . word) to be used by `flyspell-do-correct'."
+    (let* ((corrects (if flyspell-sort-corrections
+                         (sort candidates 'string<)
+                       candidates))
+           (actions `(("C-s" "Save word"         (save    . ,word))
+                      ("C-a" "Accept (session)"  (session . ,word))
+                      ("C-b" "Accept (buffer)"   (buffer  . ,word))
+                      ("C-c" "Skip"              (skip    . ,word))))
+           (prompt   (format "Dictionary: [%s]"  (or ispell-local-dictionary
+                                                     ispell-dictionary
+                                                     "default")))
+           (res      (frog-menu-read prompt corrects actions)))
+      (unless res
+        (error "Quit"))
+      res))
+  (setq flyspell-correct-interface #'frog-menu-flyspell-correct))
 
 ;; yasnippet
 (use-package yasnippet
