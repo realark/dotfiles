@@ -946,6 +946,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     ;; ("i"  (my-ide-interaction) "Interaction (repl, shell)" :exit t)
     ;; ("t"  (my-ide-test-repeat) "test re-run" :exit t)
     ("i"  (single-test) "Test thing at point" :exit t)
+    ("?" (display-local-help) "Display help at point" :exit t)
     ("q"  nil "Cancel" :color red))
 
   (general-def
