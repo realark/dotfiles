@@ -39,7 +39,7 @@ export LESS_TERMCAP_ZV=$(tput rsubm)
 export LESS_TERMCAP_ZO=$(tput ssupm)
 export LESS_TERMCAP_ZW=$(tput rsupm)
 
-PROMPT='%F{cyan}%n%F{white}@%F{cyan}%m%F{white}::%F{magenta}%3C%F{green}%# '
+PROMPT='%(!.%F{red}.%F{cyan})%n%F{white}@%F{cyan}%m%F{white}::%F{magenta}%3C%F{green}%# '
 
 #Some shell variables
 cdpath=( ~ )
