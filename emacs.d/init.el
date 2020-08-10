@@ -274,39 +274,6 @@
                 evil-motion-state-modes '())
   (evil-mode 1))
 
-(block narrow-utils
-  ;; https://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
-  (defun narrow-or-widen-dwim (p)
-    "Widen if buffer is narrowed, narrow-dwim otherwise.
-Dwim means: region, org-src-block, org-subtree, or
-defun, whichever applies first. Narrowing to
-org-src-block actually calls `org-edit-src-code'.
-
-With prefix P, don't widen, just narrow even if buffer
-is already narrowed."
-    (interactive "P")
-    (declare (interactive-only))
-    (cond ((and (buffer-narrowed-p) (not p)) (widen))
-          ((region-active-p)
-           (narrow-to-region (region-beginning)
-                             (region-end)))
-          ((derived-mode-p 'org-mode)
-           ;; `org-edit-src-code' is not a real narrowing
-           ;; command. Remove this first conditional if
-           ;; you don't want it.
-           (cond ((ignore-errors (org-edit-src-code) t)
-                  (sticky-window-delete-other-windows nil))
-                 ((ignore-errors (org-narrow-to-block) t))
-                 (t (org-narrow-to-subtree))))
-          ((derived-mode-p 'latex-mode)
-           (LaTeX-narrow-to-environment))
-          (t (narrow-to-defun))))
-
-  (general-def :states '(normal)
-    "C-x n" #'narrow-or-widen-dwim)
-  (general-def :states '(normal) :keymaps '(org-src-mode-map)
-    "q" #'org-edit-src-exit))
-
 ;; general for keybindings
 (use-package general
   :defer nil
@@ -353,6 +320,39 @@ is already narrowed."
     "f"      #'indent-region
     ";"      #'toggle-comment-region-or-line
     "x"      (general-simulate-key "M-x")))
+
+(block narrow-utils
+  ;; https://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+  (defun narrow-or-widen-dwim (p)
+    "Widen if buffer is narrowed, narrow-dwim otherwise.
+Dwim means: region, org-src-block, org-subtree, or
+defun, whichever applies first. Narrowing to
+org-src-block actually calls `org-edit-src-code'.
+
+With prefix P, don't widen, just narrow even if buffer
+is already narrowed."
+    (interactive "P")
+    (declare (interactive-only))
+    (cond ((and (buffer-narrowed-p) (not p)) (widen))
+          ((region-active-p)
+           (narrow-to-region (region-beginning)
+                             (region-end)))
+          ((derived-mode-p 'org-mode)
+           ;; `org-edit-src-code' is not a real narrowing
+           ;; command. Remove this first conditional if
+           ;; you don't want it.
+           (cond ((ignore-errors (org-edit-src-code) t)
+                  (sticky-window-delete-other-windows nil))
+                 ((ignore-errors (org-narrow-to-block) t))
+                 (t (org-narrow-to-subtree))))
+          ((derived-mode-p 'latex-mode)
+           (LaTeX-narrow-to-environment))
+          (t (narrow-to-defun))))
+
+  (general-def :states '(normal)
+    "C-x n" #'narrow-or-widen-dwim)
+  (general-def :states '(normal) :keymaps '(org-src-mode-map)
+    "q" #'org-edit-src-exit))
 
 ;; Hydras
 (use-package hydra
@@ -479,9 +479,9 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
   (sp-pair "'" nil :actions nil)
   (sp-pair "`" nil :actions nil))
 
-(use-package cl-font-lock
-  ;; :hook ((lisp-mode . cl-font-lock))
-  :demand t)
+;; (use-package cl-font-lock
+;;   ;; :hook ((lisp-mode . cl-font-lock))
+;;   :demand t)
 
 (use-package lispyville
   :delight lispyville-mode
