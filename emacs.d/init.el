@@ -1573,6 +1573,11 @@ Otherwise, send an interrupt to slime."
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
+(use-package highlight-parentheses
+  :hook ((prog-mode . highlight-parentheses-mode))
+  :config
+  (setq-default hl-paren-background-colors '("white")))
+
 (progn
   ;; ctags
   (setq-default path-to-ctags "/usr/bin/ctags")
