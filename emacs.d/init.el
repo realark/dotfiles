@@ -1413,6 +1413,8 @@ Otherwise, send an interrupt to slime."
                    "* TODO %?")
                   ("l" "Life Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "life")
                    "* TODO %?")
+                  ("p" "Peak6 Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "peak6")
+                   "* TODO %?")
                   ("b" "Backlog task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "backlog")
                    "* TODO %?")))
   (setq-default org-duration-format (quote h:mm))
