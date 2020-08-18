@@ -20,10 +20,15 @@ compinit
 zstyle ':completion:*' menu select=2
 
 #Colors
-if which gdircolors >/dev/null 2>&1; then
-  alias dircolors=gdircolors
+
+if which dircolors >/dev/null 2>&1; then
+  # no dircolors on osx
+  eval `dircolors -b`
+  if which gdircolors >/dev/null 2>&1; then
+    alias dircolors=gdircolors
+  fi
 fi
-eval `dircolors -b`
+
 #Colors for man pages
 export LESS_TERMCAP_mb=$(tput bold; tput setaf 2) # green
 export LESS_TERMCAP_md=$(tput bold; tput setaf 6) # cyan
