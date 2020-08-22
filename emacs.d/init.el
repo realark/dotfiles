@@ -1184,6 +1184,14 @@ Otherwise, send an interrupt to slime."
     :config
     (magit-todos-mode))
 
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :init
+    (add-hook 'magit-todos-mode-hook
+              (lambda ()
+                (evil-collection-init 'magit-todos))))
+
   (use-package evil-magit
     :demand t
     :after magit)
