@@ -653,6 +653,9 @@ _k_prev      _u_pper              _=_: upper/lower       _r_esolve
      ("f"   projectile-find-file)
      ("T"   (lambda ()
               (interactive)
+              ;; NOTE: if you get some error about `-e` not being supported
+              ;; you may have to explicitly install ctags (apt-get install ctags)
+              ;; https://stackoverflow.com/questions/2580313/ctags-doesnt-understand-e-option-no-exuberant-tags-option
               (my/bypass-confirmation #'projectile-regenerate-tags)
               (projectile-find-tag)))
      ("g"   projectile-grep)

@@ -7,4 +7,8 @@ if [ -f .tagskip ]; then
         excludes="$excludes | grep -v '${exclude}'"
     done
 fi
+
+# NOTE: if you get some error about `-e` not being supported
+# you may have to explicitly install ctags (apt-get install ctags)
+# https://stackoverflow.com/questions/2580313/ctags-doesnt-understand-e-option-no-exuberant-tags-option
 eval "git ls-files $excludes | ctags -e -L -"
