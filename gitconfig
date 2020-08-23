@@ -58,3 +58,5 @@
 	user = realark
 [magithub]
 	cache = always
+[submodule]
+	recurse = true
