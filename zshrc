@@ -159,7 +159,7 @@ alias myinternetspeed='speedtest-cli'
 # I don't want to set LC_ALL but perl and locale complain if I don't
 export LC_ALL="$LANG"
 
-export PATH=~/scripts:$PATH
+export PATH=~/scripts:$PATH:/snap/bin
 
 #zsh-syntax-highlighting
 #source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
