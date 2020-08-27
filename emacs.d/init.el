@@ -1137,6 +1137,9 @@ Otherwise, send an interrupt to slime."
       (message "custom slime init complete"))
 
     (load-if-exists "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
+    ;; to install log4slime:
+    ;; (ql:quickload :log4slime)
+    ;; (log4slime:install)
     (when (file-exists-p "~/.roswell/lisp/quicklisp/log4slime-setup.el")
       (load "~/.roswell/lisp/quicklisp/log4slime-setup.el")
       (global-log4slime-mode 1)
