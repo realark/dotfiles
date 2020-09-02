@@ -160,6 +160,8 @@ alias diff='colordiff'
 alias journalctl='journalctl --pager-end --since "1 day ago"'
 alias myipaddress='curl ifconfig.me'
 alias myinternetspeed='speedtest-cli'
+alias docker-stop-all='docker stop $(docker ps -aq)'
+alias docker-rm-all='docker rm $(docker ps -aq)'
 
 # I don't want to set LC_ALL but perl and locale complain if I don't
 export LC_ALL="$LANG"

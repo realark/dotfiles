@@ -1581,6 +1581,13 @@ Otherwise, send an interrupt to slime."
 (use-package graphviz-dot-mode
   :mode ("\\.dot$" . graphviz-dot-mode))
 
+;; NOTE: mmdc command must be in path
+(use-package mermaid-mode
+  :mode ("\\.mmd$" . mermaid-mode)
+  :general
+  (:states 'normal :keymaps 'mermaid-mode-map
+           "C-c C-c" #'mermaid-compile-buffer))
+
 (use-package rainbow-delimiters
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
