@@ -18,9 +18,9 @@ done
 for result in $(eval $find_cmd)
 do
     # sed can take hashes in place of slashes
-    rel_path=$(echo $result | sed -r 's#^./##g')
-    file=$(echo $rel_path | sed -r 's#.*/([^/]*$)#\1#g')
-    dir=$(echo $rel_path | sed -r 's#(.*)/[^/]*$#\1#g')
+    rel_path=$(echo $result | sed -E 's#^./##g')
+    file=$(echo $rel_path | sed -E 's#.*/([^/]*$)#\1#g')
+    dir=$(echo $rel_path | sed -E 's#(.*)/[^/]*$#\1#g')
     if [ "$file" = "$dir" ]; then
         ln $force -s "$source_dir/$file" ~/".$file"
     else
