@@ -1588,6 +1588,11 @@ Otherwise, send an interrupt to slime."
   (:states 'normal :keymaps 'mermaid-mode-map
            "C-c C-c" #'mermaid-compile-buffer))
 
+(use-package restclient
+  :general
+  (:states 'normal :keymaps 'restclient-mode-map
+           "TAB" #'restclient-toggle-body-visibility))
+
 (use-package rainbow-delimiters
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
