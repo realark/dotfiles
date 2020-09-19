@@ -170,7 +170,10 @@
           "^" ";; "                     ; comment each line
           (replace-regexp-in-string
            "\n$" ""                     ; remove trailing linebreak
-           (get-string-from-file "/etc/motd")))
+           (cond
+            ((file-exists-p "/etc/motd")
+             (get-string-from-file "/etc/motd"))
+            (t "I am but a dream--your dream, a creature of your imagination.\nIn a moment you will have realized this,\nthen you will banish me from your visions and I shall dissolve into the nothingness out of which you made me."))))
          "\n\n")))
 
 (progn ; set up custom file
