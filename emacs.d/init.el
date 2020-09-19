@@ -1767,9 +1767,25 @@ position of the outside of the paren.  Otherwise return nil."
    'aggressive-indent-dont-indent-if
    'company-candidates))
 
-(use-package lsp-mode
-  :config
+(progn                                  ; lsp
+  (use-package lsp-mode
+    :demand t
+    :init
+    (setq-default lsp-prefer-flymake nil)
+    :config
+    (add-hook 'lsp-mode-hook #'lsp-ui-mode))
+
+  (use-package company-lsp
+    :after lsp-mode
+    :config
+    (setq company-lsp-enable-snippet t
+          company-lsp-cache-candidates t)
+    ;; (push 'java-mode company-global-modes)
+    (push 'company-lsp company-backends))
+
   (use-package lsp-ui
+    :after lsp-mode
+    :hook ((lsp-mode . lsp-ui-mode))
     :general
     (:keymaps 'lsp-ui-peek-mode-map
               "M-j" #'lsp-ui-peek--select-next
@@ -1778,20 +1794,49 @@ position of the outside of the paren.  Otherwise return nil."
     (setq-default lsp-ui-sideline-enable nil
                   lsp-ui-peek-list-width 130)
     (lsp-ui-sideline-mode -1))
-  (add-hook 'lsp-mode-hook #'lsp-ui-mode)
 
-  (use-package company-lsp
-    :after company
+  (use-package dap-mode
     :config
-    (setq company-lsp-enable-snippet t
-          company-lsp-cache-candidates t)
-    ;; (push 'java-mode company-global-modes)
-    (push 'company-lsp company-backends))
+    (dap-mode t)
+    (dap-ui-mode t)))
 
-  (use-package lsp-intellij)
-  (add-hook 'java-mode-hook
-            (lambda ()
-              (lsp-intellij-enable))))
+(use-package lsp-java
+  :demand t
+  ;; :hook ((java-mode . lsp))
+  :after (lsp lsp-mode dap-mode)
+  ;; :init
+  ;; (defun jmi/java-mode-config ()
+  ;;   (setq-local tab-width 4
+  ;;               c-basic-offset 4)
+  ;;   (toggle-truncate-lines 1)
+  ;;   (setq-local tab-width 4)
+  ;;   (setq-local c-basic-offset 4)
+  ;;   (lsp))
+  ;; :hook (java-mode   . jmi/java-mode-config)
+  :config
+  ;; Enable dap-java
+  (require 'dap-java)
+  ;; Support Lombok in our projects, among other things
+  (setq lsp-java-vmargs
+        (list ; "-noverify" ; TODO
+              "-Xmx2G"
+              "-XX:+UseG1GC"
+              "-XX:+UseStringDeduplication"
+              ;; (concat "-javaagent:" jmi/lombok-jar)
+              ;; (concat "-Xbootclasspath/a:" jmi/lombok-jar)
+              )
+        lsp-file-watch-ignored
+        '(".idea" ".ensime_cache" ".eunit" "node_modules"
+          ".git" ".hg" ".fslckout" "_FOSSIL_"
+          ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
+          "build")
+        lsp-java-import-order '["" "java" "javax" "#"]
+        ;; Don't organize imports on save
+        ;; Formatter profile
+        ;; lsp-java-format-settings-url
+        ;; (concat "file://" jmi/java-format-settings-file)
+        lsp-java-import-gradle-enabled t
+        lsp-java-save-action-organize-imports nil))
 
 (progn ; glsl-mode
   (use-package glsl-mode)
