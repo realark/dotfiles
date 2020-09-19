@@ -84,6 +84,13 @@
 
 ;; Misc elisp utils
 (progn
+  (defun touch-file (file)
+    "Open FILE and write to it without changing to a new buffer."
+    (save-excursion
+      (find-file file)
+      (save-buffer)
+      (kill-buffer)))
+
   (defun load-if-exists (file)
     "If FILE exists load it and return t. nil if file does not exist."
     (when (file-exists-p file)
@@ -166,8 +173,12 @@
            (get-string-from-file "/etc/motd")))
          "\n\n")))
 
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+(progn ; set up custom file
+  (unless (file-exists-p "~/.emacs.d/custom.el")
+    (touch-file "~/.emacs.d/custom.el"))
+
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file))
 
 ;; use mepla and marmalade for package
 (eval-when-compile
