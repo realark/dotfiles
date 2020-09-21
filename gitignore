@@ -13,3 +13,4 @@ eclimd.log
 gh-drafts/
 .custom-slime-init.lisp
 .slime-initial-package
+ark-custom-rest-client
