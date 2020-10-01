@@ -948,6 +948,9 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
           ('java-mode (lsp-ui-peek-find-references))
           ('lisp-mode (call-interactively #'slime-who-calls)))
      "References" :exit t)
+    ("R" (mode-case
+          ('java-mode (call-interactively #'lsp-rename)))
+     "Rename" :exit t)
     ("d" (mode-case
           ((or 'lisp-mode 'slime-repl-mode) (call-interactively #'slime-documentation)))
      "Documentation" :exit t)
@@ -967,6 +970,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (general-def
     :states '(normal insert)
     "C-x i" #'hydra-ide/body
+    "<f4>" #'%my-go-to-definition
     "M-." #'%my-go-to-definition))
 
 (use-package ansi-color
@@ -1589,8 +1593,25 @@ Otherwise, send an interrupt to slime."
   (setq-default markdown-command "multimarkdown"))
 
 (use-package yaml-mode
+  :init
+  ;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
+  (defun aj-toggle-fold ()
+    "Toggle fold all lines larger than indentation on current line"
+    (interactive)
+    (let ((col 1))
+      (save-excursion
+        (back-to-indentation)
+        (setq col (+ 1 (current-column)))
+        (set-selective-display
+         (if selective-display nil (or col 1))))))
+  :general
+  (general-def 'normal yaml-mode-map
+    "TAB" #'aj-toggle-fold)
   :mode (("\\.yaml\\'" . yaml-mode)
          ("\\.yml\\'" . yaml-mode)))
+
+(use-package highlight-indentation
+  :hook ((yaml-mode . highlight-indentation-current-column-mode)))
 
 (use-package graphviz-dot-mode
   :mode ("\\.dot$" . graphviz-dot-mode))
@@ -1832,7 +1853,7 @@ position of the outside of the paren.  Otherwise return nil."
         '(".idea" ".ensime_cache" ".eunit" "node_modules"
           ".git" ".hg" ".fslckout" "_FOSSIL_"
           ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
-          "build")
+          "bin" "build")
         lsp-java-import-order '["" "java" "javax" "#"]
         ;; Don't organize imports on save
         ;; Formatter profile
