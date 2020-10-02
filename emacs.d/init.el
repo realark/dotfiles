@@ -1874,6 +1874,10 @@ position of the outside of the paren.  Otherwise return nil."
 
   (add-hook 'ea-popup-hook 'popup-handler))
 
+(when (file-exists-p "~/.emacs.d/vtl.el")
+  (load-file "~/.emacs.d/vtl.el")
+  (add-to-list 'auto-mode-alist '("\\.vm\\'" . turn-on-vtl-mode)))
+
 ;; start the emacs daemon
 (server-start)
 
