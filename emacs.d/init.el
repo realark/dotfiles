@@ -154,7 +154,18 @@
     (save-excursion
       (beginning-of-line)
       (setq line-starts-with-char (string-equal (thing-at-point 'char) char)))
-    line-starts-with-char)))
+    line-starts-with-char))
+
+;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
+(defun aj-toggle-fold ()
+  "Toggle fold all lines larger than indentation on current line"
+  (interactive)
+  (let ((col 1))
+    (save-excursion
+      (back-to-indentation)
+      (setq col (+ 1 (current-column)))
+      (set-selective-display
+       (if selective-display nil (or col 1)))))))
 
 (require 'cl)
 
@@ -1594,16 +1605,6 @@ Otherwise, send an interrupt to slime."
 
 (use-package yaml-mode
   :init
-  ;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
-  (defun aj-toggle-fold ()
-    "Toggle fold all lines larger than indentation on current line"
-    (interactive)
-    (let ((col 1))
-      (save-excursion
-        (back-to-indentation)
-        (setq col (+ 1 (current-column)))
-        (set-selective-display
-         (if selective-display nil (or col 1))))))
   :general
   (general-def 'normal yaml-mode-map
     "TAB" #'aj-toggle-fold)
