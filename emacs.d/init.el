@@ -292,6 +292,7 @@
   :defer nil
   :init
   (setq-default ;; Default to normal mode most of the time
+                evil-want-keybinding nil
                 evil-insert-state-modes '(nrepl-mode shell-mode git-commit-mode term-mode eshell-mode)
                 evil-emacs-state-modes '(magit-mode)
                 evil-motion-state-modes '())
