@@ -21,6 +21,8 @@
 	decorate = full
 [push]
 	default = current
+[pull]
+	rebase = true
 [color]
   # turn on color
   ui = auto
@@ -48,8 +50,6 @@
   HEAD = red bold
 [branch]
   autosetuprebase = always
-[remote "origin"]
-	prune = true
 [core]
 	excludesfile = ~/.gitignore
 [init]
@@ -60,3 +60,8 @@
 	cache = always
 [submodule]
 	recurse = true
+[merge]
+	conflictStyle = diff3
+[fetch]
+	all = true
+	prune = true

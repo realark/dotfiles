@@ -457,43 +457,31 @@ EOF"
 
 (use-package smerge-mode
   :after hydra
+  :hook (magit-diff-visit-file . (lambda ()
+                                   (when smerge-mode
+                                     (unpackaged/smerge-hydra/body))))
   :config
   (defhydra unpackaged/smerge-hydra
     (:color pink :hint nil :post (smerge-auto-leave))
     "
 ^Move^       ^Keep^               ^Diff^                 ^Other^
 ^^-----------^^-------------------^^---------------------^^-------
-_j_next      _b_ase               _<_: upper/base        _C_ombine
-_k_prev      _u_pper              _=_: upper/lower       _r_esolve
-^^           _l_ower              _>_: base/lower        _k_ill current
-^^           _a_ll                _R_efine
-^^           _RET_: current       _E_diff
+_j_next      _K_: upper           _<_: upper/base        _r_esolve manually
+_k_prev      _J_: lower           _>_: base/lower
 "
-    ("j" smerge-next)
+
+    ("j" (lambda ()
+           (interactive)
+           ;; smerge throws an error if there's no next
+           (ignore-errors
+             (smerge-next 1))))
     ("k" smerge-prev)
-    ("b" smerge-keep-base)
-    ("u" smerge-keep-upper)
-    ("l" smerge-keep-lower)
-    ("a" smerge-keep-all)
-    ("RET" smerge-keep-current)
-    ("\C-m" smerge-keep-current)
+    ("K" smerge-keep-upper)
+    ("J" smerge-keep-lower)
     ("<" smerge-diff-base-upper)
-    ("=" smerge-diff-upper-lower)
     (">" smerge-diff-base-lower)
-    ("R" smerge-refine)
-    ("E" smerge-ediff)
-    ("C" smerge-combine-with-next)
-    ("r" smerge-resolve)
-    ("k" smerge-kill-current)
-    ("ZZ" (lambda ()
-            (interactive)
-            (save-buffer)
-            (bury-buffer))
-     "Save and bury buffer" :color blue)
-    ("q" nil "cancel" :color blue))
-  :hook (magit-diff-visit-file . (lambda ()
-                                   (when smerge-mode
-                                     (unpackaged/smerge-hydra/body)))))
+    ("r" nil :color blue)
+    ("q" nil "cancel" :color blue)))
 
 (use-package smartparens
   :init
