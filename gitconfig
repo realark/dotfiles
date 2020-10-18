@@ -65,3 +65,6 @@
 [fetch]
 	all = true
 	prune = true
+# path specific overrides
+[includeIf "gitdir:~/peak/"]
+	path = ~/peak/.gitconfig-peak
