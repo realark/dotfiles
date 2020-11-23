@@ -1619,6 +1619,9 @@ Otherwise, send an interrupt to slime."
   (:states 'normal :keymaps 'restclient-mode-map
            "TAB" #'restclient-toggle-body-visibility))
 
+(use-package protobuf-mode
+  :mode ("\\.proto$" . protobuf-mode))
+
 (use-package rainbow-delimiters
   :init
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
