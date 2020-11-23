@@ -149,7 +149,7 @@ alias k="dolphin . >/dev/null 2>&1 & disown"
 alias ll="ls -l"
 alias blank="xset dpms force off"
 alias crontab="fcrontab"
-alias duh="du -h --max-depth=0"
+alias duh="du -h -d 0"
 alias sqlplus="launch_sqlplus"
 alias mtial='multitail'
 alias emacs='emacsclient -create-frame --alternate-editor=""'
