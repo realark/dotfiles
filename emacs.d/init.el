@@ -1620,7 +1620,8 @@ Otherwise, send an interrupt to slime."
            "TAB" #'restclient-toggle-body-visibility))
 
 (use-package protobuf-mode
-  :mode ("\\.proto$" . protobuf-mode))
+  :mode ("\\.proto$" . protobuf-mode)
+  :hook ((protobuf-mode . hs-minor-mode)))
 
 (use-package rainbow-delimiters
   :init
