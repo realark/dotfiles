@@ -1206,6 +1206,7 @@ Otherwise, send an interrupt to slime."
     :after magit
     :demand t
     :config
+    (setq-default magit-todos-exlude-globs '("*swagger-ui.js*"))
     (magit-todos-mode))
 
   (use-package evil-collection
