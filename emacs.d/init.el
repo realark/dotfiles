@@ -1206,8 +1206,11 @@ Otherwise, send an interrupt to slime."
   (use-package magit-todos
     :after magit
     :demand t
+    :init
+    ;; To set it locally, run add-dir-local-variable, choose magit-status-mode,
+    ;; choose magit-todos-exclude-globs, add patterns you would like to exclude as a list.
+    (setq-default magit-todos-exclude-globs '("*.map" "*.html"))
     :config
-    (setq-default magit-todos-exlude-globs '("*swagger-ui.js*"))
     (magit-todos-mode))
 
   (use-package evil-collection
