@@ -46,6 +46,9 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
+(progn ; line numbers
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+
 (setq-default
  isearch-allow-scroll t
  lazy-highlight-cleanup nil
@@ -335,12 +338,10 @@
                (interactive)
                (if (bound-and-true-p whitespace-mode)
                    (progn
-                     (whitespace-mode 0)
-                     (linum-mode 0))
+                     (whitespace-mode 0))
                  (progn
                    (message "nil branch")
-                   (whitespace-mode 1)
-                   (linum-mode 1))))
+                   (whitespace-mode 1))))
     "f"      #'indent-region
     ";"      #'toggle-comment-region-or-line
     "x"      (general-simulate-key "M-x")))
