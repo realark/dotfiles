@@ -1713,6 +1713,9 @@ position of the outside of the paren.  Otherwise return nil."
 (use-package thread-dump
   :commands (thread-dump-open-file thread-dump-open-files thread-dump-open-dir))
 
+(use-package feature-mode
+  :mode (("\\.feature$" . feature-mode)))
+
 (progn ; sql and db
   (use-package sql
     :mode ("\\.sql$" . sql-mode)
