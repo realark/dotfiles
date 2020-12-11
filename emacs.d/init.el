@@ -205,9 +205,10 @@
        (package-install ,PCK)
        (require ,PCK)))
   (require-install 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-  ;; a fresh setup will fail here. Run this block manually and at this point run: M-x package-refresh-contents RET
   (package-initialize)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+  (unless package-archive-contents
+    (package-refresh-contents))
   (require-install 'use-package)
   (setq-default use-package-always-ensure t)
   (setq-default use-package-always-defer t)
