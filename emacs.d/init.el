@@ -1627,6 +1627,7 @@ Otherwise, send an interrupt to slime."
 (use-package protobuf-mode
   :mode ("\\.proto$" . protobuf-mode)
   :hook ((protobuf-mode . hs-minor-mode)
+         (protobuf-mode . flyspell-prog-mode)
          (protobuf-mode . display-line-numbers-mode)))
 
 (use-package rainbow-delimiters
