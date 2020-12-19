@@ -1323,7 +1323,6 @@ Otherwise, send an interrupt to slime."
 	         (goto-char minp)
 	         (hs-hide-recursive minp maxp))))))
 
-  (add-hook 'hs-minor-mode-hook #'hs-hide-all)
   :general
   (:states '(normal) :keymaps 'hs-minor-mode-map
             "<tab>" #'hs-toggle-hiding
