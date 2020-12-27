@@ -1693,6 +1693,10 @@ position of the outside of the paren.  Otherwise return nil."
   ;; (setq groovysh-args  )
   )
 
+(use-package kotlin-mode
+  :mode
+  ("\\.kt$" . kotlin-mode))
+
 (use-package scala-mode
   :mode
   ("\\.scala$" . scala-mode))
