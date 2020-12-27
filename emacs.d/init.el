@@ -278,6 +278,10 @@
     :ensure t
     :if window-system)
 
+  (use-package poet-theme
+    :ensure t
+    :if window-system)
+
   (load-theme 'darktooth)
 
   ;; (setq-default circadian-themes '(("07:30" . zenburn)
