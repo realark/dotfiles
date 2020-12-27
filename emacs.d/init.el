@@ -270,11 +270,15 @@
     :if window-system
     :load-path "themes")
 
+  (use-package darktooth-theme
+    :ensure t
+    :if window-system)
+
   (use-package circadian
     :ensure t
     :if window-system)
 
-  (load-theme 'spacemacs-dark)
+  (load-theme 'darktooth)
 
   ;; (setq-default circadian-themes '(("07:30" . zenburn)
   ;;                                  ("17:00" . spacemacs-dark)
