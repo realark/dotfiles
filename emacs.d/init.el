@@ -328,7 +328,7 @@
 
   (general-def
     :states '(normal visual)
-    "/" #'swiper
+    "/" (general-simulate-key "C-s")
     "<SPC>"  (general-simulate-key "C-x"))
 
   (general-def
@@ -545,7 +545,10 @@ _k_prev      _J_: lower           _>_: base/lower
   (use-package swiper
     :demand t
     :general
-    ("C-s" #'swiper)
+    ("C-s" (lambda ()
+             (interactive)
+             (setq isearch-forward t)
+             (swiper)))
     :init
     (setq-default swiper-action-recenter t))
 
