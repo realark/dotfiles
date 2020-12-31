@@ -965,7 +965,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
           ('java-mode (call-interactively #'lsp-rename)))
      "Rename" :exit t)
     ("d" (mode-case
-          ((or 'lisp-mode 'slime-repl-mode) (call-interactively #'slime-documentation)))
+          ((or 'lisp-mode 'slime-repl-mode) (call-interactively #'slime-documentation))
+          ('java-mode (call-interactively #'lsp-describe-thing-at-point)))
      "Documentation" :exit t)
     ("e" (mode-case
           ('lisp-mode (call-interactively #'slime-list-compiler-notes))
@@ -1836,9 +1837,9 @@ position of the outside of the paren.  Otherwise return nil."
     (lsp-ui-sideline-mode -1))
 
   (use-package dap-mode
+    :after lsp-mode
     :config
-    (dap-mode t)
-    (dap-ui-mode t)))
+    (dap-auto-configure-mode)))
 
 (use-package lsp-java
   :demand t
@@ -1856,26 +1857,40 @@ position of the outside of the paren.  Otherwise return nil."
   :config
   ;; Enable dap-java
   (require 'dap-java)
-  ;; Support Lombok in our projects, among other things
+
+  ;; (setenv "JAVA_HOME"  "/usr/lib/jvm/default-java")
+
   (setq lsp-java-vmargs
-        (list ; "-noverify" ; TODO
+        (list "-noverify"
               "-Xmx2G"
               "-XX:+UseG1GC"
               "-XX:+UseStringDeduplication"
+              (concat "-javaagent:"
+                      (getenv "HOME")
+                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar")
+              (concat "-Xbootclasspath/a:"
+                      (getenv "HOME")
+                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar")
               ;; (concat "-javaagent:" jmi/lombok-jar)
               ;; (concat "-Xbootclasspath/a:" jmi/lombok-jar)
               )
+        ;; lsp-java-java-path "/usr/lib/jvm/default-java/bin/java"
+        ;; lsp-java-import-gradle-java-home "/usr/lib/jvm/default-java/bin/java"
+        ;; lsp-java-configuration-runtimes '[(:name "JavaSE-11"
+        ;;                                          :path "/usr/lib/jvm/default-java"
+        ;;                                          :default t)]
         lsp-file-watch-ignored
         '(".idea" ".ensime_cache" ".eunit" "node_modules"
-          ".git" ".hg" ".fslckout" "_FOSSIL_"
+          ".git" ".hg" ".fslckout" "_FOSSIL_" ".gradle" ".settings"
           ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
-          "bin" "build")
+          "bin" "build" "public")
         lsp-java-import-order '["" "java" "javax" "#"]
         ;; Don't organize imports on save
         ;; Formatter profile
         ;; lsp-java-format-settings-url
         ;; (concat "file://" jmi/java-format-settings-file)
         lsp-java-import-gradle-enabled t
+        ;; lsp-java-import-gradle-offline-enabled t
         lsp-java-save-action-organize-imports nil))
 
 (progn ; glsl-mode
