@@ -34,7 +34,7 @@
 
 ;; highlight the current line
 (global-hl-line-mode t)
-(setq large-file-warning-threshold 100000000) ;100mb
+(setq large-file-warning-threshold 200000000) ;200mb
 (setq create-lockfiles nil)
 (blink-cursor-mode -1)
 (setq help-window-select t)
@@ -970,6 +970,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
      "Documentation" :exit t)
     ("e" (mode-case
           ('lisp-mode (call-interactively #'slime-list-compiler-notes))
+          ('java-mode (call-interactively #'list-flycheck-errors))
           ('emacs-lisp-mode (call-interactively #'list-flycheck-errors)))
      "Error List" :exit t)
     ("g" (%my-go-to-definition)
@@ -1880,18 +1881,55 @@ position of the outside of the paren.  Otherwise return nil."
         ;;                                          :path "/usr/lib/jvm/default-java"
         ;;                                          :default t)]
         lsp-file-watch-ignored
-        '(".idea" ".ensime_cache" ".eunit" "node_modules"
-          ".git" ".hg" ".fslckout" "_FOSSIL_" ".gradle" ".settings"
-          ".bzr" "_darcs" ".tox" ".svn" ".stack-work"
-          "bin" "build" "public")
-        lsp-java-import-order '["" "java" "javax" "#"]
+        (remove-duplicates (concatenate 'list
+                                        (mapcar (lambda (ignore)
+                                                  (concatenate 'string "**/*" ignore "$"))
+                                                '("public" "build" "bin" ".gradle"))
+
+                                        ;; keep lsp-mode defaults
+                                        '(     ; SCM tools
+                                          "[/\\\\]\\.git$"
+                                          "[/\\\\]\\.hg$"
+                                          "[/\\\\]\\.bzr$"
+                                          "[/\\\\]_darcs$"
+                                          "[/\\\\]\\.svn$"
+                                          "[/\\\\]_FOSSIL_$"
+                                          ;; IDE tools
+                                          "[/\\\\]\\.idea$"
+                                          "[/\\\\]\\.ensime_cache$"
+                                          "[/\\\\]\\.eunit$"
+                                          "[/\\\\]node_modules$"
+                                          "[/\\\\]\\.fslckout$"
+                                          "[/\\\\]\\.tox$"
+                                          "[/\\\\]\\.stack-work$"
+                                          "[/\\\\]\\.bloop$"
+                                          "[/\\\\]\\.metals$"
+                                          "[/\\\\]target$"
+                                          "[/\\\\]\\.ccls-cache$"
+                                          ;; Autotools output
+                                          "[/\\\\]\\.deps$"
+                                          "[/\\\\]build-aux$"
+                                          "[/\\\\]autom4te.cache$"
+                                          "[/\\\\]\\.reference$"))
+                           :test #'equal)
         ;; Don't organize imports on save
         ;; Formatter profile
         ;; lsp-java-format-settings-url
         ;; (concat "file://" jmi/java-format-settings-file)
         lsp-java-import-gradle-enabled t
-        ;; lsp-java-import-gradle-offline-enabled t
-        lsp-java-save-action-organize-imports nil))
+        lsp-java-import-gradle-offline-enabled t
+        lsp-java-save-action-organize-imports nil)
+
+  (cl-defun my-lsp-gradle-offline-toggle  (&optional (offline-p nil supplied-p))
+    "Set gradle offline mode to OFFLINE-P. If OFFLINE-P is not provided, toggle the current offline value"
+    (interactive)
+    (if supplied-p
+        (setq lsp-java-import-gradle-offline-enabled offline-p)
+      (setq lsp-java-import-gradle-offline-enabled (not lsp-java-import-gradle-offline-enabled )))
+    (if lsp-java-import-gradle-offline-enabled
+        (message "...Gradle Offline...")
+        (message "!!!Gradle Online!!!"))
+    lsp-java-import-gradle-offline-enabled))
 
 (progn ; glsl-mode
   (use-package glsl-mode)
