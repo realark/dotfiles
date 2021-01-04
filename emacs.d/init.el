@@ -1845,7 +1845,7 @@ position of the outside of the paren.  Otherwise return nil."
 (use-package lsp-java
   :demand t
   ;; :hook ((java-mode . lsp))
-  :after (lsp lsp-mode dap-mode)
+  :after lsp-mode
   ;; :init
   ;; (defun jmi/java-mode-config ()
   ;;   (setq-local tab-width 4
