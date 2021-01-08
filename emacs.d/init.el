@@ -889,7 +889,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
-              (list "sql-mode" "sql-interactive-mode" #'sql-postgres)))
+              (list "sql-mode" "sql-interactive-mode" #'sql-connect)))
 
   (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
     (let ((interactive-buffers (list)))
