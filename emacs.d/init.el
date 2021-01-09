@@ -889,7 +889,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
-              (list "sql-mode" "sql-interactive-mode" #'sql-connect)))
+              (list "sql-mode" "sql-interactive-mode" (lambda() (call-interactively #'sql-connect)))))
 
   (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
     (let ((interactive-buffers (list)))
@@ -1952,6 +1952,15 @@ position of the outside of the paren.  Otherwise return nil."
 (when (file-exists-p "~/.emacs.d/vtl.el")
   (load-file "~/.emacs.d/vtl.el")
   (add-to-list 'auto-mode-alist '("\\.vm\\'" . turn-on-vtl-mode)))
+
+(progn ; k8
+  (use-package kubel
+    :ensure t
+    :commands (kubel))
+
+  (use-package kubel-evil
+    :ensure t
+    :after kubel))
 
 ;; start the emacs daemon
 (server-start)
