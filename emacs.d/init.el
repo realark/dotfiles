@@ -152,23 +152,41 @@
         (select-current-line))
     (comment-or-uncomment-region (region-beginning) (region-end)))
 
-(defun current-line-starts-with (char)
-  (let (line-starts-with-char)
-    (save-excursion
-      (beginning-of-line)
-      (setq line-starts-with-char (string-equal (thing-at-point 'char) char)))
-    line-starts-with-char))
+  (defun current-line-starts-with (char)
+    (let (line-starts-with-char)
+      (save-excursion
+        (beginning-of-line)
+        (setq line-starts-with-char (string-equal (thing-at-point 'char) char)))
+      line-starts-with-char))
 
-;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
-(defun aj-toggle-fold ()
-  "Toggle fold all lines larger than indentation on current line"
-  (interactive)
-  (let ((col 1))
-    (save-excursion
-      (back-to-indentation)
-      (setq col (+ 1 (current-column)))
-      (set-selective-display
-       (if selective-display nil (or col 1)))))))
+  (defun toggle-camelcase-underscores ()
+    "Toggle between camelcase and underscore notation for the symbol at point."
+    (interactive)
+    (let* ((bounds (bounds-of-thing-at-point 'symbol))
+           (start (car bounds))
+           (end (cdr bounds)))
+      (let ((currently-using-underscores-p (save-excursion (goto-char start)
+                                                           (re-search-forward "_" end t))))
+        (if currently-using-underscores-p
+            (progn
+              (upcase-initials-region start end)
+              (replace-string "_" "" nil start end)
+              (downcase-region start (1+ start)))
+          (progn
+            (replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ start) end)
+            (downcase-region start (cdr (bounds-of-thing-at-point 'symbol))))))
+      (goto-char start)))
+
+  ;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
+  (defun aj-toggle-fold ()
+    "Toggle fold all lines larger than indentation on current line"
+    (interactive)
+    (let ((col 1))
+      (save-excursion
+        (back-to-indentation)
+        (setq col (+ 1 (current-column)))
+        (set-selective-display
+         (if selective-display nil (or col 1)))))))
 
 (require 'cl)
 
