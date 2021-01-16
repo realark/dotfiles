@@ -66,6 +66,8 @@
 [fetch]
 	all = true
 	prune = true
+  pruneTags = true
+  recurseSubmodules = true
 # path specific overrides
 [includeIf "gitdir:~/peak/"]
 	path = ~/peak/.gitconfig-peak
