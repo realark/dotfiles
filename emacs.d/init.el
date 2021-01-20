@@ -85,6 +85,13 @@
 
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 
+;; handle long lines
+;; https://200ok.ch/posts/2020-09-29_comprehensive_guide_on_handling_long_lines_in_emacs.html
+(setq-default bidi-paragraph-direction 'left-to-right
+              bidi-inhibit-bpa t)
+(global-so-long-mode 1)
+
+
 ;; Misc elisp utils
 (progn
   (defun touch-file (file)
