@@ -1988,6 +1988,13 @@ position of the outside of the paren.  Otherwise return nil."
     :ensure t
     :after kubel))
 
+(use-package elpy
+  :commands (elpy-enable)
+  :config
+  (setq-default
+   elpy-rpc-python-command "python3"
+   elpy-rpc-backend "jedi"))
+
 ;; start the emacs daemon
 (server-start)
 
