@@ -1979,6 +1979,7 @@ position of the outside of the paren.  Otherwise return nil."
   (add-to-list 'auto-mode-alist '("\\.vm\\'" . turn-on-vtl-mode)))
 
 (progn ; k8
+  ;; (setq kubel-namespace "some-namespace")
   (use-package kubel
     :ensure t
     :commands (kubel))
