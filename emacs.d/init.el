@@ -1665,6 +1665,9 @@ Otherwise, send an interrupt to slime."
            "TAB" #'restclient-toggle-body-visibility))
 
 (use-package protobuf-mode
+  ;; In a dir local, you might want to add something like this to get flycheck imports working
+  ;; (setq-default flycheck-protoc-import-path
+  ;;               (list "/path/to/your/proto/root"))
   :mode ("\\.proto$" . protobuf-mode)
   :hook ((protobuf-mode . hs-minor-mode)
          (protobuf-mode . flyspell-prog-mode)
