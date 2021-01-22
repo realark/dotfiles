@@ -1995,6 +1995,12 @@ position of the outside of the paren.  Otherwise return nil."
    elpy-rpc-python-command "python3"
    elpy-rpc-backend "jedi"))
 
+(use-package go-mode
+  :mode ("\\.go$" . go-mode))
+
+(use-package graphql-mode
+  :mode ("\\.graphql$" . graphql-mode))
+
 ;; start the emacs daemon
 (server-start)
 
