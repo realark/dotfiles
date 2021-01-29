@@ -1667,8 +1667,7 @@ Otherwise, send an interrupt to slime."
 
 (use-package protobuf-mode
   ;; In a dir local, you might want to add something like this to get flycheck imports working
-  ;; (setq-default flycheck-protoc-import-path
-  ;;               (list "/path/to/your/proto/root"))
+  ;; ((protobuf-mode . ((flycheck-protoc-import-path . ("/path/to/proto/root")))))
   :mode ("\\.proto$" . protobuf-mode)
   :hook ((protobuf-mode . hs-minor-mode)
          (protobuf-mode . flyspell-prog-mode)
@@ -1981,6 +1980,9 @@ position of the outside of the paren.  Otherwise return nil."
 (when (file-exists-p "~/.emacs.d/vtl.el")
   (load-file "~/.emacs.d/vtl.el")
   (add-to-list 'auto-mode-alist '("\\.vm\\'" . turn-on-vtl-mode)))
+
+(when (file-exists-p "~/.emacs.d/go-template-mode.el")
+  (load-file  "~/.emacs.d/go-template-mode.el"))
 
 (progn ; k8
   ;; (setq kubel-namespace "some-namespace")
