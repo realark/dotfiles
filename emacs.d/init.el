@@ -2005,7 +2005,22 @@ position of the outside of the paren.  Otherwise return nil."
   :mode ("\\.go$" . go-mode))
 
 (use-package graphql-mode
-  :mode ("\\.graphql$" . graphql-mode))
+  :mode ("\\.graphql$" . graphql-mode)
+  ;; :config
+  ;; (when (file-exists-p "~/.emacs.d/company-graphql/company-graphql.el")
+  ;;   (load "~/.emacs.d/company-graphql/company-graphql.el")
+  ;;   (add-to-list 'company-backends 'company-graphql))
+    )
+
+;; (use-package company-graphql
+;;   :after graphql-mode
+;;   :config
+;;   (add-to-list 'company-backends 'company-graphql))
+
+(use-package json-mode
+  :mode ("\\.json$" . json-mode))
+
+(use-package dumb-jump)
 
 ;; start the emacs daemon
 (server-start)
