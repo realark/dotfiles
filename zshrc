@@ -284,3 +284,7 @@ if [ -d "/Users/akent/.sdkman" ]; then
   PERL_MB_OPT="--install_base \"/Users/akent/perl5\""; export PERL_MB_OPT;
   PERL_MM_OPT="INSTALL_BASE=/Users/akent/perl5"; export PERL_MM_OPT;
 fi
+
+
+# Kube notes
+# k get service -n trident-dev fzd -o json | jq ".spec.ports[]"
