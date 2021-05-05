@@ -1279,7 +1279,7 @@ Otherwise, send an interrupt to slime."
 
   (use-package git-link
     :config
-    (setq git-link-default-branch "master")))
+    (setq-default git-link-default-branch "master")))
 
 (use-package hideshow
   :delight hs-minor-mode
@@ -1495,6 +1495,9 @@ Otherwise, send an interrupt to slime."
                   ("b" "Backlog task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "backlog")
                    "* TODO %?")))
   (setq-default org-duration-format (quote h:mm))
+  (setq-default org-fontify-done-headline t)
+  (set-face-attribute 'org-done nil :strike-through t)
+  (set-face-attribute 'org-headline-done nil :strike-through t)
   (add-hook 'org-capture-mode-hook 'evil-insert-state))
 
 (use-package evil-org
@@ -1528,8 +1531,8 @@ Otherwise, send an interrupt to slime."
     "k" #'evil-previous-line)
   :config
   (setq-default org-super-agenda-header-separator "  --->"
-                org-agenda-skip-scheduled-if-done t
-                org-agenda-skip-deadline-if-done t
+                org-agenda-skip-scheduled-if-done nil
+                org-agenda-skip-deadline-if-done nil
                 org-super-agenda-groups
                 '((:name "CALENDAR"
                          :time-grid t
