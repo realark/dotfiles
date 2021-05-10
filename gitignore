@@ -14,3 +14,4 @@ gh-drafts/
 .custom-slime-init.lisp
 .slime-initial-package
 ark-custom-rest-client
+.DS_STORE
