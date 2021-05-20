@@ -981,7 +981,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                        (sticky-window-delete-window nil))
      ('lisp-mode (call-interactively #'slime-edit-definition))
      ('slime-repl-mode (call-interactively #'slime-edit-definition))
-     ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))))
+     ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))
+     ('protobuf-mode (call-interactively #'dumb-jump-go ))))
 
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
@@ -2023,7 +2024,20 @@ position of the outside of the paren.  Otherwise return nil."
 (use-package json-mode
   :mode ("\\.json$" . json-mode))
 
-(use-package dumb-jump)
+(use-package dumb-jump
+  :init
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  (setq-default xref-show-definitions-function #'ivy-completing-read)
+  (setq-default dumb-jump-selector 'ivy)
+  :config
+  (setq-default dumb-jump-git-grep-search-untracked nil))
+
+
+(defun my/reformat-xml ()
+  (interactive)
+  (save-excursion
+    (sgml-pretty-print (point-min) (point-max))
+    (indent-region (point-min) (point-max))))
 
 ;; start the emacs daemon
 (server-start)
