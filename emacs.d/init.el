@@ -13,7 +13,7 @@
 
 (setq inhibit-startup-message t)
 ;; Format the title-bar to always include the buffer name
-(setq frame-title-format "emacs - %b")
+(setq frame-title-format "%b -- %m")
 ;; Make the mouse wheel scroll Emacs
 (mouse-wheel-mode t)
 ;; Don't require an ending newline
