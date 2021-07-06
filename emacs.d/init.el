@@ -304,10 +304,6 @@
     :ensure t
     :if window-system)
 
-  (use-package poet-theme
-    :ensure t
-    :if window-system)
-
   (load-theme 'darktooth)
 
   ;; (setq-default circadian-themes '(("07:30" . zenburn)
@@ -1442,7 +1438,10 @@ Otherwise, send an interrupt to slime."
    "C-x a" #'org-agenda-list)
   (:states 'normal :keymaps 'org-agenda-mode-map
            "M-k"     #'org-agenda-drag-line-backward
-           "M-j"     #'org-agenda-drag-line-forward)
+           "M-j"     #'org-agenda-drag-line-forward
+           "L"     #'org-agenda-do-date-later
+           "H"     #'org-agenda-do-date-earlier
+           "D"     #'org-agenda-kill)
   :delight org-indent-mode nil org-indent
   :init
   (defhydra hydra-orgmode (:color amaranth :columns 1)
@@ -1574,6 +1573,10 @@ Otherwise, send an interrupt to slime."
                 (org-trello-sync-buffer t)))))
 
 (progn ; calfw calendar
+  (setq-default calendar-location-name "Portland, OR")
+  (setq-default calendar-latitude 45.5)
+  (setq-default calendar-longitude -122.7)
+
   (use-package calfw
     :commands (cfw:open-calendar-buffer cfw:org-create-source)
     :general
