@@ -22,11 +22,11 @@ zstyle ':completion:*' menu select=2
 #Colors
 
 if which dircolors >/dev/null 2>&1; then
-  # no dircolors on osx
-  eval `dircolors -b`
-  if which gdircolors >/dev/null 2>&1; then
-    alias dircolors=gdircolors
-  fi
+    # no dircolors on osx
+    eval `dircolors -b`
+    if which gdircolors >/dev/null 2>&1; then
+        alias dircolors=gdircolors
+    fi
 fi
 
 #Colors for man pages
@@ -130,11 +130,11 @@ bindkey -v
 ##################################################################
 # Some aliases
 if [ "$machine" = "linux" ]; then
-  alias ls='ls --color=auto -F'
+    alias ls='ls --color=auto -F'
 else
-  if [ "$machine" = "mac" ]; then
-    alias ls='ls -G -F'
-  fi
+    if [ "$machine" = "mac" ]; then
+        alias ls='ls -G -F'
+    fi
 fi
 alias top='htop'
 alias open='xdg-open'
@@ -158,8 +158,6 @@ alias yaourt='yaourt --noconfirm'
 alias telnet='rlwrap nc'
 alias diff='colordiff'
 alias journalctl='journalctl --pager-end --since "1 day ago"'
-alias myipaddress='curl ifconfig.me'
-alias myinternetspeed='speedtest-cli'
 alias docker-stop-all='docker stop $(docker ps -aq)'
 alias docker-rm-all='docker rm $(docker ps -aq)'
 
@@ -214,9 +212,9 @@ function runGradle() {
 
 # Show 'dots' if a tab completion stalls
 function expand-or-complete-with-dots() {
-  echo -n "\e[31m......\e[0m"
-  zle expand-or-complete
-  zle redisplay
+    echo -n "\e[31m......\e[0m"
+    zle expand-or-complete
+    zle redisplay
 }
 zle -N expand-or-complete-with-dots
 bindkey "^I" expand-or-complete-with-dots
@@ -229,13 +227,13 @@ bindkey '^R' history-incremental-search-backward
 
 # Set the title of a Terminal window
 function settitle() {
- if [ -n "$STY" ] ; then         # We are in a screen session
-  echo "Setting screen titles to $@"
-  printf "\033k%s\033\\" "$@"
-  screen -X eval "at \\# title $@" "shelltitle $@"
- else
-  printf "\033]0;%s\007" "$@"
- fi
+    if [ -n "$STY" ] ; then         # We are in a screen session
+        echo "Setting screen titles to $@"
+        printf "\033k%s\033\\" "$@"
+        screen -X eval "at \\# title $@" "shelltitle $@"
+    else
+        printf "\033]0;%s\007" "$@"
+    fi
 }
 
 function formatxml(){
@@ -270,21 +268,37 @@ source_if_exists ~/.admin/$(hostname)_custom.sh
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 if [ -d "/Users/akent/.sdkman" ]; then
-  export SDKMAN_DIR="/Users/akent/.sdkman"
-  [[ -s "/Users/akent/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/akent/.sdkman/bin/sdkman-init.sh"
-  # to use sdkman
-  #     source "/Users/akent/.sdkman/bin/sdkman-init.sh"
-  #     sdk list java
-  #     sdk install java <version>
+    export SDKMAN_DIR="/Users/akent/.sdkman"
+    [[ -s "/Users/akent/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/akent/.sdkman/bin/sdkman-init.sh"
+    # to use sdkman
+    #     source "/Users/akent/.sdkman/bin/sdkman-init.sh"
+    #     sdk list java
+    #     sdk install java <version>
 
 
-  PATH="/Users/akent/perl5/bin${PATH:+:${PATH}}"; export PATH;
-  PERL5LIB="/Users/akent/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-  PERL_LOCAL_LIB_ROOT="/Users/akent/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-  PERL_MB_OPT="--install_base \"/Users/akent/perl5\""; export PERL_MB_OPT;
-  PERL_MM_OPT="INSTALL_BASE=/Users/akent/perl5"; export PERL_MM_OPT;
+    PATH="/Users/akent/perl5/bin${PATH:+:${PATH}}"; export PATH;
+    PERL5LIB="/Users/akent/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+    PERL_LOCAL_LIB_ROOT="/Users/akent/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+    PERL_MB_OPT="--install_base \"/Users/akent/perl5\""; export PERL_MB_OPT;
+    PERL_MM_OPT="INSTALL_BASE=/Users/akent/perl5"; export PERL_MM_OPT;
 fi
 
 
 # Kube notes
 # k get service -n trident-dev fzd -o json | jq ".spec.ports[]"
+
+alias myipaddress='curl ifconfig.me'
+alias myinternetspeed='speedtest-cli'
+
+function myhosts_on_network {
+    if [ "$machine" != "linux" ]; then
+        echo "Unsupported OS: $machine"
+        return 1
+    fi
+    NETWORK="$1"
+    if [ "$NETWORK" = "" ]; then
+        NETWORK="192.168.1.0"
+    fi
+    echo "------ $NETWORK ------"
+    nmap -sP "$NETWORK/24" | grep "Nmap scan report for " | sed -E "s/Nmap scan report for //g" | sed -E "s/(.*) \((.*)\)/\2 -- \1/g" | sed -E "s/(\.[0-9][0-9]) --/\1  --/g" | sed -E "s/(\.[0-9]) --/\1   --/g"
+}
