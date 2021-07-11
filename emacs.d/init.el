@@ -994,7 +994,10 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
           ('java-mode (call-interactively #'lsp-rename)))
      "Rename" :exit t)
     ("d" (mode-case
-          ((or 'lisp-mode 'slime-repl-mode) (call-interactively #'slime-documentation))
+          ((or 'lisp-mode 'slime-repl-mode)
+           (if (file-exists-p (concat (getenv "HOME") "/prog/slime-doc-contribs"))
+               (call-interactively #'slime-help-symbol)
+             (call-interactively #'slime-documentation)))
           ('java-mode (call-interactively #'lsp-describe-thing-at-point)))
      "Documentation" :exit t)
     ("e" (mode-case
@@ -1032,7 +1035,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
         (mark-beginning-of-buffer)
         (my-ansi-color-region)))))
 
-(progn
+(progn ; slime stuff
   (use-package slime
     :delight slime
     :commands (slime slime-connect)
@@ -1152,11 +1155,22 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
     (load (expand-file-name "~/.roswell/helper.el"))
     (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run --lose-on-corruption")
-    (slime-setup '(slime-fancy
-                   slime-highlight-edits
-                   slime-asdf
-                   slime-sprof
-                   slime-xref-browser))
+
+    (if (file-exists-p (concat (getenv "HOME") "/prog/slime-doc-contribs"))
+        (progn
+          (push (concat (getenv "HOME") "/prog/slime-doc-contribs") load-path)
+          (slime-setup '(slime-fancy
+                         slime-highlight-edits
+                         slime-asdf
+                         slime-sprof
+                         slime-xref-browser
+                         slime-help
+                         slime-info)))
+      (slime-setup '(slime-fancy
+                     slime-highlight-edits
+                     slime-asdf
+                     slime-sprof)))
+
     (slime-require :swank-listener-hooks)
     (setq-default slime-sprof-exclude-swank t)
     ;; https://emacs.stackexchange.com/questions/9600/how-can-i-override-a-pre-defined-face-for-light-and-dark-backgrounds

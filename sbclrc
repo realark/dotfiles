@@ -23,6 +23,11 @@
 (defpackage :ark (:use :cl))
 (in-package :ark)
 
+(require :swank)
+(when (cl:probe-file (cl:concatenate 'cl:string (sb-posix:getenv "HOME") "/prog/slime-doc-contribs/"))
+  (cl:pushnew (cl:probe-file (cl:concatenate 'cl:string (sb-posix:getenv "HOME") "/prog/slime-doc-contribs/"))
+              swank::*load-path*))
+
 @export
 (defmacro dis (args &rest body)
   "Disassemble a lambda expression."
