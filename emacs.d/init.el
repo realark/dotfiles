@@ -1477,8 +1477,7 @@ Otherwise, send an interrupt to slime."
   ;; fontify code in code blocks
   (setq-default org-src-fontify-natively t)
   (setq-default org-directory "~/Documents/org-files/")
-  (setq-default org-agenda-files (list (concat org-directory "tasks.org")
-                                       (concat org-directory "gcal-spark.org")))
+  (setq-default org-agenda-files (list (concat org-directory "tasks.org")))
   (setq-default org-default-notes-file (concat org-directory "notes.org"))
   (setq-default org-log-done 'time)
   (setq-default org-enforce-todo-dependencies t)
