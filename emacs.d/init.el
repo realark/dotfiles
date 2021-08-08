@@ -1500,13 +1500,13 @@ Otherwise, send an interrupt to slime."
   (setq-default org-refile-use-outline-path t) ; Show full paths for refiling
   (setq-default org-capture-templates
                 `(("s" "Syn Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "syn")
-                   "* TODO %?")
+                   "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")
                   ("l" "Life Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "life")
-                   "* TODO %?")
+                   "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")
                   ("p" "Peak6 Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "peak6")
-                   "* TODO %?")
+                   "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")
                   ("b" "Backlog task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "backlog")
-                   "* TODO %?")))
+                   "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")))
   (setq-default org-duration-format (quote h:mm))
   (setq-default org-fontify-done-headline t)
   (set-face-attribute 'org-done nil :strike-through t)
