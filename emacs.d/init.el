@@ -236,7 +236,7 @@
   (unless package-archive-contents
     (package-refresh-contents))
   (require-install 'use-package)
-  (setq-default use-package-always-ensure t)
+  (setq-default use-package-always-ensure nil)
   (setq-default use-package-always-defer t)
 
   (use-package try
@@ -2048,6 +2048,8 @@ position of the outside of the paren.  Otherwise return nil."
   :config
   (setq-default dumb-jump-git-grep-search-untracked nil))
 
+(use-package phps-mode
+  :mode ("\\.php$" . phps-mode))
 
 (defun my/reformat-xml ()
   (interactive)
