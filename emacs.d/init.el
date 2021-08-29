@@ -1922,10 +1922,10 @@ position of the outside of the paren.  Otherwise return nil."
               "-XX:+UseStringDeduplication"
               (concat "-javaagent:"
                       (getenv "HOME")
-                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar")
+                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.18/481f5bfed3ae29f656eedfe9e98c8365b8ba5c57/lombok-1.18.18.jar")
               (concat "-Xbootclasspath/a:"
                       (getenv "HOME")
-                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar")
+                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.18/481f5bfed3ae29f656eedfe9e98c8365b8ba5c57/lombok-1.18.18.jar")
               ;; (concat "-javaagent:" jmi/lombok-jar)
               ;; (concat "-Xbootclasspath/a:" jmi/lombok-jar)
               )
