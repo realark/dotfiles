@@ -1766,11 +1766,12 @@ position of the outside of the paren.  Otherwise return nil."
   ("\\.scala$" . scala-mode))
 
 (use-package jdecomp
-  :mode ("\\.class$" . jdecomp-mode)
+  ;; :mode ("\\.class$" . jdecomp-mode)
   :config
   (customize-set-variable 'jdecomp-decompiler-type 'procyon)
   (customize-set-variable 'jdecomp-decompiler-paths
-                          `((procyon . ,(first-existing-file "/usr/share/java/procyon-decompiler/procyon-decompiler.jar"
+                          `((procyon . ,(first-existing-file "/opt/procyon/procyon-decompiler-0.6-prerelease.jar"
+                                                             "/usr/share/java/procyon-decompiler/procyon-decompiler.jar"
                                                              "/opt/procyon/procyon-decompiler-0.5.30.jar"
                                                              "/usr/local/Cellar/procyon-decompiler/0.5.30/libexec/procyon-decompiler-0.5.30.jar"))))
   (defun my-jdecomp-bytecode ()
