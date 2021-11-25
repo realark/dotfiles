@@ -231,6 +231,9 @@
        (package-install ,PCK)
        (require ,PCK)))
   (require-install 'package)
+  (when (and (equal emacs-version "27.2")
+             (eql system-type 'darwin))
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
   (package-initialize)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
   (unless package-archive-contents
