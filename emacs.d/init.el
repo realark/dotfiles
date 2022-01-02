@@ -307,7 +307,7 @@
     :ensure t
     :if window-system)
 
-  (load-theme 'darktooth)
+  (load-theme 'moe-dark)
 
   ;; (setq-default circadian-themes '(("07:30" . zenburn)
   ;;                                  ("17:00" . spacemacs-dark)
