@@ -54,3 +54,36 @@ Usage: (disasm-method #'package:generic-fun '(integer))"
           (function (sb-mop:method-function method))
           (fast-function (sb-pcl::%method-function-fast-function function)))
      (disassemble fast-function)))
+
+
+;; hash-table literal syntax using braces
+(set-macro-character #\{
+		     (lambda (str char)
+		       (declare (ignore char))
+		       (let ((*readtable* (copy-readtable *readtable* nil))
+			     (keep-going t))
+			 (set-macro-character #\} (lambda (stream char)
+						    (declare (ignore char) (ignore stream))
+						    (setf keep-going nil)))
+			 (let ((pairs (loop for key = (read str nil nil t)
+					   while keep-going
+					   for value = (read str nil nil t)
+					   collect (list key value)))
+			       (retn (gensym)))
+			   `(let ((,retn (make-hash-table :test #'equal)))
+			      ,@(mapcar
+				 (lambda (pair)
+				   `(setf (gethash ,(car pair) ,retn) ,(cadr pair)))
+				 pairs)
+			      ,retn)))))
+
+(defparameter *pretty-print-hash-table* t)
+
+(defmethod print-object ((object hash-table) stream)
+  (format stream "#HASH{size ~a test ~a}{~{~{(~a : ~a)~}~^ ~}}"
+          (hash-table-size object)
+          (hash-table-test object)
+          (when *pretty-print-hash-table*
+            (loop for key being the hash-keys of object
+                    using (hash-value value)
+                  collect (list key value)))))
