@@ -1989,6 +1989,9 @@ position of the outside of the paren.  Otherwise return nil."
         (message "!!!Gradle Online!!!"))
     lsp-java-import-gradle-offline-enabled))
 
+(when (file-exists-p "~/.emacs.d/guess-offset.el")
+  (load-file  "~/.emacs.d/guess-offset.el"))
+
 (progn ; glsl-mode
   (use-package glsl-mode)
 
