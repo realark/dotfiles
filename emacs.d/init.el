@@ -46,8 +46,7 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-(progn ; line numbers
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+(global-display-line-numbers-mode)
 
 (setq-default
  isearch-allow-scroll t
@@ -1693,8 +1692,7 @@ Otherwise, send an interrupt to slime."
   ;; ((protobuf-mode . ((flycheck-protoc-import-path . ("/path/to/proto/root")))))
   :mode ("\\.proto$" . protobuf-mode)
   :hook ((protobuf-mode . hs-minor-mode)
-         (protobuf-mode . flyspell-prog-mode)
-         (protobuf-mode . display-line-numbers-mode)))
+         (protobuf-mode . flyspell-prog-mode)))
 
 (use-package rainbow-delimiters
   :init
