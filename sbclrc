@@ -80,8 +80,8 @@ Usage: (disasm-method #'package:generic-fun '(integer))"
 (defparameter *pretty-print-hash-table* t)
 
 (defmethod print-object ((object hash-table) stream)
-  (format stream "#HASH{size ~a test ~a}{~{~{(~a : ~a)~}~^ ~}}"
-          (hash-table-size object)
+  (format stream "#HASH{count ~a test ~a}{~{~{(~a : ~a)~}~^ ~}}"
+          (hash-table-count object)
           (hash-table-test object)
           (when *pretty-print-hash-table*
             (loop for key being the hash-keys of object
