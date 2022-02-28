@@ -241,6 +241,8 @@
   (setq-default use-package-always-ensure nil)
   (setq-default use-package-always-defer t)
 
+  (setq-default use-package-always-ensure t)
+
   (use-package try
     :commands try))
 
@@ -1273,13 +1275,12 @@ Otherwise, send an interrupt to slime."
     :after evil
     :ensure t
     :init
+    (add-hook 'magit-mode-hook
+              (lambda ()
+                (evil-collection-init 'magit)))
     (add-hook 'magit-todos-mode-hook
               (lambda ()
                 (evil-collection-init 'magit-todos))))
-
-  (use-package evil-magit
-    :demand t
-    :after magit)
 
   ;; no longer works due to lack of magit-popup in latest magit release
   ;; (use-package magithub
@@ -1873,13 +1874,14 @@ position of the outside of the paren.  Otherwise return nil."
     :config
     (add-hook 'lsp-mode-hook #'lsp-ui-mode))
 
-  (use-package company-lsp
-    :after lsp-mode
-    :config
-    (setq company-lsp-enable-snippet t
-          company-lsp-cache-candidates t)
-    ;; (push 'java-mode company-global-modes)
-    (push 'company-lsp company-backends))
+  ;; removed from melpa?
+  ;; (use-package company-lsp
+  ;;   :after lsp-mode
+  ;;   :config
+  ;;   (setq company-lsp-enable-snippet t
+  ;;         company-lsp-cache-candidates t)
+  ;;   ;; (push 'java-mode company-global-modes)
+  ;;   (push 'company-lsp company-backends))
 
   (use-package lsp-ui
     :after lsp-mode
