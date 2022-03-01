@@ -1736,6 +1736,15 @@ position of the outside of the paren.  Otherwise return nil."
   (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
   (add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode))
 
+
+(progn ; bazel
+  (setenv "PATH" (concat (getenv "HOME") "/go/bin"))
+  (add-to-list 'exec-path (concat (getenv "HOME") "/go/bin"))
+
+  (use-package bazel
+    :mode (("^BUILD$" . bazel-build-mode)
+           ("^WORKSPACE$$" . bazel-workspace-mode))))
+
 (use-package gradle-mode
   :mode (("\\.java$" . java-mode)
          ("\\.gradle$" . groovy-mode)
