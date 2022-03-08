@@ -1736,8 +1736,10 @@ position of the outside of the paren.  Otherwise return nil."
   (add-to-list 'exec-path (concat (getenv "HOME") "/go/bin"))
 
   (use-package bazel
+    :commands (bazel-test-at-point bazel-show-consuming-rule bazel-find-build-file bazel-compile-current-file bazel-build bazel-test bazel-buildifier bazel-run)
     :mode (("^BUILD$" . bazel-build-mode)
-           ("^WORKSPACE$$" . bazel-workspace-mode))))
+           ("^WORKSPACE$" . bazel-workspace-mode)
+           ("\\.bzl$" . bazel-starlark-mode))))
 
 (use-package gradle-mode
   :mode (("\\.java$" . java-mode)
