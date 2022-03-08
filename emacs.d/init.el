@@ -1282,14 +1282,8 @@ Otherwise, send an interrupt to slime."
               (lambda ()
                 (evil-collection-init 'magit-todos))))
 
-  ;; no longer works due to lack of magit-popup in latest magit release
-  ;; (use-package magithub
-  ;;   :demand t
-  ;;   :after magit
-  ;;   :config (magithub-feature-autoinject t)
-  ;;   (defun my-magithub-refresh ()
-  ;;     (interactive)
-  ;;     (magithub--refresh)))
+  (use-package forge
+    :after magit)
 
   (use-package git-link
     :config
