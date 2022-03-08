@@ -347,3 +347,11 @@ HELP
 
     echo "${tags}"
 }
+
+if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+  source "$HOME/.sdkman/bin/sdkman-init.sh"
+fi
+
+if [ -d $HOME/go/bin ]; then
+  export "PATH=$PATH:$HOME/go/bin"
+fi

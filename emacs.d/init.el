@@ -1192,7 +1192,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (slime-edit-definition (slime-symbol-at-point)))
       "q" 'bury-buffer)
 
-    (load "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
+    (load-if-exists "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
 
     (setq-default inhibit-splash-screen t)
     ;; stop slime from complaining about version mismatch
@@ -1738,7 +1738,7 @@ position of the outside of the paren.  Otherwise return nil."
 
 
 (progn ; bazel
-  (setenv "PATH" (concat (getenv "HOME") "/go/bin"))
+  (setenv "PATH" (concat (getenv "PATH") ":" (getenv "HOME") "/go/bin"))
   (add-to-list 'exec-path (concat (getenv "HOME") "/go/bin"))
 
   (use-package bazel
