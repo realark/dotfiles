@@ -280,26 +280,7 @@ function source_if_exists {
     fi
 }
 
-source_if_exists ~/.admin/sec.sh
-source_if_exists ~/.admin/$(hostname)_custom.sh
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-if [ -d "/Users/akent/.sdkman" ]; then
-    export SDKMAN_DIR="/Users/akent/.sdkman"
-    [[ -s "/Users/akent/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/akent/.sdkman/bin/sdkman-init.sh"
-    # to use sdkman
-    #     source "/Users/akent/.sdkman/bin/sdkman-init.sh"
-    #     sdk list java
-    #     sdk install java <version>
-
-
-    PATH="/Users/akent/perl5/bin${PATH:+:${PATH}}"; export PATH;
-    PERL5LIB="/Users/akent/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-    PERL_LOCAL_LIB_ROOT="/Users/akent/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-    PERL_MB_OPT="--install_base \"/Users/akent/perl5\""; export PERL_MB_OPT;
-    PERL_MM_OPT="INSTALL_BASE=/Users/akent/perl5"; export PERL_MM_OPT;
-fi
-
+source_if_exists ~/.custom.sh
 
 # Kube notes
 # k get service -n trident-dev fzd -o json | jq ".spec.ports[]"
@@ -354,4 +335,8 @@ fi
 
 if [ -d $HOME/go/bin ]; then
   export "PATH=$PATH:$HOME/go/bin"
+fi
+
+if [ -f /etc/motd ]; then
+  cat /etc/motd
 fi
