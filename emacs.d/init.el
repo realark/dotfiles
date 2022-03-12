@@ -80,6 +80,7 @@
 ;;Turn off tabs and indent two spaces
 (setq-default indent-tabs-mode nil
               c-basic-offset 2
+              sh-basic-offset 2
               tab-width 2)
 
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
@@ -91,6 +92,16 @@
 (if (version<= "27.1" emacs-version)
     (global-so-long-mode 1))
 
+(require 'cl)
+
+;; extra places to look for executables
+(cl-loop for extra-path in (list (concat (getenv "HOME") "/go/bin")
+                                  (concat (getenv "HOME") "/bin"))
+         do
+         (when (file-exists-p extra-path)
+           (warn (concat "yello: " extra-path))
+           (setenv "PATH" (concat (getenv "PATH") ":" extra-path))
+           (add-to-list 'exec-path extra-path)))
 
 ;; Misc elisp utils
 (progn
@@ -194,8 +205,6 @@
         (setq col (+ 1 (current-column)))
         (set-selective-display
          (if selective-display nil (or col 1)))))))
-
-(require 'cl)
 
 ;; Change startup messages
 (progn
@@ -1730,16 +1739,11 @@ position of the outside of the paren.  Otherwise return nil."
   (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
   (add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode))
 
-
-(progn ; bazel
-  (setenv "PATH" (concat (getenv "PATH") ":" (getenv "HOME") "/go/bin"))
-  (add-to-list 'exec-path (concat (getenv "HOME") "/go/bin"))
-
   (use-package bazel
     :commands (bazel-test-at-point bazel-show-consuming-rule bazel-find-build-file bazel-compile-current-file bazel-build bazel-test bazel-buildifier bazel-run)
     :mode (("^BUILD$" . bazel-build-mode)
            ("^WORKSPACE$" . bazel-workspace-mode)
-           ("\\.bzl$" . bazel-starlark-mode))))
+           ("\\.bzl$" . bazel-starlark-mode)))
 
 (use-package gradle-mode
   :mode (("\\.java$" . java-mode)
