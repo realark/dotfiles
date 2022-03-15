@@ -664,7 +664,7 @@ _k_prev      _J_: lower           _>_: base/lower
 
   (progn
     (defun gradle-command-alias (cmd)
-      "Simplify running commands on specific gradle subprojects."
+      "Simplify running commands on specific gradle subprojects by substituting `/` with `:`"
       (let ((tokens (split-string cmd)))
         ;; use wrapper
         (setcar tokens "./gradlew")
