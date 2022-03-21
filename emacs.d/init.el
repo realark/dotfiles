@@ -99,7 +99,6 @@
                                   (concat (getenv "HOME") "/bin"))
          do
          (when (file-exists-p extra-path)
-           (warn (concat "yello: " extra-path))
            (setenv "PATH" (concat (getenv "PATH") ":" extra-path))
            (add-to-list 'exec-path extra-path)))
 
@@ -1201,7 +1200,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (slime-edit-definition (slime-symbol-at-point)))
       "q" 'bury-buffer)
 
-    (load-if-exists "~/.roswell/lisp/quicklisp/clhs-use-local.el" t)
+    (load-if-exists "~/.roswell/lisp/quicklisp/clhs-use-local.el")
 
     (setq-default inhibit-splash-screen t)
     ;; stop slime from complaining about version mismatch
