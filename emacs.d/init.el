@@ -2072,6 +2072,9 @@ position of the outside of the paren.  Otherwise return nil."
     (sgml-pretty-print (point-min) (point-max))
     (indent-region (point-min) (point-max))))
 
+(use-package solidity-mode
+  :mode ("\\.sol$" . solidity-mode))
+
 ;; start the emacs daemon
 (server-start)
 
