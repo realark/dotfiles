@@ -1,30 +1,30 @@
 [user]
-	email = arktheprogrammer@gmail.com
-	name = Ark
+  email = arktheprogrammer@gmail.com
+  name = Ark
 [alias]
-	ignored = ls-files --others -i --exclude-standard
-	ls = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-	ll = log --graph --pretty=format:'%Cred%h%Creset %ad%Cred%d -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --numstat --date=short
-	la = "!git config -l | grep alias | cut -c 7-"
-	news = log -p HEAD@{1}..HEAD@{0}
-	rh = reset --hard
-	rs1 = reset --soft HEAD~1
-	ignore=!echo "$2" >>.gitignore
-	spull = !git-svn fetch && git-svn rebase
-	spush = !git-svn dcommit
-	co = checkout
-	diffword = diff --color-words
+  ignored = ls-files --others -i --exclude-standard
+  ls = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  ll = log --graph --pretty=format:'%Cred%h%Creset %ad%Cred%d -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --numstat --date=short
+  la = "!git config -l | grep alias | cut -c 7-"
+  news = log -p HEAD@{1}..HEAD@{0}
+  rh = reset --hard
+  rs1 = reset --soft HEAD~1
+  ignore=!echo "$2" >>.gitignore
+  spull = !git-svn fetch && git-svn rebase
+  spush = !git-svn dcommit
+  co = checkout
+  diffword = diff --color-words
   purge = clean -fX
-	ctags = !.git/hooks/ctags
-    # delete branches which have been merged to the current branch
-    delete-merged-branches = "!git branch --merged | grep -v '*' | grep -v master | xargs -n 1 git branch -d"
+  ctags = !.git/hooks/ctags
+  # delete branches which have been merged to the current branch
+  delete-merged-branches = "!git branch --merged | grep -v '*' | grep -v master | xargs -n 1 git branch -d"
   summary = !~/.git-stat-sum.sh \"$@\"
 [log]
-	decorate = full
+  decorate = full
 [push]
-	default = current
+  default = current
 [pull]
-	rebase = true
+  rebase = true
 [color]
   # turn on color
   ui = auto
@@ -53,23 +53,23 @@
 [branch]
   autosetuprebase = always
 [core]
-	excludesfile = ~/.gitignore
-	editor = vim
+  excludesfile = ~/.gitignore
+  editor = vim
 [init]
-	templatedir = ~/.git_template
+  templatedir = ~/.git_template
 [github]
-	user = realark
+  user = realark
 [magithub]
-	cache = always
+  cache = always
 [submodule]
-	recurse = true
+  recurse = true
 [merge]
-	conflictStyle = diff3
+  conflictStyle = diff3
 [fetch]
-	all = true
-	prune = true
+  all = true
+  prune = true
   pruneTags = true
   recurseSubmodules = true
 # path specific overrides
 [includeIf "gitdir:~/peak/"]
-	path = ~/peak/.gitconfig-peak
+  path = ~/peak/.gitconfig-peak
