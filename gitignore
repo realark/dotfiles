@@ -16,3 +16,4 @@ gh-drafts/
 ark-custom-rest-client
 .DS_STORE
 *DONTCOMMIT*
+arkdev/*
