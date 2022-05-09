@@ -2075,6 +2075,10 @@ position of the outside of the paren.  Otherwise return nil."
 (use-package solidity-mode
   :mode ("\\.sol$" . solidity-mode))
 
+(use-package eredis
+  ;; (setq p1 (eredis-connect "localhost" 6379))
+  :commands (eredis-connect eredis-ping))
+
 ;; start the emacs daemon
 (server-start)
 
