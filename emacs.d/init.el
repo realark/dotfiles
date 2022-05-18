@@ -205,11 +205,13 @@
         (set-selective-display
          (if selective-display nil (or col 1)))))))
 
-;; Change startup messages
+;; Customize scratch buffer
 (progn
   (defun display-startup-echo-area-message ()
     "Change the startup message."
     (message "(oo)"))
+
+  (setq initial-major-mode 'lisp-mode)
 
   (setq initial-scratch-message
         (concat
@@ -920,6 +922,7 @@ EOF"
 The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq interactive-perspectives
         (list (list "lisp-mode" "slime-repl-mode" #'slime)
+              (list "emacs-lisp-mode" #'ielm)
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
