@@ -655,7 +655,8 @@ _k_prev      _J_: lower           _>_: base/lower
   (setq-default projectile-completion-system 'ivy
                 projectile-globally-ignored-directories (append projectile-globally-ignored-directories
                                                                 '(".git" ".ensime_cache.d" ".gradle"
-                                                                  ".recommenders" ".metadata" "dist"))
+                                                                  ".recommenders" ".metadata" "dist"
+                                                                  "bazel-bin" "bazel-out" "bazel-*"))
                 projectile-globally-ignored-files (append projectile-globally-ignored-files
                                                           '(".ensime" "*.war" "*.jar" "*.zip"
                                                             "*.png" "*.gif" "*.vsd" "*.svg"
