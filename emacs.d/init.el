@@ -48,6 +48,8 @@
 
 (global-display-line-numbers-mode)
 
+(setq-default column-number-mode t)
+
 (setq-default
  isearch-allow-scroll t
  lazy-highlight-cleanup nil
@@ -314,11 +316,15 @@
     :ensure t
     :if window-system)
 
+  (use-package modus-themes
+    :ensure t
+    :if window-system)
+
   (use-package circadian
     :ensure t
     :if window-system)
 
-  (load-theme 'moe-dark)
+  (load-theme 'modus-vivendi)
 
   ;; (setq-default circadian-themes '(("07:30" . zenburn)
   ;;                                  ("17:00" . spacemacs-dark)
