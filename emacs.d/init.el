@@ -343,7 +343,8 @@
 
 (use-package undo-tree
   :init
-  (global-undo-tree-mode))
+  (global-undo-tree-mode)
+  (setq-default undo-tree-history-directory-alist '(("." . "/tmp/undo"))))
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
