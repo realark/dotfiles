@@ -332,6 +332,7 @@ if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
   source "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
+export GO111MODULE=on
 if [ -d $HOME/go/bin ]; then
   export "PATH=$PATH:$HOME/go/bin"
 fi

@@ -981,6 +981,9 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
 ;; IDE hydra
 (progn
+  (defvar my-lsp-modes '(java-mode 'go-mode)
+    "modes which use LSP to achieve IDE functionality")
+
   (defmacro mode-case (&rest body)
     "Execute a different body depending on the active major-mode."
     `(pcase major-mode
@@ -1000,28 +1003,28 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                        (sticky-window-delete-window nil))
      ('lisp-mode (call-interactively #'slime-edit-definition))
      ('slime-repl-mode (call-interactively #'slime-edit-definition))
-     ('java-mode (call-interactively #'lsp-ui-peek-find-definitions))
+     (my-lsp-modes (call-interactively #'lsp-ui-peek-find-definitions))
      ('protobuf-mode (call-interactively #'dumb-jump-go ))))
 
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
     ("h" (mode-case
-          ('java-mode (lsp-ui-peek-find-implementation))
+          (my-lsp-modes (lsp-ui-peek-find-implementation))
           ('lisp-mode (slime-browse-classes (slime-read-symbol-name "Class Name: "))))
      "Type Hierarchy" :exit t)
     ("r" (mode-case
-          ('java-mode (lsp-ui-peek-find-references))
+          (my-lsp-modes (lsp-ui-peek-find-references))
           ('lisp-mode (call-interactively #'slime-who-calls)))
      "References" :exit t)
     ("R" (mode-case
-          ('java-mode (call-interactively #'lsp-rename)))
+          (my-lsp-modes (call-interactively #'lsp-rename)))
      "Rename" :exit t)
     ("d" (mode-case
           ((or 'lisp-mode 'slime-repl-mode)
            (if (file-exists-p (concat (getenv "HOME") "/prog/slime-doc-contribs"))
                (call-interactively #'slime-help-symbol)
              (call-interactively #'slime-documentation)))
-          ('java-mode (call-interactively #'lsp-describe-thing-at-point)))
+          (my-lsp-modes (call-interactively #'lsp-describe-thing-at-point)))
      "Documentation" :exit t)
     ("e" (mode-case
           ('lisp-mode (call-interactively #'slime-list-compiler-notes))
@@ -1890,6 +1893,10 @@ position of the outside of the paren.  Otherwise return nil."
     :demand t
     :init
     (setq-default lsp-prefer-flymake nil)
+
+    (setenv "GO111MODULE" "on")
+    (setenv "GOPATH" (concat (getenv "HOME") "/go"))
+    (setenv "GOBIN" (concat (getenv "HOME") "/go/bin"))
     :config
     (add-hook 'lsp-mode-hook #'lsp-ui-mode))
 
@@ -2048,6 +2055,12 @@ position of the outside of the paren.  Otherwise return nil."
    elpy-rpc-backend "jedi"))
 
 (use-package go-mode
+  :init
+  (add-hook 'go-mode-hook #'lsp-deferred)
+  (defun lsp-go-install-save-hooks ()
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
   :mode ("\\.go$" . go-mode))
 
 (use-package graphql-mode
