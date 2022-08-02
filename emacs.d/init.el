@@ -2063,6 +2063,19 @@ position of the outside of the paren.  Otherwise return nil."
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
   :mode ("\\.go$" . go-mode))
 
+(use-package gotest
+  :after go-mode
+  :config
+  (defun go-single-test ()
+    "Function for running unit test(s).  This should be overridden by a directory local definition."
+    (interactive)
+    (let ((test-info (ignore-errors (go-test--get-current-test-info))))
+      (if test-info
+          (call-interactively #'go-test-current-test)
+        (call-interactively #'go-test-current-test-cache))
+      (call-interactively #'other-window)
+      (call-interactively #'end-of-buffer))))
+
 (use-package graphql-mode
   :mode ("\\.graphql$" . graphql-mode)
   ;; :config
