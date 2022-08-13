@@ -701,6 +701,8 @@ _k_prev      _J_: lower           _>_: base/lower
       (projectile-invalidate-cache nil))
     (advice-add 'magit-checkout
                 :after #'%run-projectile-invalidate-cache)
+    (advice-add 'magit-pull-from-upstream
+                :after #'%run-projectile-invalidate-cache)
     (advice-add 'magit-branch-and-checkout ; This is `b c'.
                 :after #'%run-projectile-invalidate-cache))
 
