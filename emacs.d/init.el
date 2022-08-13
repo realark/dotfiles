@@ -1003,8 +1003,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                        (sticky-window-delete-window nil))
      ('lisp-mode (call-interactively #'slime-edit-definition))
      ('slime-repl-mode (call-interactively #'slime-edit-definition))
-     (my-lsp-modes (call-interactively #'lsp-ui-peek-find-definitions))
-     ('protobuf-mode (call-interactively #'dumb-jump-go ))))
+     ('protobuf-mode (call-interactively #'dumb-jump-go ))
+     (my-lsp-modes (call-interactively #'lsp-ui-peek-find-definitions))))
 
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
@@ -1132,12 +1132,16 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (:states 'normal :keymaps 'slime-sprof-browser-mode
              "v" (general-simulate-key "v" :state 'emacs))
     :init
+    (defvar my-single-test nil)
+
     (defun print-help ()
       (print "No override. Check for .custom.el?"))
     (defun single-test ()
       "Function for running unit test(s).  This should be overridden by a directory local definition."
       (interactive)
-      (print-help))
+      (if my-single-test
+          (funcall my-single-test)
+        (print-help)))
     (defun run-unit-tests ()
       "Function for running unit test(s).  This should be overridden by a directory local definition."
       (interactive)
@@ -2065,7 +2069,7 @@ position of the outside of the paren.  Otherwise return nil."
 
 (use-package gotest
   :after go-mode
-  :config
+  :init
   (defun go-single-test ()
     "Function for running unit test(s).  This should be overridden by a directory local definition."
     (interactive)
@@ -2097,6 +2101,7 @@ position of the outside of the paren.  Otherwise return nil."
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
   (setq-default xref-show-definitions-function #'ivy-completing-read)
   (setq-default dumb-jump-selector 'ivy)
+  :commands dumb-jump-go
   :config
   (setq-default dumb-jump-git-grep-search-untracked nil))
 
