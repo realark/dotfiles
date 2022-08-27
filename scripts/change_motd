@@ -13,15 +13,17 @@ exec ros -Q -- $0 "$@"
       (do ((line (read-line stream nil)
                  (read-line stream nil))
            (current-quote ""))
-          ((null line))
-                                        ;(push line quotes)))
+          ((block continue-loop-check
+             (null line))
+           (block return-statement
+             (push (concatenate 'string current-quote (list #\Newline)) quotes)
+             quotes))
         (cond
           ((string= (string-trim " " line) "")
            (push (concatenate 'string current-quote (list #\Newline)) quotes)
            (setf current-quote ""))
           ((string= current-quote "") (setf current-quote line))
-          (t (setf current-quote (concatenate 'string current-quote (list #\Newline) line))))))
-    quotes))
+          (t (setf current-quote (concatenate 'string current-quote (list #\Newline) line))))))))
 
 (defun get-random-quote (quotes)
   (nth (random (length quotes) (make-random-state t)) quotes))
