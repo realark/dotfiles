@@ -355,8 +355,8 @@
 
 (use-package undo-tree
   :init
-  (global-undo-tree-mode)
-  (setq-default undo-tree-history-directory-alist '(("." . "/tmp/undo"))))
+  (setq-default undo-tree-history-directory-alist '(("." . "/tmp/undo")))
+  (global-undo-tree-mode))
 
 ;;Evil (extensible vi layer for Emacs)
 (use-package evil
