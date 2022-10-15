@@ -944,7 +944,7 @@ EOF"
 The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq interactive-perspectives
         (list (list "lisp-mode" "slime-repl-mode" #'slime)
-              (list "emacs-lisp-mode" #'ielm)
+              (list "emacs-lisp-mode" "inferior-emacs-lisp-mode" #'ielm)
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
@@ -1770,11 +1770,11 @@ position of the outside of the paren.  Otherwise return nil."
   (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
   (add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode))
 
-  (use-package bazel
-    :commands (bazel-test-at-point bazel-show-consuming-rule bazel-find-build-file bazel-compile-current-file bazel-build bazel-test bazel-buildifier bazel-run)
-    :mode (("^BUILD$" . bazel-build-mode)
-           ("^WORKSPACE$" . bazel-workspace-mode)
-           ("\\.bzl$" . bazel-starlark-mode)))
+(use-package bazel
+  :commands (bazel-test-at-point bazel-show-consuming-rule bazel-find-build-file bazel-compile-current-file bazel-build bazel-test bazel-buildifier bazel-run)
+  :mode (("^BUILD$" . bazel-build-mode)
+         ("^WORKSPACE$" . bazel-workspace-mode)
+         ("\\.bzl$" . bazel-starlark-mode)))
 
 (use-package gradle-mode
   :mode (("\\.java$" . java-mode)
@@ -1906,7 +1906,7 @@ position of the outside of the paren.  Otherwise return nil."
    'aggressive-indent-dont-indent-if
    'company-candidates))
 
-(progn                                  ; lsp
+(progn ; lsp
   (use-package lsp-mode
     :demand t
     :init
