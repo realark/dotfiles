@@ -309,11 +309,6 @@
     :if window-system
     :load-path "themes")
 
-  (use-package farmhouse-theme
-    :ensure :defer
-    :if window-system
-    :load-path "themes")
-
   (use-package zenburn-theme
     :ensure :defer
     :if window-system
