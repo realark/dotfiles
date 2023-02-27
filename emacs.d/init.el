@@ -1535,7 +1535,7 @@ Otherwise, send an interrupt to slime."
                    "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")
                   ("l" "Life Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "life")
                    "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")
-                  ("p" "Peak6 Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "peak6")
+                  ("n" "Nutshell Task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "nutshell")
                    "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")
                   ("b" "Backlog task" entry (file+olp ,(concat org-directory "tasks.org") "Agenda" "backlog")
                    "* TODO %?\nSCHEDULED: <%<%Y-%m-%d>>")))
