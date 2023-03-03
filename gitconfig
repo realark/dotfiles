@@ -71,5 +71,5 @@
   pruneTags = true
   recurseSubmodules = true
 # path specific overrides
-[includeIf "gitdir:~/peak/"]
-  path = ~/peak/.gitconfig-peak
+[includeIf "gitdir:~/nuts/"]
+  path = ~/nuts/.gitconfig-nuts
