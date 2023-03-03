@@ -923,7 +923,7 @@ EOF"
 
 (use-package keycast
   :demand t
-  :init
+  :config
   (keycast-mode))
 
 ;; sticky windows
