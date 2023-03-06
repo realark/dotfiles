@@ -271,13 +271,7 @@
   (require 'quelpa-use-package))
 
 (progn ; settings for osx
-  (setq-default mac-command-modifier 'meta)
-
-  (use-package exec-path-from-shell
-    :defer nil
-    :if (memq window-system '(ns))
-    :config
-    (exec-path-from-shell-initialize)))
+  (setq-default mac-command-modifier 'meta))
 
 ;; Themes and UI tweaks
 (progn
@@ -2129,6 +2123,15 @@ position of the outside of the paren.  Otherwise return nil."
 (use-package eredis
   ;; (setq p1 (eredis-connect "localhost" 6379))
   :commands (eredis-connect eredis-ping))
+
+(use-package exec-path-from-shell
+  :ensure t
+  :defer nil
+  :if (memq window-system '(mac ns x))
+  :config
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "JAVA_HOME")
+  (exec-path-from-shell-copy-env "PATH"))
 
 ;; start the emacs daemon
 (server-start)
