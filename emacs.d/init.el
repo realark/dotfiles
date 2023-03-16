@@ -1138,6 +1138,10 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (defvar my-single-test nil)
 
     (defun print-help ()
+      ;; ((java-mode (eval (setq-default my-single-test
+      ;;                                 (lambda () (call-interactively
+      ;;                                        (bazel-test ":all")
+      ;;                                        (other-window 1)))))))
       (print "No override. Check for .custom.el?"))
     (defun single-test ()
       "Function for running unit test(s).  This should be overridden by a directory local definition."
