@@ -1616,9 +1616,9 @@ Otherwise, send an interrupt to slime."
                 (org-trello-sync-buffer t)))))
 
 (progn ; calfw calendar
-  (setq-default calendar-location-name "Portland, OR")
-  (setq-default calendar-latitude 45.5)
-  (setq-default calendar-longitude -122.7)
+  (setq-default calendar-location-name "Boise, ID")
+  (setq-default calendar-latitude 43.618881)
+  (setq-default calendar-longitude -116.215019)
 
   (use-package calfw
     :commands (cfw:open-calendar-buffer cfw:org-create-source)
