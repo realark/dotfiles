@@ -2126,6 +2126,12 @@ position of the outside of the paren.  Otherwise return nil."
   ;; (setq p1 (eredis-connect "localhost" 6379))
   :commands (eredis-connect eredis-ping))
 
+(use-package terraform-mode
+  :config
+  (defun my-terraform-mode-init ()
+    (outline-minor-mode 1))
+  (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
+
 (use-package exec-path-from-shell
   :ensure t
   :defer nil
