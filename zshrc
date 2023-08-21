@@ -356,3 +356,9 @@ if [ -d "$HOME/.local/share/pnpm" ]; then
   esac
   # pnpm end
 fi
+
+# fnm
+if [ -d "$HOME/.local/share/fnm" ]; then
+  export PATH="$HOME/.local/share/fnm:$PATH"
+  eval "`fnm env`"
+fi
