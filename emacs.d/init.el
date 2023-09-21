@@ -659,15 +659,16 @@ _k_prev      _J_: lower           _>_: base/lower
   (projectile-mode)
   :config
   (setq-default projectile-completion-system 'ivy
-                projectile-globally-ignored-directories (append projectile-globally-ignored-directories
-                                                                '(".git" ".ensime_cache.d" ".gradle"
-                                                                  ".recommenders" ".metadata" "dist"
-                                                                  "bazel-bin" "bazel-out" "bazel-*"))
-                projectile-globally-ignored-files (append projectile-globally-ignored-files
-                                                          '(".ensime" "*.war" "*.jar" "*.zip"
-                                                            "*.png" "*.gif" "*.vsd" "*.svg"
-                                                            "*.exe" "eclimd.log" "workbench.xmi"
-                                                            ".emacs.desktop" "*.deb" "*.gz" "*.fasl"))
+                projectile-globally-ignored-directories (remove-duplicates (append projectile-globally-ignored-directories
+                                                                                   '(".git" ".ensime_cache.d" ".gradle"
+                                                                                     ".recommenders" ".metadata" "dist"
+                                                                                     "bazel-bin" "bazel-out" "bazel-*"
+                                                                                     "node_modules")))
+                projectile-globally-ignored-files (remove-duplicates (append projectile-globally-ignored-files
+                                                                             '(".ensime" "*.war" "*.jar" "*.zip"
+                                                                               "*.png" "*.gif" "*.vsd" "*.svg"
+                                                                               "*.exe" "eclimd.log" "workbench.xmi"
+                                                                               ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
                 projectile-enable-caching t)
 
   (progn
