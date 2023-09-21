@@ -1192,20 +1192,24 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (load (expand-file-name "~/.roswell/helper.el"))
     (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run --lose-on-corruption")
 
-    (if (file-exists-p (concat (getenv "HOME") "/prog/slime-doc-contribs"))
+    (slime-setup
+     (remove-duplicates
+      (append slime-contribs
+              '(slime-fancy
+                slime-highlight-edits
+                slime-asdf
+                slime-sprof))))
+
+    (when (file-exists-p (concat (getenv "HOME") "/prog/slime-doc-contribs"))
         (progn
           (push (concat (getenv "HOME") "/prog/slime-doc-contribs") load-path)
-          (slime-setup '(slime-fancy
-                         slime-highlight-edits
-                         slime-asdf
-                         slime-sprof
-                         slime-xref-browser
-                         slime-help
-                         slime-info)))
-      (slime-setup '(slime-fancy
-                     slime-highlight-edits
-                     slime-asdf
-                     slime-sprof)))
+          (slime-setup
+           (remove-duplicates
+            (append slime-contribs
+                    '(slime-xref-browser
+                      slime-help
+                      slime-info))))
+          slime-contribs))
 
     (slime-require :swank-listener-hooks)
     (setq-default slime-sprof-exclude-swank t)
@@ -1250,8 +1254,9 @@ Otherwise, send an interrupt to slime."
 
     (when (file-exists-p "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
       (load "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
-      (slime-setup '(slime-annot))
-      t)
+      (slime-setup (remove-duplicates (append slime-contribs '(slime-annot))))
+      slime-contribs
+      (require 'slime-annot))
     ;; to install log4slime:
     ;; (ql:quickload :log4cl.log4slime)
     ;; (log4cl.log4slime:install)
@@ -1270,7 +1275,7 @@ Otherwise, send an interrupt to slime."
     :demand t
     :after slime
     :config
-    (slime-setup '(slime-company))
+    (slime-setup (remove-duplicates (append slime-contribs '(slime-company))))
     (slime-company-init)))
 
 (progn ; magit and other git utils
