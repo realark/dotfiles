@@ -1986,7 +1986,7 @@ position of the outside of the paren.  Otherwise return nil."
         (remove-duplicates (concatenate 'list
                                         (mapcar (lambda (ignore)
                                                   (concatenate 'string "**/*" ignore "$"))
-                                                '("public" "build" "bin" ".gradle"))
+                                                '("public" "build" "bin" ".gradle" "bazel-bin" "bazel-oak" "bazel-out" "bazel-testlogs" "node_modules"))
 
                                         ;; keep lsp-mode defaults
                                         '(     ; SCM tools
