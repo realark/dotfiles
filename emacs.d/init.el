@@ -1883,6 +1883,44 @@ position of the outside of the paren.  Otherwise return nil."
     (add-hook 'sql-mode-hook 'sqlup-mode)
     (add-hook 'sql-interactive-mode-hook 'sqlup-mode)))
 
+(use-package bigquery-mode
+  :quelpa (bigquery-mode :fetcher github :repo "christophstockhusen/bigquery-mode")
+  :commands (bigquery-mode my-bqm-run-query-at-point my-bigquery-mode-setup )
+  :init
+  (add-hook 'bigquery-mode-hook 'my-bigquery-mode-setup)
+  :config
+  ;; :general use-package isn't working for some reason
+  (defun my-bigquery-mode-setup ()
+    (general-define-key :keymaps 'bqm-mode-map "C-c C-c" #'my-bqm-run-query-at-point))
+
+  (defun my-bqm-run-query-at-point ()
+    "Execute the BigQuery SQL statement at point."
+    (interactive)
+    (let (start end query)
+      ;; Find the start of the query
+      (save-excursion
+        ;; Keep moving back until we find a valid delimiter
+        (while (progn
+                 (search-backward ";" nil t)
+                 (syntax-ppss-context (syntax-ppss))))
+        (forward-char)
+        (skip-chars-forward " \t\n")
+        (setq start (point)))
+      ;; Find the end of the query
+      (save-excursion
+        ;; Keep moving forward until we find a valid delimiter
+        (while (progn
+                 (search-forward ";" nil t)
+                 (syntax-ppss-context (syntax-ppss))))
+        (skip-chars-backward " \t\n")
+        (setq end (point)))
+      ;; Extract the query
+      (setq query (buffer-substring-no-properties start end))
+      ;; Use the `bqm-run-query' function to execute the query
+      (with-temp-buffer
+        (insert query)
+        (bqm-run-query)))))
+
 (use-package aggressive-indent
   :delight aggressive-indent-mode
   :config
