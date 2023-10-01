@@ -1896,26 +1896,17 @@ position of the outside of the paren.  Otherwise return nil."
   (defun my-bqm-run-query-at-point ()
     "Execute the BigQuery SQL statement at point."
     (interactive)
-    (let (start end query)
-      ;; Find the start of the query
-      (save-excursion
-        ;; Keep moving back until we find a valid delimiter
-        (while (progn
-                 (search-backward ";" nil t)
-                 (syntax-ppss-context (syntax-ppss))))
-        (forward-char)
-        (skip-chars-forward " \t\n")
-        (setq start (point)))
-      ;; Find the end of the query
-      (save-excursion
-        ;; Keep moving forward until we find a valid delimiter
-        (while (progn
-                 (search-forward ";" nil t)
-                 (syntax-ppss-context (syntax-ppss))))
-        (skip-chars-backward " \t\n")
-        (setq end (point)))
+
+    (let ((start (save-excursion
+		               (backward-paragraph)
+		               (point)))
+          (end (save-excursion
+	               (forward-paragraph)
+	               (point)))
+	        query)
       ;; Extract the query
       (setq query (buffer-substring-no-properties start end))
+      ;; (message "Extracted query: %s" query)
       ;; Use the `bqm-run-query' function to execute the query
       (with-temp-buffer
         (insert query)
