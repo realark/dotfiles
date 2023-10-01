@@ -339,6 +339,10 @@ if [ -d $HOME/go/bin ]; then
   export "PATH=$PATH:$HOME/go/bin"
 fi
 
+if [ -d "$HOME/adb-fastboot/platform-tools" ] ; then
+ export PATH="$HOME/adb-fastboot/platform-tools:$PATH"
+fi
+
 if [ -f /etc/motd ]; then
   cat /etc/motd
 fi
