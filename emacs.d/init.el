@@ -1893,6 +1893,12 @@ position of the outside of the paren.  Otherwise return nil."
   (defun my-bigquery-mode-setup ()
     (general-define-key :keymaps 'bqm-mode-map "C-c C-c" #'my-bqm-run-query-at-point))
 
+  (defvar my-bqm-params
+    ;; example: '(("regex" . "replacement"))
+    '()
+    "regex->replacement that runs over the bq query before it is sent to the server")
+
+
   (defun my-bqm-run-query-at-point ()
     "Execute the BigQuery SQL statement at point."
     (interactive)
@@ -1906,10 +1912,12 @@ position of the outside of the paren.  Otherwise return nil."
 	        query)
       ;; Extract the query
       (setq query (buffer-substring-no-properties start end))
-      ;; (message "Extracted query: %s" query)
-      ;; Use the `bqm-run-query' function to execute the query
       (with-temp-buffer
         (insert query)
+        (dolist (pair my-bqm-params)
+          (goto-char (point-min))
+          (while (re-search-forward (car pair) nil t)
+            (replace-match (cdr pair) t t)))
         (bqm-run-query)))))
 
 (use-package aggressive-indent
