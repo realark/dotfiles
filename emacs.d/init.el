@@ -2181,8 +2181,8 @@ position of the outside of the paren.  Otherwise return nil."
 (use-package exec-path-from-shell
   :ensure t
   :defer nil
-  :if (memq window-system '(mac ns x))
   :config
+  ;; (when (memq window-system '(mac ns x)))
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "JAVA_HOME")
   (exec-path-from-shell-copy-env "PATH"))
