@@ -159,6 +159,7 @@ alias diff='colordiff'
 alias journalctl='journalctl --pager-end --since "1 day ago"'
 alias docker-stop-all='docker stop $(docker ps -aq)'
 alias docker-rm-all='docker rm $(docker ps -aq)'
+alias fd='fdfind'
 
 # Wrap ssh in an alias to change the terminal color scheme.
 # Supported terminals:
