@@ -723,7 +723,7 @@ _k_prev      _J_: lower           _>_: base/lower
  Find/Replace         Tasks                   Buffers
 ----------------------------------------------------------------------------------
  _f_: file find         _t_: test project     _k_: Kill all buffers
- _T_: find tag          _c_: command run
+ _T_: find (c)tag       _c_: command run
  _g_: grep all files
  _r_: replace
  _R_: replace regex
@@ -733,7 +733,7 @@ _k_prev      _J_: lower           _>_: base/lower
      ("T"   (lambda ()
               (interactive)
               ;; NOTE: if you get some error about `-e` not being supported
-              ;; you may have to explicitly install ctags (apt-get install ctags)
+              ;; you may have to explicitly install ctags (sudo apt install exuberant-ctags)
               ;; https://stackoverflow.com/questions/2580313/ctags-doesnt-understand-e-option-no-exuberant-tags-option
               (my/bypass-confirmation #'projectile-regenerate-tags)
               (projectile-find-tag)))
