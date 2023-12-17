@@ -1,11 +1,11 @@
 # -*- mode: shell-script -*-
 
 case "$(uname -a)" in
-    Linux*)     machine=linux;;
-    Darwin*)    machine=mac;;
-    CYGWIN*)    machine=cygwin;;
-    MINGW*)     machine=mingw;;
-    *)          machine="unknown"
+  Linux*)     machine=linux;;
+  Darwin*)    machine=mac;;
+  CYGWIN*)    machine=cygwin;;
+  MINGW*)     machine=mingw;;
+  *)          machine="unknown"
 esac
 
 # COMPLETION SETTINGS
@@ -22,11 +22,11 @@ zstyle ':completion:*' menu select=2
 #Colors
 
 if which dircolors >/dev/null 2>&1; then
-    # no dircolors on osx
-    eval `dircolors -b`
-    if which gdircolors >/dev/null 2>&1; then
-        alias dircolors=gdircolors
-    fi
+  # no dircolors on osx
+  eval `dircolors -b`
+  if which gdircolors >/dev/null 2>&1; then
+    alias dircolors=gdircolors
+  fi
 fi
 
 #Colors for man pages
@@ -130,11 +130,11 @@ bindkey -v
 ##################################################################
 # Some aliases
 if [ "$machine" = "linux" ]; then
-    alias ls='ls --color=auto -F'
+  alias ls='ls --color=auto -F'
 else
-    if [ "$machine" = "mac" ]; then
-        alias ls='ls -G -F'
-    fi
+  if [ "$machine" = "mac" ]; then
+    alias ls='ls -G -F'
+  fi
 fi
 alias top='htop'
 alias open='xdg-open'
@@ -207,37 +207,37 @@ export PATH=~/scripts:$PATH:/snap/bin:~/bin:~/.roswell/bin:~/.local/bin:~/.cargo
 ##############Custom Functions
 
 function lecho() {
-    echo > $1 && less $1
+  echo > $1 && less $1
 }
 
 function listMavenCompletions { reply=(cli:execute cli:execute-phase archetype:generate compile clean install test test-compile deploy package cobertura:cobertura jetty:run -Dmaven.test.skip=true -DarchetypeCatalog=http://tapestry.formos.com/maven-snapshot-repository -Dtest= `if [ -d ./src ] ; then find ./src -type f | grep -v svn | sed 's?.*/\([^/]*\)\..*?-Dtest=\1?' ; fi`); }
 compctl -K listMavenCompletions mvn
 
 function runGradle() {
-    gradleTasks=""
-    if [ -d "$1" -a $# -gt 1 ]; then
-        #Passed a dir as arg1. We'll assume it's a gradle subproject
-        gradleSubproject=$(echo $1 | sed -r 's/\//:/g' | sed -r 's/^:*(.*):*$/:\1:/g')
-        for arg in "${@:2}"; do
-            gradleTasks="$gradleTasks ${gradleSubproject}${arg}"
-        done
-    else
-        gradleTasks=$@
-    fi
-    if [ -f ./gradlew ]; then
-        echo "RUNNING: gradle $gradleTasks"
-        ./gradlew $gradleTasks
-    else
-        echo "RUNNING: gradle $gradleTasks"
-        $GRADLE_BIN $gradleTasks
-    fi
+  gradleTasks=""
+  if [ -d "$1" -a $# -gt 1 ]; then
+    #Passed a dir as arg1. We'll assume it's a gradle subproject
+    gradleSubproject=$(echo $1 | sed -r 's/\//:/g' | sed -r 's/^:*(.*):*$/:\1:/g')
+    for arg in "${@:2}"; do
+      gradleTasks="$gradleTasks ${gradleSubproject}${arg}"
+    done
+  else
+    gradleTasks=$@
+  fi
+  if [ -f ./gradlew ]; then
+    echo "RUNNING: gradle $gradleTasks"
+    ./gradlew $gradleTasks
+  else
+    echo "RUNNING: gradle $gradleTasks"
+    $GRADLE_BIN $gradleTasks
+  fi
 }
 
 # Show 'dots' if a tab completion stalls
 function expand-or-complete-with-dots() {
-    echo -n "\e[31m......\e[0m"
-    zle expand-or-complete
-    zle redisplay
+  echo -n "\e[31m......\e[0m"
+  zle expand-or-complete
+  zle redisplay
 }
 zle -N expand-or-complete-with-dots
 bindkey "^I" expand-or-complete-with-dots
@@ -250,40 +250,40 @@ bindkey '^R' history-incremental-search-backward
 
 # Set the title of a Terminal window
 function settitle() {
-    if [ -n "$STY" ] ; then         # We are in a screen session
-        echo "Setting screen titles to $@"
-        printf "\033k%s\033\\" "$@"
-        screen -X eval "at \\# title $@" "shelltitle $@"
-    else
-        printf "\033]0;%s\007" "$@"
-    fi
+  if [ -n "$STY" ] ; then         # We are in a screen session
+    echo "Setting screen titles to $@"
+    printf "\033k%s\033\\" "$@"
+    screen -X eval "at \\# title $@" "shelltitle $@"
+  else
+    printf "\033]0;%s\007" "$@"
+  fi
 }
 
 function formatxml(){
-    for file in $@; do
-        tmpfile="/tmp/$file.tmp"
-        xmllint --format $file > $tmpfile
-        mv $tmpfile $file
-    done
+  for file in $@; do
+    tmpfile="/tmp/$file.tmp"
+    xmllint --format $file > $tmpfile
+    mv $tmpfile $file
+  done
 }
 
 # In general, I'd like to only capture complicatated commands or commands which changed the state of the machine.
 declare -a history_exclude_regexes=('^ls$' '^tree$' '^(h)?top$' '^pwd$' 'screen' '^whoami$' 'su -' '^\s*cd\s*$' '^idemacs$' '^git (status|log|ls|ll|show)$' '^(sudo )?poweroff$')
 
 function zshaddhistory() {
-    emulate -L zsh
-    for regex in "${history_exclude_regexes[@]}"; do
-        if echo $1 2>/dev/null | grep -E $regex >/dev/null 2>&1 ; then
-            return 1
-        fi
-    done
+  emulate -L zsh
+  for regex in "${history_exclude_regexes[@]}"; do
+    if echo $1 2>/dev/null | grep -E $regex >/dev/null 2>&1 ; then
+      return 1
+    fi
+  done
 }
 
 function source_if_exists {
-    filepath=$1
-    if [ -f $filepath ]; then
-        source $filepath
-    fi
+  filepath=$1
+  if [ -f $filepath ]; then
+    source $filepath
+  fi
 }
 
 source_if_exists ~/.custom.sh
@@ -295,22 +295,22 @@ alias myipaddress='curl ifconfig.me'
 alias myinternetspeed='speedtest-cli'
 
 function myhosts_on_network {
-    if [ "$machine" != "linux" ]; then
-        echo "Unsupported OS: $machine"
-        return 1
-    fi
-    NETWORK="$1"
-    if [ "$NETWORK" = "" ]; then
-        NETWORK="192.168.1.0"
-    fi
-    echo "------ $NETWORK ------"
-    nmap -sP "$NETWORK/24" | grep "Nmap scan report for " | sed -E "s/Nmap scan report for //g" | sed -E "s/(.*) \((.*)\)/\2 -- \1/g" | sed -E "s/(\.[0-9][0-9]) --/\1  --/g" | sed -E "s/(\.[0-9]) --/\1   --/g"
+  if [ "$machine" != "linux" ]; then
+    echo "Unsupported OS: $machine"
+    return 1
+  fi
+  NETWORK="$1"
+  if [ "$NETWORK" = "" ]; then
+    NETWORK="192.168.1.0"
+  fi
+  echo "------ $NETWORK ------"
+  nmap -sP "$NETWORK/24" | grep "Nmap scan report for " | sed -E "s/Nmap scan report for //g" | sed -E "s/(.*) \((.*)\)/\2 -- \1/g" | sed -E "s/(\.[0-9][0-9]) --/\1  --/g" | sed -E "s/(\.[0-9]) --/\1   --/g"
 }
 
 function docker-ls-tags {
-    if [ $# -lt 1 ]
-    then
-        cat << HELP
+  if [ $# -lt 1 ]
+  then
+    cat << HELP
 
 docker-ls-tags  --  list all tags for a Docker image on a remote registry.
 
@@ -322,17 +322,17 @@ EXAMPLE:
        dockertags php apache
 
 HELP
-    fi
+  fi
 
-    image="$1"
-    tags=`wget -q https://registry.hub.docker.com/v1/repositories/${image}/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'`
+  image="$1"
+  tags=`wget -q https://registry.hub.docker.com/v1/repositories/${image}/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'`
 
-    if [ -n "$2" ]
-    then
-        tags=` echo "${tags}" | grep "$2" `
-    fi
+  if [ -n "$2" ]
+  then
+    tags=` echo "${tags}" | grep "$2" `
+  fi
 
-    echo "${tags}"
+  echo "${tags}"
 }
 
 if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
@@ -347,7 +347,7 @@ if [ -d $HOME/go/bin ]; then
 fi
 
 if [ -d "$HOME/adb-fastboot/platform-tools" ] ; then
- export PATH="$HOME/adb-fastboot/platform-tools:$PATH"
+  export PATH="$HOME/adb-fastboot/platform-tools:$PATH"
 fi
 
 if [ -f /etc/motd ]; then
