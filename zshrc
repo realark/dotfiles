@@ -155,28 +155,34 @@ alias emacs='emacsclient -create-frame --alternate-editor=""'
 alias less='less -R'
 alias yaourt='yaourt --noconfirm'
 alias telnet='rlwrap nc'
-alias diff='colordiff'
 alias journalctl='journalctl --pager-end --since "1 day ago"'
 alias docker-stop-all='docker stop $(docker ps -aq)'
 alias docker-rm-all='docker rm $(docker ps -aq)'
 alias fd='fdfind'
-
 # Wrap ssh in an alias to change the terminal color scheme.
 # Supported terminals:
 # - konsole
-function wrapped_ssh() {
-    change_terminal_colors "Solarized"
-    ssh "$@"
-    change_terminal_colors "GreenOnBlack"
-}
 function change_terminal_colors {
-    NEW_COLORS="$!"
-    if which konsoleprofile >/dev/null 2>&1; then
-        konsoleprofile colors="$1"
-    fi
+  NEW_COLORS="$!"
+  if which konsoleprofile >/dev/null 2>&1; then
+    konsoleprofile colors="$1"
+  fi
+}
+function wrapped_ssh() {
+  change_terminal_colors "Solarized"
+  ssh "$@"
+  change_terminal_colors "GreenOnBlack"
 }
 alias ssh='wrapped_ssh'
 compdef wrapped_ssh=ssh
+function diff_or_colordiff() {
+  if command -v colordiff &> /dev/null; then
+    colordiff "$@"
+  else
+    diff "$@"
+  fi
+}
+alias diff='diff_or_colordiff'
 
 # I don't want to set LC_ALL but perl and locale complain if I don't
 export LC_ALL="$LANG"
