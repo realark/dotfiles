@@ -1807,6 +1807,11 @@ position of the outside of the paren.  Otherwise return nil."
   :mode
   ("\\.scala$" . scala-mode))
 
+(use-package typescript-mode
+  ;; TODO: remove this package when you upgrade to emacs 29
+  :mode
+  ("\\.ts$" . typescript-mode))
+
 (use-package jdecomp
   ;; :mode ("\\.class$" . jdecomp-mode)
   :config
