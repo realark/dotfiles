@@ -200,10 +200,6 @@ export PATH=~/scripts:$PATH:/snap/bin:~/bin:~/.roswell/bin:~/.local/bin:~/.cargo
 #fi
 #PROMPT=$username_prompt'@%B%m%~%b$(git_super_status) %# '
 
-#Smartcd
-#source $HOME/.smartcd/lib/core/smartcd
-#source $HOME/.smartcd_config
-
 ##############Custom Functions
 
 function lecho() {
@@ -372,4 +368,12 @@ fi
 if [ -d "$HOME/.local/share/fnm" ]; then
   export PATH="$HOME/.local/share/fnm:$PATH"
   eval "`fnm env`"
+fi
+
+#Smartcd: https://github.com/cxreg/smartcd
+if [ -f "$HOME/.smartcd/lib/core/smartcd" ]; then
+  source $HOME/.smartcd/lib/core/smartcd
+fi
+if [ -f "$HOME/.smartcd_config" ]; then
+  source $HOME/.smartcd_config
 fi
