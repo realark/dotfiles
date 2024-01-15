@@ -1925,6 +1925,8 @@ position of the outside of the paren.  Otherwise return nil."
             (replace-match (cdr pair) t t)))
         (bqm-run-query)))))
 
+(use-package sqlite3)
+
 (use-package aggressive-indent
   :delight aggressive-indent-mode
   :config
