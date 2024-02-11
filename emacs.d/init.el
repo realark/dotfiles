@@ -917,7 +917,9 @@ EOF"
 (use-package keycast
   :demand t
   :config
-  (keycast-mode))
+  (if (version< emacs-version "29.1")
+      (keycast-mode)
+    (keycast-mode-line-mode)))
 
 ;; sticky windows
 (when (load-if-exists "~/.emacs.d/sticky-windows.el")
