@@ -32,13 +32,13 @@
 (put 'narrow-to-region 'disabled nil)
 (put 'erase-buffer 'disabled nil)
 
-;; highlight the current line
 (global-hl-line-mode t)
 (setq large-file-warning-threshold 200000000) ;200mb
 (setq create-lockfiles nil)
 (blink-cursor-mode -1)
 (setq help-window-select t)
 (setq echo-keystrokes 0.1)
+(setq-default warning-minimum-level :error)
 
 (mouse-avoidance-mode 'exile)
 
