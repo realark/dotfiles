@@ -377,3 +377,13 @@ fi
 if [ -f "$HOME/.smartcd_config" ]; then
   source $HOME/.smartcd_config
 fi
+
+coinflip() {
+  if (($RANDOM%2)); then
+    echo "heads"
+    return 0;
+  else
+    echo "tails"
+    return 1;
+  fi
+}
