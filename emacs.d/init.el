@@ -938,7 +938,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
-              (list "sql-mode" "sql-interactive-mode" (lambda() (call-interactively #'sql-connect)))))
+              (list "sql-mode" "sql-interactive-mode" (lambda() (call-interactively #'sql-connect)))
+              (list "markdown-mode" "chatgpt-mode" (lambda () (call-interactively #'chatgpt-run)))))
 
   (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
     (let ((interactive-buffers (list)))
@@ -2191,8 +2192,12 @@ position of the outside of the paren.  Otherwise return nil."
   :config
   ;; (when (memq window-system '(mac ns x)))
   (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "OPENAI_API_KEY")
   (exec-path-from-shell-copy-env "JAVA_HOME")
   (exec-path-from-shell-copy-env "PATH"))
+
+(use-package chatgpt
+  :quelpa ((chatgpt :fetcher git :url "https://github.com/joshcho/ChatGPT.el.git") :stable t))
 
 ;; start the emacs daemon
 (server-start)
