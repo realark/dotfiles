@@ -929,6 +929,14 @@ EOF"
     "C-x 0" #'sticky-window-delete-window
     "C-x 1" #'sticky-window-delete-other-windows))
 
+(use-package treesit-auto
+  :demand t
+  :init
+  (setq-default treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
 ;; interactive mode toggling
 (progn
   (defvar interactive-perspectives '()
