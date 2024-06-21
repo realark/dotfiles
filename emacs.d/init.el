@@ -1521,7 +1521,7 @@ Otherwise, send an interrupt to slime."
     ("C"  (org-capture) "Capture" :exit t)
     ("q"  nil "Cancel" :color red))
   :config
-  (setq-default org-agenda-show-future-repeats t) ; will want to turn this off if I stop using org-habits
+  (setq-default org-agenda-show-future-repeats nil)
   (setq-default org-todo-keywords '("TODO(t)" "DOING(o)" "|" "DONE(d!)" "SKIP(s!)"))
   (setq-default org-startup-indented t)
   ;; fontify code in code blocks
@@ -1594,6 +1594,7 @@ Otherwise, send an interrupt to slime."
   (setq-default org-super-agenda-header-separator "  --->"
                 org-agenda-skip-scheduled-if-done nil
                 org-agenda-skip-deadline-if-done nil
+                org-agenda-show-future-repeats nil
                 org-super-agenda-groups
                 '((:name "CALENDAR"
                          :time-grid t
