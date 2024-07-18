@@ -562,7 +562,7 @@ _k_prev      _J_: lower           _>_: base/lower
          (eval-expression-minibuffer-setup . lispyville-mode)
          (ielm-mode . lispyville-mode)
          (lisp-interaction-mode . lispyville-mode)
-         (slime-repl-mode . lispyville-mode)
+         (sly-mrepl-mode . lispyville-mode)
          (scheme-mode . lispyville-mode))
   :config
   (lispyville-set-key-theme '(operators
@@ -844,7 +844,7 @@ of (command . word) to be used by `flyspell-do-correct'."
   (dired-mode . centaur-tabs-local-mode)
   (magit-mode . centaur-tabs-local-mode)
   (org-agenda-mode . centaur-tabs-local-mode)
-  (slime-repl-mode . centaur-tabs-local-mode)
+  (sly-mrepl-mode . centaur-tabs-local-mode)
   :general
   (:states 'normal :keymaps 'centaur-tabs-mode-map
    "gT" #'centaur-tabs-backward-tab
@@ -943,7 +943,7 @@ EOF"
     "list of (major-mode interactive-mode launch-interactive-mode-function).
 The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq interactive-perspectives
-        (list (list "lisp-mode" "slime-repl-mode" #'slime)
+        (list (list "lisp-mode" "sly-mrepl-mode" #'sly)
               (list "emacs-lisp-mode" "inferior-emacs-lisp-mode" #'ielm)
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
@@ -1016,33 +1016,30 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
      ('emacs-lisp-mode (call-interactively #'find-function-at-point)
                        ;; delete extra window created by find-function-at-point
                        (sticky-window-delete-window nil))
-     ('lisp-mode (call-interactively #'slime-edit-definition))
-     ('slime-repl-mode (call-interactively #'slime-edit-definition))
+     ('lisp-mode (call-interactively #'sly-edit-definition))
+     ('sly-mrepl-mode (call-interactively #'sly-edit-definition))
      ('protobuf-mode (call-interactively #'dumb-jump-go ))
      (my-lsp-modes (call-interactively #'lsp-ui-peek-find-definitions))))
 
   (defhydra hydra-ide (:color amaranth :columns 1)
     "IDE Actions"
     ("h" (mode-case
-          (my-lsp-modes (lsp-ui-peek-find-implementation))
-          ('lisp-mode (slime-browse-classes (slime-read-symbol-name "Class Name: "))))
+          (my-lsp-modes (lsp-ui-peek-find-implementation)))
      "Type Hierarchy" :exit t)
     ("r" (mode-case
           (my-lsp-modes (lsp-ui-peek-find-references))
-          ('lisp-mode (call-interactively #'slime-who-calls)))
+          ('lisp-mode (call-interactively #'sly-who-calls)))
      "References" :exit t)
     ("R" (mode-case
           (my-lsp-modes (call-interactively #'lsp-rename)))
      "Rename" :exit t)
     ("d" (mode-case
-          ((or 'lisp-mode 'slime-repl-mode)
-           (if (file-exists-p (concat (getenv "HOME") "/prog/slime-doc-contribs"))
-               (call-interactively #'slime-help-symbol)
-             (call-interactively #'slime-documentation)))
+          ((or 'lisp-mode 'sly-mrepl-mode)
+           (call-interactively #'sly-documentation))
           (my-lsp-modes (call-interactively #'lsp-describe-thing-at-point)))
      "Documentation" :exit t)
     ("e" (mode-case
-          ('lisp-mode (call-interactively #'slime-list-compiler-notes))
+          ('lisp-mode (call-interactively #'sly-compiler-notes))
           ('java-mode (call-interactively #'list-flycheck-errors))
           ('emacs-lisp-mode (call-interactively #'list-flycheck-errors)))
      "Error List" :exit t)
@@ -1076,32 +1073,36 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
         (mark-beginning-of-buffer)
         (my-ansi-color-region)))))
 
-(progn ; slime stuff
-  (use-package slime
-    :delight slime
-    :commands (slime slime-connect)
+(progn ; sly
+  (use-package sly
+    :commands (sly)
     :general
-    (:states 'normal :keymaps 'slime-repl-mode-map
+    (:states 'normal :keymaps 'sly-mrepl-mode-map
              "q" (lambda ()
                    (interactive)
                    (end-of-buffer)
                    (evil-insert-state)
-                   (toggle-interact-with-buffer))
-             [return]  #'slime-inspect-presentation-at-point
-             "C-<return>" #'slime-expand-1-inplace)
-    (:states 'insert :keymaps 'slime-repl-mode-map
+                   (toggle-interact-with-buffer)))
+    (:states 'insert :keymaps 'sly-mrepl-mode-map
              ;; insert a newline instead of evaluating the expression
              "S-<return>" #'newline-and-indent
-             "C-c" #'my-slime-repl-kill-or-interrupt
+             "C-c" (lambda ()
+                     (interactive)
+                     (end-of-buffer)
+                     (comint-kill-input))
              "C-d" (lambda () (interactive)
-                     (when (y-or-n-p "Quit slime?")
-                       (and (slime-repl-quit) (sticky-window-delete-window nil))))
-             "C-r" #'slime-repl-previous-matching-input
+                     (when (y-or-n-p "Quit sly?")
+                       (progn
+                         (sly-quit-lisp t nil)
+                         (sleep-for 2)
+                         (call-interactively (kill-buffer-and-window)))))
+             "C-r" #'isearch-backward
              "TAB" #'completion-at-point
-             "C-S-l" #'slime-repl-clear-buffer
-             "C-k" #'slime-repl-previous-input
-             "C-j" #'slime-repl-next-input)
-    (:states 'normal :keymaps 'sldb-mode-map
+             "C-S-l" #'sly-mrepl-clear-repl
+             "C-k" #'comint-previous-input
+             "C-j" #'comint-next-input)
+    (:states 'normal :keymaps 'sly-db-mode-map
+             "S-<return>"  #'sly-db-toggle-details
              "C-j" (general-simulate-key "n" :state 'emacs)
              "C-k" (general-simulate-key "p" :state 'emacs)
              "j" (general-simulate-key "C-n" :state 'emacs)
@@ -1118,178 +1119,59 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
              "7" (general-simulate-key "7" :state 'emacs)
              "8" (general-simulate-key "8" :state 'emacs)
              "9" (general-simulate-key "9" :state 'emacs)
-             ":" #'sldb-pprint-eval-in-frame
+             ":" #'sly-db-pprint-eval-in-frame
              "v" (general-simulate-key "v" :state 'emacs))
-    (:states 'normal :keymaps 'slime-xref-mode-map
-             "j" #'slime-xref-next-line
-             "k" #'slime-xref-prev-line)
     (:states 'normal :keymaps 'lisp-mode-map
+             "C-c C-k" (lambda ()
+                         (interactive)
+                         (sly-compile-and-load-file))
              "C-c C-c" (lambda ()
-                       (interactive)
-                       (slime-compile-defun)
-                       ;; (when my-slime-defun
-                       ;;   (slime-eval-async
-                       ;;       ;; DONTCOMMIT make project custom
-                       ;;       my-slime-defun
-                       ;;     nil
-                       ;;     #'cl-user))
-                       ))
-    (:states 'normal :keymaps 'slime-inspector-mode-map
-             ":" #'slime-inspector-eval
-             "q" (lambda ()
-                   "Reinspect the previous object or close the window if there is no previous object"
-                   ;; mostly copied from slime-inspector-pop
-                   (interactive)
-                   (let ((result (slime-eval `(swank:inspector-pop))))
-                     (if result
-                         (slime-open-inspector result (pop slime-inspector-mark-stack))
-                       (quit-window)))))
-    (:states 'normal :keymaps 'slime-sprof-browser-mode
-             "v" (general-simulate-key "v" :state 'emacs))
-    :init
-    (defvar my-single-test nil)
-
-    (defun print-help ()
-      ;; ((java-mode (eval (setq-default my-single-test
-      ;;                                 (lambda () (call-interactively
-      ;;                                        (bazel-test ":all")
-      ;;                                        (other-window 1)))))))
-      (print "No override. Check for .custom.el?"))
-    (defun single-test ()
-      "Function for running unit test(s).  This should be overridden by a directory local definition."
-      (interactive)
-      (if my-single-test
-          (funcall my-single-test)
-        (print-help)))
-    (defun run-unit-tests ()
-      "Function for running unit test(s).  This should be overridden by a directory local definition."
-      (interactive)
-      (print-help)
-      nil)
-    (defun run-integration-tests ()
-      "Function for running unit test(s).  This should be overridden by a directory local definition."
-      (interactive)
-      (print-help)
-      nil)
-    (defun run-performance-tests ()
-      "Function for running unit test(s).  This should be overridden by a directory local definition."
-      (interactive)
-      (print-help)
-      nil)
-    (defun reload-systems ()
-      "Delete packages and reload asdf systems."
-      (interactive)
-      (print-help)
-      nil)
-    (defvar my-slime-defun nil)
+                         (interactive)
+                         (sly-compile-defun)))
+    (:states 'normal :keymaps 'sly-inspector-mode-map
+             ":" #'sly-inspector-eval
+             "q" #'sly-inspector-pop
+             "Q" (lambda ()
+                     (interactive)
+                     (sly-inspector-quit t)))
+    (:states 'normal :keymaps 'sly-xref-mode-map
+             "j" #'sly-xref-next-line
+             "k" #'sly-xref-prev-line)
     :config
-    (progn ; emit ansi colors in slime repl
-      (defvar slime-colors t "If non-nil, emit ansi colors in the slime repl.")
-      (defun slime-colors-on ()
-        "Enable ansi colors in the slime repl."
-        (interactive)
-        (setq slime-colors t))
-      (defun slime-colors-off ()
-        "Disable ansi colors in the slime repl."
-        (interactive)
-        (setq slime-colors nil))
-      (defadvice slime-repl-emit (around slime-repl-ansi-colorize activate compile)
-        (with-current-buffer (slime-output-buffer)
-          (setq ad-return-value ad-do-it)
-          (when slime-colors
-            (ansi-color-apply-on-region slime-output-start
-                                        slime-output-end)))))
-    (make-directory "/tmp/slime-fasls/" t)
-    (setq slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
+    (make-directory "/tmp/sly-fasls/" t)
+    (setq sly-compile-file-options '(:fasl-directory "/tmp/sly-fasls/"))
 
     (load (expand-file-name "~/.roswell/helper.el"))
     (setq inferior-lisp-program "ros -Q -l ~/.sbclrc run --lose-on-corruption")
-
-    (slime-setup
-     (remove-duplicates
-      (append slime-contribs
-              '(slime-fancy
-                slime-highlight-edits
-                slime-asdf
-                slime-sprof))))
-
-    (when (file-exists-p (concat (getenv "HOME") "/prog/slime-doc-contribs"))
-        (progn
-          (push (concat (getenv "HOME") "/prog/slime-doc-contribs") load-path)
-          (slime-setup
-           (remove-duplicates
-            (append slime-contribs
-                    '(slime-xref-browser
-                      slime-help
-                      slime-info))))
-          slime-contribs))
-
-    (slime-require :swank-listener-hooks)
-    (setq-default slime-sprof-exclude-swank t)
-    ;; https://emacs.stackexchange.com/questions/9600/how-can-i-override-a-pre-defined-face-for-light-and-dark-backgrounds
-    (set-face-attribute 'slime-highlight-edits-face nil
-                        ;; :background "dimgray"
-                        ;; :background "lightgray"
-                        :background "purple4")
-
-    ;; keymap must go here after contrib loads
-    (general-def :states 'normal :keymaps 'slime-browser-map
-      "j" 'widget-forward
-      "k" 'widget-backward
-      "M-." (lambda () (interactive)
-              (end-of-line)
-              (slime-edit-definition (slime-symbol-at-point)))
-      "q" 'bury-buffer)
+    (sly-setup
+     (cl-remove-duplicates
+      (append sly-contribs
+              '(sly-fancy
+                sly-profiler))))
 
     (load-if-exists "~/.roswell/lisp/quicklisp/clhs-use-local.el")
 
-    (setq-default inhibit-splash-screen t)
-    ;; stop slime from complaining about version mismatch
-    (setq-default slime-protocol-version 'ignore)
-
-    (defun my-slime-repl-kill-or-interrupt ()
-      "If the user has entered text in the prompt, remove the text before and after point.
-Otherwise, send an interrupt to slime."
-      (interactive)
-      (cond ((= (marker-position slime-repl-input-start-mark) (point))
-             (slime-interrupt))
-            (t (slime-repl-kill-input)
-               (slime-repl-kill-input))))
-
-    (defun slime-post-connect ()
-      (when (file-exists-p "~/.emacs.d/slime-init.lisp")
-        (slime-eval (car (read-from-string (get-string-from-file "~/.emacs.d/slime-init.lisp")))))
+    (defun sly-post-connect ()
       (when (file-exists-p (concat default-directory ".custom-slime-init.lisp"))
-        (slime-eval (car (read-from-string (get-string-from-file (concat default-directory ".custom-slime-init.lisp"))))))
+        (sly-eval (car (read-from-string (get-string-from-file (concat default-directory ".custom-slime-init.lisp"))))))
       (when (file-exists-p (concat default-directory ".slime-initial-package"))
-        (slime-repl-set-package (get-string-from-file (concat default-directory ".slime-initial-package"))))
-      (message "custom slime init complete"))
+        (let ((package (upcase (get-string-from-file (concat default-directory ".slime-initial-package")))))
+          (sly-eval `(slynk-mrepl:guess-and-set-package ,package))))
+      (message "custom sly init complete"))
 
-    (when (file-exists-p "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
-      (load "~/.roswell/lisp/quicklisp/dists/quicklisp/software/cl-annot-20150608-git/misc/slime-annot.el")
-      (slime-setup (remove-duplicates (append slime-contribs '(slime-annot))))
-      slime-contribs
-      (require 'slime-annot))
-    ;; to install log4slime:
-    ;; (ql:quickload :log4cl.log4slime)
-    ;; (log4cl.log4slime:install)
-    (when (file-exists-p "~/.roswell/lisp/quicklisp/log4slime-setup.el")
-      (load "~/.roswell/lisp/quicklisp/log4slime-setup.el")
-      (global-log4slime-mode 1)
-      (general-def :keymaps 'log4slime-mode-map
-        "C-c C-g" #'log4slime-level-selection))
+    (add-hook 'sly-mrepl-mode-hook #'sly-post-connect))
 
-    ;; allow slime doc to resize the window
-    (setq-default eldoc-echo-area-use-multiline-p t)
+  (use-package sly-repl-ansi-color
+    :after sly)
 
-    (add-hook 'slime-repl-mode-hook #'slime-post-connect))
+  (use-package sly-macrostep
+    :after sly)
 
-  (use-package slime-company
-    :demand t
-    :after slime
-    :config
-    (slime-setup (remove-duplicates (append slime-contribs '(slime-company))))
-    (slime-company-init)))
+  (use-package sly-quicklisp
+    :after sly)
+
+  (use-package sly-asdf
+    :after sly))
 
 (progn ; magit and other git utils
   (use-package magit
