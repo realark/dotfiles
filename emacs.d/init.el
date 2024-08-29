@@ -551,10 +551,6 @@ _k_prev      _J_: lower           _>_: base/lower
   (sp-pair "'" nil :actions nil)
   (sp-pair "`" nil :actions nil))
 
-;; (use-package cl-font-lock
-;;   ;; :hook ((lisp-mode . cl-font-lock))
-;;   :demand t)
-
 (use-package lispyville
   :delight lispyville-mode
   :hook ((lisp-mode . lispyville-mode)
@@ -633,7 +629,6 @@ _k_prev      _J_: lower           _>_: base/lower
     (company-quickhelp-mode t)
     (setq-default company-idle-delay 1.00)
     (setq-default company-minimum-prefix-length 3)))
-
 
 ;; Options for M-x rgrep
 (use-package grep
@@ -996,7 +991,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
 ;; IDE hydra
 (progn
-  (defvar my-lsp-modes '(java-mode 'go-mode)
+  (defvar my-lsp-modes '(java-mode go-mode python-ts-mode python-mode)
     "modes which use LSP to achieve IDE functionality")
 
   (defmacro mode-case (&rest body)
@@ -1411,7 +1406,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq-default org-directory "~/Documents/org-files/")
   (setq-default org-agenda-files (list (concat org-directory "tasks.org")))
   (setq-default org-default-notes-file (concat org-directory "notes.org"))
-  (setq-default org-log-done 'time)
+  (setq-default org-log-done nil)
   (setq-default org-enforce-todo-dependencies t)
   (setq-default org-catch-invisible-edits 'show-and-error)
 
@@ -1485,9 +1480,6 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                    :todo ("DOING")
                    :time-grid t
                    :face (:underline t))
-                  (:name "SYN"
-                   :time-grid t
-                   :category "SYN")
                   (:auto-category t))))
 
 (use-package org-trello
@@ -1882,6 +1874,12 @@ position of the outside of the paren.  Otherwise return nil."
     :config
     (dap-auto-configure-mode)))
 
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-ts-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp))))
+
 (use-package lsp-java
   :demand t
   ;; :hook ((java-mode . lsp))
@@ -1946,6 +1944,8 @@ position of the outside of the paren.  Otherwise return nil."
                                           "[/\\\\]\\.metals$"
                                           "[/\\\\]target$"
                                           "[/\\\\]\\.ccls-cache$"
+                                          ;; python venv
+                                          "[/\\\\]\\.venv$"
                                           ;; Autotools output
                                           "[/\\\\]\\.deps$"
                                           "[/\\\\]build-aux$"
