@@ -403,7 +403,18 @@
                    (whitespace-mode 1))))
     "f"      #'indent-region
     ";"      #'toggle-comment-region-or-line
-    "x"      (general-simulate-key "M-x")))
+    "x"      (general-simulate-key "M-x"))
+
+  (general-def :states '(insert normal) :keymaps 'comint-mode-map
+             "C-S-r" #'comint-history-isearch-backward-regexp
+             "C-l" #'comint-clear-buffer
+             "C-k" #'comint-previous-input
+             "C-j" #'comint-next-input
+             "C-d" (lambda ()
+                     (interactive)
+                     (when (yes-or-no-p "Quit session?")
+                       (comint-delchar-or-maybe-eof 0)
+                       (sticky-window-delete-window nil)))))
 
 (block narrow-utils
   ;; https://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
@@ -940,6 +951,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq interactive-perspectives
         (list (list "lisp-mode" "sly-mrepl-mode" #'sly)
               (list "emacs-lisp-mode" "inferior-emacs-lisp-mode" #'ielm)
+              (list "python-ts-mode" "inferior-python-mode" #'run-python)
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
@@ -1724,16 +1736,6 @@ position of the outside of the paren.  Otherwise return nil."
   (use-package sql
     :mode ("\\.sql$" . sql-mode)
     :general
-    (:states 'insert :keymaps 'sql-interactive-mode-map
-             "C-S-r" #'comint-history-isearch-backward-regexp
-             "C-l" #'comint-clear-buffer
-             "C-k" #'comint-previous-input
-             "C-j" #'comint-next-input
-             "C-d" (lambda ()
-                     (interactive)
-                     (when (yes-or-no-p "Quit Sql session?")
-                       (comint-delchar-or-maybe-eof 0)
-                       (sticky-window-delete-window nil))))
     (:state '(insert normal) :keymaps 'sql-mode-map
             "C-c C-c" #'sql-send-paragraph)
     :config
@@ -1875,6 +1877,9 @@ position of the outside of the paren.  Otherwise return nil."
     (dap-auto-configure-mode)))
 
 (use-package lsp-pyright
+  ;; to get the repl to use your virtual env
+  ;; (pyvenv-activate "./.venv")
+  ;; TODO automated this with a wrapper around run-python
   :ensure t
   :hook (python-ts-mode . (lambda ()
                           (require 'lsp-pyright)
@@ -2007,8 +2012,7 @@ position of the outside of the paren.  Otherwise return nil."
   :commands (elpy-enable)
   :config
   (setq-default
-   elpy-rpc-python-command "python3"
-   elpy-rpc-backend "jedi"))
+   elpy-rpc-python-command "python3"))
 
 (use-package go-mode
   :init
