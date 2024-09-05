@@ -68,8 +68,7 @@
 
 ;; pretty lambda
 (setq-default prettify-symbols-alist
-              ;; lambda -> λ
-              '(("lambda" . 955)))
+              '(("lambda" . ?λ)))
 (global-prettify-symbols-mode 1)
 
 (defun my-minibuffer-setup-hook ()
@@ -1876,14 +1875,22 @@ position of the outside of the paren.  Otherwise return nil."
     :config
     (dap-auto-configure-mode)))
 
-(use-package lsp-pyright
-  ;; to get the repl to use your virtual env
-  ;; (pyvenv-activate "./.venv")
-  ;; TODO automated this with a wrapper around run-python
-  :ensure t
-  :hook (python-ts-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))
+(progn ; python
+  (add-hook 'python-ts-mode-hook
+            (lambda ()
+              ;; stop python ts mode from prettifying AND and OR symbols
+              (prettify-symbols-mode -1)
+              (when (file-directory-p ".venv")
+                (pyvenv-activate ".venv"))))
+
+  (use-package lsp-pyright
+    :hook (python-ts-mode . (lambda ()
+                              (require 'lsp-pyright)
+                              (lsp))))
+  (use-package elpy
+    :commands (elpy-enable)
+    :config
+    (setq-default elpy-rpc-python-command "python3")))
 
 (use-package lsp-java
   :demand t
@@ -2007,12 +2014,6 @@ position of the outside of the paren.  Otherwise return nil."
   (use-package kubel-evil
     :ensure t
     :after kubel))
-
-(use-package elpy
-  :commands (elpy-enable)
-  :config
-  (setq-default
-   elpy-rpc-python-command "python3"))
 
 (use-package go-mode
   :init
