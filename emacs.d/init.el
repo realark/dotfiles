@@ -670,7 +670,7 @@ _k_prev      _J_: lower           _>_: base/lower
                                                                                    '(".git" ".ensime_cache.d" ".gradle"
                                                                                      ".recommenders" ".metadata" "dist"
                                                                                      "bazel-bin" "bazel-out" "bazel-*"
-                                                                                     "node_modules")))
+                                                                                     "node_modules" ".venv")))
                 projectile-globally-ignored-files (remove-duplicates (append projectile-globally-ignored-files
                                                                              '(".ensime" "*.war" "*.jar" "*.zip"
                                                                                "*.png" "*.gif" "*.vsd" "*.svg"
@@ -1890,7 +1890,12 @@ position of the outside of the paren.  Otherwise return nil."
   (use-package elpy
     :commands (elpy-enable)
     :config
-    (setq-default elpy-rpc-python-command "python3")))
+    (setq-default elpy-rpc-python-command "python3"))
+
+  ;; (use-package python-black
+  ;;   :commands (python-black-on-save-mode-enable-dwim)
+  ;;   :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
+  )
 
 (use-package lsp-java
   :demand t
