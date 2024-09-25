@@ -19,3 +19,4 @@ ark-custom-rest-client
 arkdev/*
 arkdev
 .aider*
+.idea/
