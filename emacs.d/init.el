@@ -1886,16 +1886,15 @@ position of the outside of the paren.  Otherwise return nil."
   (use-package lsp-pyright
     :hook (python-ts-mode . (lambda ()
                               (require 'lsp-pyright)
-                              (lsp))))
-  (use-package elpy
-    :commands (elpy-enable)
+                              (lsp)))
     :config
-    (setq-default elpy-rpc-python-command "python3"))
-
-  ;; (use-package python-black
-  ;;   :commands (python-black-on-save-mode-enable-dwim)
-  ;;   :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
-  )
+    (setq python-shell-interpreter "ipython"
+          python-shell-interpreter-args "--simple-prompt -i")
+    (require 'dap-python)
+    (setq-default dap-python-debugger 'debugpy
+                  dap-python-executable "python3"
+                  dap-log-level 'DEBUG
+                  dap-print-io t)))
 
 (use-package lsp-java
   :demand t
