@@ -253,19 +253,7 @@
   (setq-default use-package-always-ensure t)
 
   (use-package try
-    :commands try)
-
-  ;; quelpa
-  (unless (package-installed-p 'quelpa)
-    (with-temp-buffer
-      (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
-      (eval-buffer)
-      (quelpa-self-upgrade)))
-  (quelpa
-   '(quelpa-use-package
-     :fetcher git
-     :url "https://github.com/quelpa/quelpa-use-package.git"))
-  (require 'quelpa-use-package))
+    :commands try))
 
 (progn ; settings for osx
   (setq-default mac-command-modifier 'meta))
@@ -2092,9 +2080,6 @@ position of the outside of the paren.  Otherwise return nil."
   (exec-path-from-shell-copy-env "OPENAI_API_KEY")
   (exec-path-from-shell-copy-env "JAVA_HOME")
   (exec-path-from-shell-copy-env "PATH"))
-
-(use-package chatgpt
-  :quelpa ((chatgpt :fetcher git :url "https://github.com/joshcho/ChatGPT.el.git") :stable t))
 
 ;; start the emacs daemon
 (server-start)
