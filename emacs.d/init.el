@@ -236,17 +236,29 @@
 
 ;; use mepla and marmalade for package
 (eval-when-compile
-  (defmacro require-install (PCK)
-    "Require package PCK, install via \"package-install\" if missing."
-    `(unless (require ,PCK nil t)
-       (package-install ,PCK)
-       (require ,PCK)))
-  (require-install 'package)
-  (package-initialize)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-  (unless package-archive-contents
-    (package-refresh-contents))
-  (require-install 'use-package)
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name
+          "straight/repos/straight.el/bootstrap.el"
+          (or (bound-and-true-p straight-base-dir)
+              user-emacs-directory)))
+        (bootstrap-version 7)
+        (straight-version "88e574ae75344e39b436f863ef0344135c7b6517"))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           ;; master as of 2024-10-02
+           (concatenate 'string
+                        "https://raw.githubusercontent.com/radian-software/straight.el/"
+                        straight-version
+                        "/install.el")
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+
+  (straight-use-package 'use-package)
+
   (setq-default use-package-always-defer t
                 use-package-always-ensure t))
 
