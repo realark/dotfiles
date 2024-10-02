@@ -92,8 +92,7 @@
 ;; https://200ok.ch/posts/2020-09-29_comprehensive_guide_on_handling_long_lines_in_emacs.html
 (setq-default bidi-paragraph-direction 'left-to-right
               bidi-inhibit-bpa t)
-(if (version<= "27.1" emacs-version)
-    (global-so-long-mode 1))
+(global-so-long-mode 1)
 
 (require 'cl)
 
@@ -243,9 +242,6 @@
        (package-install ,PCK)
        (require ,PCK)))
   (require-install 'package)
-  (when (and (equal emacs-version "27.2")
-             (eql system-type 'darwin))
-    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
   (package-initialize)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
   (unless package-archive-contents
@@ -924,9 +920,7 @@ EOF"
 (use-package keycast
   :demand t
   :config
-  (if (version< emacs-version "29.1")
-      (keycast-mode)
-    (keycast-mode-line-mode)))
+  (keycast-mode-line-mode))
 
 ;; sticky windows
 (when (load-if-exists "~/.emacs.d/sticky-windows.el")
