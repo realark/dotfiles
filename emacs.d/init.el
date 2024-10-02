@@ -94,7 +94,7 @@
               bidi-inhibit-bpa t)
 (global-so-long-mode 1)
 
-(require 'cl)
+(require 'cl-lib)
 
 ;; extra places to look for executables
 (cl-loop for extra-path in (list (concat (getenv "HOME") "/go/bin")
