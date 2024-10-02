@@ -247,13 +247,11 @@
   (unless package-archive-contents
     (package-refresh-contents))
   (require-install 'use-package)
-  (setq-default use-package-always-ensure nil)
-  (setq-default use-package-always-defer t)
+  (setq-default use-package-always-defer t
+                use-package-always-ensure t))
 
-  (setq-default use-package-always-ensure t)
-
-  (use-package try
-    :commands try))
+(use-package try
+  :commands try)
 
 (progn ; settings for osx
   (setq-default mac-command-modifier 'meta))
