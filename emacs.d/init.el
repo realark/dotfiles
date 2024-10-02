@@ -757,6 +757,7 @@ _k_prev      _J_: lower           _>_: base/lower
            "j" #'flycheck-error-list-next-error
            "k" #'flycheck-error-list-previous-error)
   :config
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   (global-flycheck-mode)
   (delight 'flyspell-mode nil 'flyspell)
   (delight 'flyspell-prog-mode nil 'flyspell)
