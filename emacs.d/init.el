@@ -935,6 +935,117 @@ EOF"
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+(progn ; folding
+  (general-def
+    :states 'normal :keymaps 'prog-mode-map
+    "<tab>" (lambda ()
+              (interactive)
+              (cond
+               ((and (treesit-available-p) (treesit-language-at (point-min)))
+                (call-interactively #'treesit-fold-toggle))
+               ((find 'hs-minor-mode minor-mode-list)
+                (call-interactively #'hs-toggle-hiding))
+               (t (warn "code folding not supported in current buffer"))))
+    "<backtab>" (lambda ()
+                  (interactive)
+                  (cond
+                   ((and (treesit-available-p) (treesit-language-at (point-min)))
+                    (call-interactively #'treesit-fold-close-all))
+                   ((find 'hs-minor-mode minor-mode-list)
+                    (call-interactively #'hs-show-all))
+                   (t (warn "code folding not supported in current buffer")))))
+
+  (use-package treesit-fold
+    :demand t
+    :straight (treesit-fold :type git :host github
+                            :repo "emacs-tree-sitter/treesit-fold"
+                            :commit "11add1f4ac7f7956dc5aae98571605d27a1773e2")
+    :hook ((python-ts-mode . treesit-fold-mode)))
+
+  (use-package hideshow
+    :delight hs-minor-mode
+    :hook ((prog-mode . hs-minor-mode)
+           (hs-minor-mode . hs-hide-initial-comment-block))
+    :config
+    (defun end-of-line-before-comment ()
+      "Move the end of the line, or just before a comment character if the line ends in a comment."
+      (when (comment-search-forward (line-end-position) t)
+        (goto-char (match-beginning 0))
+        (skip-syntax-backward " " (line-beginning-position))
+        (backward-char)))
+
+    ;; hideshow org-mode like folding
+    ;; see: https://github.com/logangrado/hideshow-orgmode/blob/master/hideshow-orgmode.el
+    (setq hs-allow-nesting t)
+    (defun hs-cycle ()
+      "Progressively shows more blocks under current block, then hide all blocks"
+      (interactive)
+      (hs-life-goes-on
+       (save-excursion
+         ;; (move-beginning-of-line 1)
+         (when (hs-find-block-beginning)
+           (let (minp maxp)
+             (setq minp (point))		;Set minp to beg+1
+             (funcall hs-forward-sexp-func 1)	;Goes to end of current block
+             (setq maxp (point))		;Set maxp to end-1s
+             (if (hs-contains-hidden minp maxp)
+                 (hs-discard-overlays minp maxp)
+               (hs-hide-recursive minp maxp)))))))
+    (defun hs-contains-hidden (minp maxp)
+      "Returns nil if there is no overlay between minp and maxp"
+      (goto-char minp)
+      (let ((contains_hidden nil))
+        (while (progn
+                 (forward-comment (buffer-size)) ;forward-comment moves forward across count complete comments
+                 (and(and (< (point) maxp) ;Ensure we're not past maxp
+                          (re-search-forward hs-block-start-regexp maxp t))
+                     (not contains_hidden))) ;Searches forward for next blockstart
+          (setq contains_hidden (hs-already-hidden-p)))
+        contains_hidden))
+    (defun hs-hide-recursive (minp maxp)
+      "Hide all blocks between minp,maxp recursively (deepest level up)"
+      (hs-life-goes-on
+       (save-excursion
+         (goto-char minp)
+         (save-excursion
+           (let ((maxd 3));(hs-max-depth minp maxp)))
+             (while (> maxd 0)
+               (goto-char minp)
+               (hs-hide-level-recursive maxd minp maxp)
+               (setq maxd (1- maxd)))))
+         (hs-hide-block))))
+    (defun hs-cycle-all()
+      "Progressive show more blocks all are shown, then hide all blocks"
+      (interactive)
+      (hs-life-goes-on
+       (save-excursion
+         (if (hs-contains-hidden (point-min) (point-max))
+             (hs-discard-overlays (point-min) (point-max))
+           (hs-hide-recursive (point-min) (point-max))))))
+
+    (defun hs-fold-all()
+      "Hides all blocks. Differs from 'hs-hide-all' in that it also folds all child blocks"
+      (interactive)
+      (hs-life-goes-on
+       (hs-find-block-beginning) ;go to beginning of block
+       (save-excursion
+         (goto-char (point-min))
+         (hs-hide-recursive (point-min) (point-max)))))
+
+    (defun hs-fold-block()
+      "Hides current block recursively"
+      (interactive)
+      (hs-life-goes-on
+       (save-excursion
+         (move-beginning-of-line 1)
+         (let ((minp nil) (maxp nil))
+           (when (hs-find-block-beginning)
+             (setq minp (point))
+             (funcall hs-forward-sexp-func 1)
+             (setq maxp (1- (point)))
+             (goto-char minp)
+             (hs-hide-recursive minp maxp))))))))
+
 ;; interactive mode toggling
 (progn
   (defvar interactive-perspectives '()
@@ -991,7 +1102,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                        (return t))))))
         (message "No interactive mode for %s" current-buffer-major-mode))))
   (general-def
-   "<f9>" #'toggle-interact-with-buffer))
+    "<f9>" #'toggle-interact-with-buffer))
 
 ;; IDE hydra
 (progn
@@ -1222,95 +1333,6 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (use-package git-link
     :config
     (setq-default git-link-default-branch "master")))
-
-(use-package hideshow
-  :delight hs-minor-mode
-  :hook ((prog-mode . hs-minor-mode)
-         (hs-minor-mode . hs-hide-initial-comment-block))
-  :config
-  (defun end-of-line-before-comment ()
-    "Move the end of the line, or just before a comment character if the line ends in a comment."
-    (when (comment-search-forward (line-end-position) t)
-      (goto-char (match-beginning 0))
-      (skip-syntax-backward " " (line-beginning-position))
-      (backward-char)))
-
-  ;; hideshow org-mode like folding
-  ;; see: https://github.com/logangrado/hideshow-orgmode/blob/master/hideshow-orgmode.el
-  (setq hs-allow-nesting t)
-  (defun hs-cycle ()
-    "Progressively shows more blocks under current block, then hide all blocks"
-    (interactive)
-    (hs-life-goes-on
-     (save-excursion
-       ;; (move-beginning-of-line 1)
-       (when (hs-find-block-beginning)
-         (let (minp maxp)
-	         (setq minp (point))		;Set minp to beg+1
-	         (funcall hs-forward-sexp-func 1)	;Goes to end of current block
-	         (setq maxp (point))		;Set maxp to end-1s
-	         (if (hs-contains-hidden minp maxp)
-	             (hs-discard-overlays minp maxp)
-	           (hs-hide-recursive minp maxp)))))))
-  (defun hs-contains-hidden (minp maxp)
-    "Returns nil if there is no overlay between minp and maxp"
-    (goto-char minp)
-    (let ((contains_hidden nil))
-      (while (progn
-	             (forward-comment (buffer-size)) ;forward-comment moves forward across count complete comments
-	             (and(and (< (point) maxp) ;Ensure we're not past maxp
-		                    (re-search-forward hs-block-start-regexp maxp t))
-		               (not contains_hidden))) ;Searches forward for next blockstart
-        (setq contains_hidden (hs-already-hidden-p)))
-      contains_hidden))
-  (defun hs-hide-recursive (minp maxp)
-    "Hide all blocks between minp,maxp recursively (deepest level up)"
-    (hs-life-goes-on
-     (save-excursion
-       (goto-char minp)
-       (save-excursion
-         (let ((maxd 3));(hs-max-depth minp maxp)))
-	         (while (> maxd 0)
-	           (goto-char minp)
-	           (hs-hide-level-recursive maxd minp maxp)
-	           (setq maxd (1- maxd)))))
-       (hs-hide-block))))
-  (defun hs-cycle-all()
-    "Progressive show more blocks all are shown, then hide all blocks"
-    (interactive)
-    (hs-life-goes-on
-     (save-excursion
-       (if (hs-contains-hidden (point-min) (point-max))
-	         (hs-discard-overlays (point-min) (point-max))
-         (hs-hide-recursive (point-min) (point-max))))))
-
-  (defun hs-fold-all()
-    "Hides all blocks. Differs from 'hs-hide-all' in that it also folds all child blocks"
-    (interactive)
-    (hs-life-goes-on
-     (hs-find-block-beginning) ;go to beginning of block
-     (save-excursion
-       (goto-char (point-min))
-       (hs-hide-recursive (point-min) (point-max)))))
-
-  (defun hs-fold-block()
-    "Hides current block recursively"
-    (interactive)
-    (hs-life-goes-on
-     (save-excursion
-       (move-beginning-of-line 1)
-       (let ((minp nil) (maxp nil))
-         (when (hs-find-block-beginning)
-	         (setq minp (point))
-	         (funcall hs-forward-sexp-func 1)
-	         (setq maxp (1- (point)))
-	         (goto-char minp)
-	         (hs-hide-recursive minp maxp))))))
-
-  :general
-  (:states '(normal) :keymaps 'hs-minor-mode-map
-            "<tab>" #'hs-toggle-hiding
-            "<backtab>" #'hs-show-all))
 
 (use-package eshell
   :general
