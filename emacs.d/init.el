@@ -1891,12 +1891,18 @@ position of the outside of the paren.  Otherwise return nil."
     (dap-auto-configure-mode)))
 
 (progn ; python
+  (use-package pyvenv
+    :ensure t)
+
   (add-hook 'python-ts-mode-hook
             (lambda ()
               ;; stop python ts mode from prettifying AND and OR symbols
               (prettify-symbols-mode -1)
-              (when (file-directory-p ".venv")
-                (pyvenv-activate ".venv"))))
+              (cond
+               ((and (ignore-errors (projectile-project-root))
+                     (file-directory-p (concatenate 'string (projectile-project-root) ".venv")))
+                (pyvenv-activate (concatenate 'string (projectile-project-root) ".venv")))
+               ((file-directory-p ".venv") (pyvenv-activate ".venv")))))
 
   (use-package lsp-pyright
     :hook (python-ts-mode . (lambda ()
