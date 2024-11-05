@@ -290,7 +290,7 @@ source_if_exists ~/.custom.sh
 alias myipaddress='curl ifconfig.me'
 alias myinternetspeed='speedtest-cli'
 
-function myhosts_on_network {
+function hosts_on_network {
   if [ "$machine" != "linux" ]; then
     echo "Unsupported OS: $machine"
     return 1
