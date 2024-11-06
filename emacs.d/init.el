@@ -389,14 +389,6 @@
 
   (general-def
     :prefix "C-x"
-    "l"      (lambda ()
-               (interactive)
-               (if (bound-and-true-p whitespace-mode)
-                   (progn
-                     (whitespace-mode 0))
-                 (progn
-                   (message "nil branch")
-                   (whitespace-mode 1))))
     "f"      #'indent-region
     ";"      #'toggle-comment-region-or-line
     "x"      (general-simulate-key "M-x"))
@@ -1612,6 +1604,20 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq-default markdown-command "multimarkdown"))
 
 (use-package gptel
+  :general
+  (general-define-key
+   :states '(normal visual insert emacs)
+   "C-x l"
+   (defhydra hydra-gptel (:color blue :hint nil)
+     "
+     ~~~ GPTEL (%s(format \"%s\" gptel-model)) ~~~
+ _l_: Open dedicated chat
+ _m_: Menu (prompt, context, etc)
+
+"
+     ("l" gptel)
+     ("m" gptel-menu)
+     ("q" nil "Cancel" :color red)))
   :config
   (setq-default gptel-api-key (getenv "OPENAI_API_KEY"))
   (setq-default
