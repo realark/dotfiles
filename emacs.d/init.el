@@ -71,6 +71,9 @@
               '(("lambda" . ?λ)))
 (global-prettify-symbols-mode 1)
 
+;; https://www.reddit.com/r/emacs/comments/1gjlv1z/why_is_emacs_grep_command_pinging_external_servers/
+(setq ffap-machine-p-known 'reject)
+
 (defun my-minibuffer-setup-hook ()
   "Disable GC in the minibuffer."
   (setq gc-cons-threshold most-positive-fixnum))
