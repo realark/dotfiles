@@ -1793,43 +1793,6 @@ position of the outside of the paren.  Otherwise return nil."
     (add-hook 'sql-mode-hook 'sqlup-mode)
     (add-hook 'sql-interactive-mode-hook 'sqlup-mode)))
 
-;; (use-package bigquery-mode
-;;   :quelpa (bigquery-mode :fetcher github :repo "christophstockhusen/bigquery-mode" :stable t)
-;;   :commands (bigquery-mode my-bqm-run-query-at-point my-bigquery-mode-setup )
-;;   :init
-;;   (add-hook 'bigquery-mode-hook 'my-bigquery-mode-setup)
-;;   :config
-;;   ;; :general use-package isn't working for some reason
-;;   (defun my-bigquery-mode-setup ()
-;;     (general-define-key :keymaps 'bqm-mode-map "C-c C-c" #'my-bqm-run-query-at-point))
-
-;;   (defvar my-bqm-params
-;;     ;; example: '(("regex" . "replacement"))
-;;     '()
-;;     "regex->replacement that runs over the bq query before it is sent to the server")
-
-
-;;   (defun my-bqm-run-query-at-point ()
-;;     "Execute the BigQuery SQL statement at point."
-;;     (interactive)
-
-;;     (let ((start (save-excursion
-;; 		               (backward-paragraph)
-;; 		               (point)))
-;;           (end (save-excursion
-;; 	               (forward-paragraph)
-;; 	               (point)))
-;; 	        query)
-;;       ;; Extract the query
-;;       (setq query (buffer-substring-no-properties start end))
-;;       (with-temp-buffer
-;;         (insert query)
-;;         (dolist (pair my-bqm-params)
-;;           (goto-char (point-min))
-;;           (while (re-search-forward (car pair) nil t)
-;;             (replace-match (cdr pair) t t)))
-;;         (bqm-run-query)))))
-
 (use-package sqlite3)
 
 (use-package aggressive-indent
