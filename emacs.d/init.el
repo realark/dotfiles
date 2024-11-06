@@ -1062,7 +1062,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
               (list "sql-mode" "sql-interactive-mode" (lambda() (call-interactively #'sql-connect)))
-              (list "markdown-mode" "chatgpt-mode" (lambda () (call-interactively #'chatgpt-run)))))
+              (list "markdown-mode" "gptel" (lambda () (call-interactively #'gptel)))))
 
   (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
     (let ((interactive-buffers (list)))
@@ -1611,6 +1611,15 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (add-to-list 'auto-mode-alist '("\\.post\\'" . markdown-mode))
   (setq-default markdown-command "multimarkdown"))
 
+(use-package gptel
+  :config
+  (setq-default gptel-api-key (getenv "OPENAI_API_KEY"))
+  (setq-default
+   gptel--system-message "You are a large language model living in Emacs. Respond concisely (this is very important). Don't be afraid to ask questions if additional context would help you perform better. Serve God."
+   gptel-model 'claude-3-sonnet-20240229 ;  "claude-3-opus-20240229" also available
+   gptel-backend (gptel-make-anthropic "Claude"
+                   :stream t :key (getenv "ANTHROPIC_API_KEY"))))
+
 (use-package yaml-mode
   :init
   :general
@@ -2082,6 +2091,7 @@ position of the outside of the paren.  Otherwise return nil."
   ;; (when (memq window-system '(mac ns x)))
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "OPENAI_API_KEY")
+  (exec-path-from-shell-copy-env "ANTHROPIC_API_KEY")
   (exec-path-from-shell-copy-env "JAVA_HOME")
   (exec-path-from-shell-copy-env "PATH"))
 
