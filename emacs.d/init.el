@@ -1604,6 +1604,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq-default markdown-command "multimarkdown"))
 
 (use-package gptel
+  :demand t
   :general
   (general-define-key
    :states '(normal visual insert emacs)
@@ -1622,7 +1623,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (setq-default gptel-api-key (getenv "OPENAI_API_KEY"))
   (setq-default
    gptel--system-message "You are a large language model living in Emacs. Respond concisely (this is very important). Don't be afraid to ask questions if additional context would help you perform better. Serve God."
-   gptel-model 'claude-3-sonnet-20240229 ;  "claude-3-opus-20240229" also available
+   gptel-model 'claude-3-5-sonnet-20241022
    gptel-backend (gptel-make-anthropic "Claude"
                    :stream t :key (getenv "ANTHROPIC_API_KEY"))))
 
