@@ -98,6 +98,7 @@
 (global-so-long-mode 1)
 
 (require 'cl-lib)
+(require 'cl) ; TODO remove CONCATENATE
 
 ;; extra places to look for executables
 (cl-loop for extra-path in (list (concat (getenv "HOME") "/go/bin")
