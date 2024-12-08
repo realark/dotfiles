@@ -1420,29 +1420,33 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     ("C"  (org-capture) "Capture" :exit t)
     ("q"  nil "Cancel" :color red))
   :config
-  (setq-default org-agenda-show-future-repeats nil)
-  (setq-default org-todo-keywords '("TODO(t)" "DOING(o)" "|" "DONE(d!)" "SKIP(s!)"))
-  (setq-default org-startup-indented t)
-  ;; fontify code in code blocks
-  (setq-default org-src-fontify-natively t)
-  (setq-default org-directory "~/Documents/org-files/")
-  (setq-default org-agenda-files (list (concat org-directory "tasks.org")))
-  (setq-default org-default-notes-file (concat org-directory "notes.org"))
-  (setq-default org-log-done nil)
-  (setq-default org-enforce-todo-dependencies t)
-  (setq-default org-catch-invisible-edits 'show-and-error)
+  (setq-default
+   org-agenda-show-future-repeats nil
+   org-todo-keywords '("TODO(t)" "DOING(o)" "|" "DONE(d!)" "SKIP(s!)")
+   org-startup-indented t
+   ;; fontify code in code blocks
+   org-src-fontify-natively t
+   org-directory "~/Documents/org-files/"
+   org-agenda-files (list (concat org-directory "tasks.org"))
+   org-default-notes-file (concat org-directory "notes.org")
+   org-enforce-todo-dependencies t
+   org-catch-invisible-edits 'show-and-error
 
-  (setq-default org-startup-with-inline-images t)
-  (setq-default org-image-actual-width nil)
+   org-startup-with-inline-images t
+   org-image-actual-width nil
+   ;; don't log state changes for recurring tasks
+   org-treat-S-cursor-todo-selection-as-state-change nil
+   org-log-states nil
+   org-log-into-drawer nil
+   org-log-repeat nil
+   org-log-done-with-time nil
+   org-log-done nil)
 
-  ;; (setq-default org-log-repeat nil)
   (add-to-list 'org-modules 'org-habit t)
   ;; show all habits in agenda, even if done
   (setq-default org-habit-show-all-today nil)
   ;; I don't like seeing red in the future
   (setq-default org-habit-following-days 0)
-
-  (setq-default org-log-into-drawer t)
 
   (setq-default org-refile-targets '((nil :maxlevel . 9)))
   (setq-default org-outline-path-complete-in-steps nil) ; Refile in a single go
