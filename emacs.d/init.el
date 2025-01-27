@@ -1627,7 +1627,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   :config
   (setq-default gptel-api-key (getenv "OPENAI_API_KEY"))
   (setq-default
-   gptel--system-message "You are a large language model living in Emacs. Respond concisely (this is very important). Don't be afraid to ask questions if additional context would help you perform better. Serve God."
+   gptel--system-message "You are a large language model living in Emacs. Respond concisely. Ask questions if additional context would help you perform better. Tell the truth no matter what."
    gptel-model 'claude-3-5-sonnet-20241022
    gptel-backend (gptel-make-anthropic "Claude"
                    :stream t :key (getenv "ANTHROPIC_API_KEY"))))
