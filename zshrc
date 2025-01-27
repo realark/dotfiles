@@ -160,6 +160,11 @@ alias docker-stop-all='docker stop $(docker ps -aq)'
 alias docker-rm-all='docker rm $(docker ps -aq)'
 alias fd='fdfind'
 alias dolt-rpull='for dir in */; do if [ -d "${dir}/.dolt" ]; then (cd "$dir" && echo "Pulling $dir" && dolt pull); fi; done'
+alias myhw='echo "HARDWARE FOR MACHINE \"$(hostname)\"" && \
+echo "--- CPU ---" && lscpu | grep -E "Model name|CPU\(s\)|Thread|MHz" && \
+echo -e "\n--- MEMORY ---" && free -h && \
+echo -e "\n--- GPU ---" && lspci | grep -i vga && \
+echo -e "\n--- STORAGE ---" && df -h /'
 # Wrap ssh in an alias to change the terminal color scheme.
 # Supported terminals:
 # - konsole
