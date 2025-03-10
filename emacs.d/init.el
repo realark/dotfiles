@@ -1805,7 +1805,7 @@ position of the outside of the paren.  Otherwise return nil."
   (use-package sql-indent
     :defer nil
     :after sql
-    :init (add-hook 'sql-mode-hook 'sql-indent))
+    :init (add-hook 'sql-mode-hook 'sql-indent-enable))
 
   (use-package sqlup-mode
     :defer nil
