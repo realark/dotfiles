@@ -1102,7 +1102,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
 ;; IDE hydra
 (progn
-  (defvar my-lsp-modes '(java-mode go-mode python-ts-mode python-mode)
+  (defvar my-lsp-modes '(java-mode go-mode python-ts-mode python-mode js-ts-mode)
     "modes which use LSP to achieve IDE functionality")
 
   (defmacro mode-case (&rest body)
@@ -1849,7 +1849,8 @@ position of the outside of the paren.  Otherwise return nil."
     (setenv "GOPATH" (concat (getenv "HOME") "/go"))
     (setenv "GOBIN" (concat (getenv "HOME") "/go/bin"))
     :config
-    (add-hook 'lsp-mode-hook #'lsp-ui-mode))
+    (add-hook 'lsp-mode-hook #'lsp-ui-mode)
+    (add-hook 'js-ts-mode-hook #'lsp))
 
   ;; removed from melpa?
   ;; (use-package company-lsp
@@ -1994,9 +1995,6 @@ position of the outside of the paren.  Otherwise return nil."
         (message "...Gradle Offline...")
         (message "!!!Gradle Online!!!"))
     lsp-java-import-gradle-offline-enabled))
-
-(when (file-exists-p "~/.emacs.d/guess-offset.el")
-  (load-file  "~/.emacs.d/guess-offset.el"))
 
 (progn ; glsl-mode
   (use-package glsl-mode)
