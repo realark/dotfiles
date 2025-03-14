@@ -1625,12 +1625,17 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
      ("m" gptel-menu)
      ("q" nil "Cancel" :color red)))
   :config
-  (setq-default gptel-api-key (getenv "OPENAI_API_KEY"))
   (setq-default
+   gptel-api-key (getenv "OPENAI_API_KEY")
    gptel--system-message "You are a large language model living in Emacs. Respond concisely. Ask questions if additional context would help you perform better. Tell the truth no matter what."
    gptel-model 'claude-3-7-sonnet-20250219
    gptel-backend (gptel-make-anthropic "Claude"
                    :stream t :key (getenv "ANTHROPIC_API_KEY"))))
+
+(progn ; aider
+  (package-vc-install '(aider :url "https://github.com/tninja/aider.el"))
+  ;; (global-set-key (kbd "C-c a") 'aider-transient-menu)
+  (setq aider-args '("--model" "sonnet")))
 
 (use-package yaml-mode
   :init
