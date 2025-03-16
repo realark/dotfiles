@@ -1,5 +1,5 @@
 [user]
-  email = arktheprogrammer@gmail.com
+  email = ark@recursive.games
   name = Ark
 [alias]
   ignored = ls-files --others -i --exclude-standard
