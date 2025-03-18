@@ -57,7 +57,6 @@ setopt append_history
 setopt share_history
 export HISTIGNORE="[ ]*"
 
-autoload -U compinit compinit
 setopt autopushd pushdminus pushdsilent pushdtohome
 setopt autocd
 setopt cdablevars
@@ -76,12 +75,6 @@ export EDITOR="vim"                             # $EDITOR opens in terminal
 export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
 
 ##################################################################
-# Tab completions
-
-autoload -Uz compinit
-compinit
-
-
 # allow approximate
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
@@ -354,8 +347,22 @@ if [ -f /etc/motd ]; then
 fi
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+function nvm {
+  unset -f nvm
+  unset -f npm
+  # NVM is super slow to load and I usually don't need it
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  nvm $@ # now call the real nvm
+}
+function npm {
+  unset -f nvm
+  unset -f npm
+  # NVM is super slow to load and I usually don't need it
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  npm $@ # now call the real npm
+}
 
 if [ -d "$HOME/.local/share/pnpm" ]; then
   # pnpm
