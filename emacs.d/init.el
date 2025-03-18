@@ -1707,7 +1707,8 @@ position of the outside of the paren.  Otherwise return nil."
     (shell-command
      (format "ctags -f %s -e -R %s" path-to-ctags (directory-file-name dir-name))))
 
-  (setq-default tags-add-tables nil)
+  (setq-default tags-add-tables nil
+                tags-revert-without-query 1)
   (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
   (add-hook 'lisp-mode-common-hook  'turn-on-ctags-auto-update-mode))
 
