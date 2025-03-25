@@ -1633,7 +1633,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                    :stream t :key (getenv "ANTHROPIC_API_KEY"))))
 
 (progn ; aider
-  (package-vc-install '(aider :url "https://github.com/tninja/aider.el"))
+  (unless (package-installed-p 'aider)
+    (package-vc-install '(aider :url "https://github.com/tninja/aider.el" :tag "v0.5.5")))
   ;; (global-set-key (kbd "C-c a") 'aider-transient-menu)
   (setq aider-args '("--model" "sonnet")))
 
@@ -1844,6 +1845,9 @@ position of the outside of the paren.  Otherwise return nil."
   (add-to-list
    'aggressive-indent-dont-indent-if
    'company-candidates))
+
+(progn ; misc javascript
+  (setq-default js-indent-level 2))
 
 (progn ; lsp
   (use-package lsp-mode
