@@ -240,6 +240,12 @@
 
 ;; use mepla and marmalade for package
 (eval-when-compile
+  (require 'package)
+  (add-to-list 'package-archives
+               '("MELPA" .
+                 "http://melpa.org/packages/"))
+  (package-initialize)
+
   (defvar bootstrap-version)
   (let ((bootstrap-file
          (expand-file-name
@@ -247,11 +253,11 @@
           (or (bound-and-true-p straight-base-dir)
               user-emacs-directory)))
         (bootstrap-version 7)
-        (straight-version "88e574ae75344e39b436f863ef0344135c7b6517"))
+        ;; master as of 2025-03-30
+        (straight-version "483b205efb2eaa6be7c0dc7078b8c9dafcffb318"))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
           (url-retrieve-synchronously
-           ;; master as of 2024-10-02
            (concatenate 'string
                         "https://raw.githubusercontent.com/radian-software/straight.el/"
                         straight-version
