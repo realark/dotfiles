@@ -383,9 +383,9 @@ fi
 #Smartcd: https://github.com/cxreg/smartcd
 if [ -f "$HOME/.smartcd/lib/core/smartcd" ]; then
   source $HOME/.smartcd/lib/core/smartcd
-fi
-if [ -f "$HOME/.smartcd_config" ]; then
-  source $HOME/.smartcd_config
+  if [ -f  -f "$HOME/.smartcd_config" ]; then
+    source $HOME/.smartcd_config
+  fi
 fi
 
 coinflip() {
