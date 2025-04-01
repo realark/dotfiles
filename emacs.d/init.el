@@ -934,7 +934,8 @@ EOF"
   :init
   (setq-default treesit-auto-install 'prompt)
   :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
+  ;; breaks as of emacs 30
+  ;; (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
 (progn ; folding
@@ -966,7 +967,7 @@ EOF"
 
   (use-package hideshow
     :delight hs-minor-mode
-    :hook ((prog-mode . hs-minor-mode)
+    :hook ((emacs-lisp-mode . hs-minor-mode)
            (hs-minor-mode . hs-hide-initial-comment-block))
     :config
     (defun end-of-line-before-comment ()
@@ -1611,7 +1612,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     "TAB" #'markdown-cycle)
   :init
   ;; coleslaw blogging
-  (add-to-list 'auto-mode-alist '("\\.post\\'" . markdown-mode))
+  (add-to-list auto-mode-alist '("\\.post\\'" . markdown-mode))
   (setq-default markdown-command "multimarkdown"))
 
 (use-package gptel
@@ -1756,36 +1757,9 @@ position of the outside of the paren.  Otherwise return nil."
   :mode
   ("\\.scala$" . scala-mode))
 
-(use-package typescript-mode
-  ;; TODO: remove this package when you upgrade to emacs 29
-  :mode
-  ("\\.ts$" . typescript-mode))
-
-(use-package jdecomp
-  ;; :mode ("\\.class$" . jdecomp-mode)
-  :config
-  (customize-set-variable 'jdecomp-decompiler-type 'procyon)
-  (customize-set-variable 'jdecomp-decompiler-paths
-                          `((procyon . ,(first-existing-file "/opt/procyon/procyon-decompiler-0.6-prerelease.jar"
-                                                             "/usr/share/java/procyon-decompiler/procyon-decompiler.jar"
-                                                             "/opt/procyon/procyon-decompiler-0.5.30.jar"
-                                                             "/usr/local/Cellar/procyon-decompiler/0.5.30/libexec/procyon-decompiler-0.5.30.jar"))))
-  (defun my-jdecomp-bytecode ()
-    "Decompile the current file into raw bytecode"
-    (interactive)
-    (let ((jdecomp-decompiler-options
-           '((procyon "-r -ln -ss"""))))
-      (jdecomp-decompile-and-view (buffer-file-name)))))
-
-(use-package thread-dump
-  :commands (thread-dump-open-file thread-dump-open-files thread-dump-open-dir))
-
-(use-package feature-mode
-  :mode (("\\.feature$" . feature-mode)))
-
 (progn ; sql and db
   (use-package sql
-    :mode ("\\.sql$" . sql-mode)
+    ;; :mode ("\\.sql$" . sql-mode)
     :general
     (:state '(insert normal) :keymaps 'sql-mode-map
             "C-c C-c" #'sql-send-paragraph)
@@ -1889,10 +1863,12 @@ position of the outside of the paren.  Otherwise return nil."
                   lsp-ui-peek-list-width 130)
     (lsp-ui-sideline-mode -1))
 
-  (use-package dap-mode
-    :after lsp-mode
-    :config
-    (dap-auto-configure-mode)))
+  ;; breaks as of emacs 30
+  ;; (use-package dap-mode
+  ;;   :after lsp-mode
+  ;;   :config
+  ;;   (dap-auto-configure-mode))
+  )
 
 (progn ; python
   (use-package pyvenv
@@ -2023,10 +1999,6 @@ position of the outside of the paren.  Otherwise return nil."
     (lisp-mode))
 
   (add-hook 'ea-popup-hook 'popup-handler))
-
-(when (file-exists-p "~/.emacs.d/vtl.el")
-  (load-file "~/.emacs.d/vtl.el")
-  (add-to-list 'auto-mode-alist '("\\.vm\\'" . turn-on-vtl-mode)))
 
 (when (file-exists-p "~/.emacs.d/go-template-mode.el")
   (load-file  "~/.emacs.d/go-template-mode.el"))
