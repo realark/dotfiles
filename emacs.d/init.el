@@ -934,8 +934,18 @@ EOF"
   :init
   (setq-default treesit-auto-install 'prompt)
   :config
-  ;; breaks as of emacs 30
+  ;; 'all breaks as of emacs 30
   ;; (treesit-auto-add-to-auto-mode-alist 'all)
+  (treesit-auto-add-to-auto-mode-alist
+   '(typescript
+     javascript
+     html
+     css
+     python
+     json
+     yaml
+     proto
+     markdown))
   (global-treesit-auto-mode))
 
 (progn ; folding
@@ -962,12 +972,13 @@ EOF"
     :demand t
     :straight (treesit-fold :type git :host github
                             :repo "emacs-tree-sitter/treesit-fold"
-                            :commit "11add1f4ac7f7956dc5aae98571605d27a1773e2")
+                            :commit "54d6b693780b64d4a0d491e25463d7059fcef483")
     :hook ((python-ts-mode . treesit-fold-mode)))
 
   (use-package hideshow
     :delight hs-minor-mode
     :hook ((emacs-lisp-mode . hs-minor-mode)
+           (lisp-mode . hs-minor-mode)
            (hs-minor-mode . hs-hide-initial-comment-block))
     :config
     (defun end-of-line-before-comment ()
@@ -1891,11 +1902,13 @@ position of the outside of the paren.  Otherwise return nil."
     :config
     (setq python-shell-interpreter "ipython"
           python-shell-interpreter-args "--simple-prompt -i")
-    (require 'dap-python)
-    (setq-default dap-python-debugger 'debugpy
-                  dap-python-executable "python3"
-                  dap-log-level 'DEBUG
-                  dap-print-io t)))
+    ;; dap is busted as of emacs 30
+    ;; (require 'dap-python)
+    ;; (setq-default dap-python-debugger 'debugpy
+    ;;               dap-python-executable "python3"
+    ;;               dap-log-level 'DEBUG
+    ;;               dap-print-io t)
+    ))
 
 (use-package lsp-java
   :demand t
@@ -1911,8 +1924,9 @@ position of the outside of the paren.  Otherwise return nil."
   ;;   (lsp))
   ;; :hook (java-mode   . jmi/java-mode-config)
   :config
+  ;; dap busted as of emacs 30
   ;; Enable dap-java
-  (require 'dap-java)
+  ;; (require 'dap-java)
 
   ;; (setenv "JAVA_HOME"  "/usr/lib/jvm/default-java")
 
