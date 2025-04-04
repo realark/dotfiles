@@ -397,3 +397,7 @@ coinflip() {
     return 1;
   fi
 }
+
+if [ -f "$HOME/.lmstudio/bin" ]; then
+  export PATH="$PATH:$HOME/.lmstudio/bin"
+fi
