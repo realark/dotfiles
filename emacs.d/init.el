@@ -663,17 +663,17 @@ _k_prev      _J_: lower           _>_: base/lower
   :config
   (setq-default projectile-completion-system 'ivy
                 projectile-globally-ignored-directories (remove-duplicates (append projectile-globally-ignored-directories
-                                                                                   '(".git" ".ensime_cache.d" ".gradle"
+                                                                                   '("*.git" ".ensime_cache.d" ".gradle"
                                                                                      ".recommenders" ".metadata" "dist"
-                                                                                     "bazel-bin" "bazel-out" "bazel-*"
-                                                                                     "node_modules" ".venv")))
+                                                                                     "*bazel-bin" "*bazel-out" "*bazel-*"
+                                                                                     "*node_modules" "*.venv"
+                                                                                     "*.aider*")))
                 projectile-globally-ignored-files (remove-duplicates (append projectile-globally-ignored-files
                                                                              '(".ensime" "*.war" "*.jar" "*.zip"
                                                                                "*.png" "*.gif" "*.vsd" "*.svg"
                                                                                "*.exe" "eclimd.log" "workbench.xmi"
                                                                                ".emacs.desktop" "*.deb" "*.gz" "*.fasl")))
                 projectile-enable-caching t)
-
   (progn
     (defun gradle-command-alias (cmd)
       "Simplify running commands on specific gradle subprojects by substituting `/` with `:`"
