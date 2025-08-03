@@ -1072,6 +1072,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (list "sh-mode" "term-mode" #'eshell)
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
+              (list "js-ts-mode" "js-comint-mode" #'js-comint-start-or-switch-to-repl)
               (list "sql-mode" "sql-interactive-mode" (lambda() (call-interactively #'sql-connect)))
               (list "markdown-mode" "gptel" (lambda () (call-interactively #'gptel)))))
 
@@ -1838,7 +1839,12 @@ position of the outside of the paren.  Otherwise return nil."
    'company-candidates))
 
 (progn ; misc javascript
-  (setq-default js-indent-level 2))
+  (setq-default js-indent-level 2)
+
+  (use-package js-comint
+    :ensure t
+    :config
+    (setq inferior-js-program-command "npm run console")))
 
 (progn ; lsp
   (use-package lsp-mode
