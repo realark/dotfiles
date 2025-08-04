@@ -1527,6 +1527,15 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                    :face (:underline t))
                   (:auto-category t))))
 
+(progn ;breadcrumbs for org files
+  (defun my/org-breadcrumb-header ()
+    (when (derived-mode-p 'org-mode)
+      (setq header-line-format
+            (org-format-outline-path (org-get-outline-path t) 80))))
+
+  (add-hook 'post-command-hook #'my/org-breadcrumb-header))
+
+
 (use-package org-trello
   :mode ("\\.trello$" . org-mode)
   :delight org-trello-mode
