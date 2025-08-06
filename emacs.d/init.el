@@ -1530,11 +1530,14 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 (progn ;breadcrumbs for org files
   (defun my/org-breadcrumb-header ()
     (when (derived-mode-p 'org-mode)
-      (setq header-line-format
-            (org-format-outline-path (org-get-outline-path t) 80))))
+      (ignore-errors ; to prevent issues if you're before the first header
+        (setq header-line-format
+              (org-format-outline-path (org-get-outline-path t) 80)))))
 
-  (add-hook 'post-command-hook #'my/org-breadcrumb-header))
+  (defun my/org-setup-breadcrumbs ()
+    (add-hook 'post-command-hook #'my/org-breadcrumb-header nil t))
 
+  (add-hook 'org-mode-hook #'my/org-setup-breadcrumbs))
 
 (use-package org-trello
   :mode ("\\.trello$" . org-mode)
