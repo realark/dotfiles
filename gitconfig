@@ -71,5 +71,5 @@
   pruneTags = true
   recurseSubmodules = true
 # path specific overrides
-[includeIf "gitdir:~/nuts/"]
-  path = ~/nuts/.gitconfig-nuts
+[includeIf "gitdir:~/braintrust/"]
+  path = ~/braintrust/.gitconfig-braintrust
