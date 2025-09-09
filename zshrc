@@ -331,13 +331,6 @@ if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
   source "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
-export GO111MODULE=on
-export GOPATH="$HOME/go"
-export GOBIN="$HOME/go/bin"
-if [ -d $HOME/go/bin ]; then
-  export "PATH=$PATH:$HOME/go/bin"
-fi
-
 if [ -d "$HOME/adb-fastboot/platform-tools" ] ; then
   export PATH="$HOME/adb-fastboot/platform-tools:$PATH"
 fi
@@ -400,4 +393,9 @@ coinflip() {
 
 if [ -f "$HOME/.lmstudio/bin" ]; then
   export PATH="$PATH:$HOME/.lmstudio/bin"
+fi
+
+source_if_exists ${ASDF_DATA_DIR:-$HOME/.asdf}/plugins/golang/set-env.zsh
+if [ -d "${ASDF_DATA_DIR:-$HOME/.asdf}/shims" ] ; then
+  export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 fi
