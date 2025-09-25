@@ -10,8 +10,6 @@
   rh = reset --hard
   rs1 = reset --soft HEAD~1
   ignore=!echo "$2" >>.gitignore
-  spull = !git-svn fetch && git-svn rebase
-  spush = !git-svn dcommit
   co = checkout
   diffword = diff --color-words
   purge = clean -fX
