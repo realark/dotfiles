@@ -1486,8 +1486,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (add-hook 'org-capture-mode-hook 'evil-insert-state))
 
 (use-package evil-org
-  :hook ((org-mode . evil-org-mode)
-         (org-trello-mode . evil-org-mode))
+  :hook ((org-mode . evil-org-mode))
   :delight
   evil-org-mode
   :general
@@ -1540,32 +1539,6 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     (add-hook 'post-command-hook #'my/org-breadcrumb-header nil t))
 
   (add-hook 'org-mode-hook #'my/org-setup-breadcrumbs))
-
-(use-package org-trello
-  :mode ("\\.trello$" . org-mode)
-  :delight org-trello-mode
-  :general
-  (:keymaps 'org-trello-mode-map
-            "C-x C-s"
-            (lambda ()
-              (interactive)
-              (when my-org-trello-online
-                (call-interactively #'org-trello-sync-buffer ))
-              (call-interactively #'save-buffer)))
-  :init
-  (add-hook 'org-mode-hook (lambda ()
-                             (when (string-suffix-p ".trello" (buffer-name))
-                               (org-trello-mode))))
-  (defun org-trello-personal-fetch-buffer ()
-    "Fetch data from trello and populate the buffer"
-    (interactive)
-    (org-trello-sync-buffer t))
-  (defvar my-org-trello-online t
-    "Automatically sync org trello files when non-nil.")
-  (add-hook 'org-trello-mode-hook
-            (lambda ()
-              (when my-org-trello-online
-                (org-trello-sync-buffer t)))))
 
 (progn ; calfw calendar
   (setq-default calendar-location-name "Boise, ID")
