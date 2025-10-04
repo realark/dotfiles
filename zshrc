@@ -158,6 +158,30 @@ echo "--- CPU ---" && lscpu | grep -E "Model name|CPU\(s\)|Thread|MHz" && \
 echo -e "\n--- MEMORY ---" && free -h && \
 echo -e "\n--- GPU ---" && lspci | grep -i vga && \
 echo -e "\n--- STORAGE ---" && df -h /'
+alias update-everything="update_everything"
+update_everything() {
+  os_name="$(. /etc/os-release && echo "$ID")"
+
+  case "$os_name" in
+    ubuntu)
+      sudo bash -c '
+        set -e
+        apt autoremove -y
+        flatpak uninstall --unused -y
+        apt update -y
+        apt upgrade -y
+        snap refresh
+        flatpak update -y
+        fwupdmgr refresh --force
+        fwupdmgr upgrade -y
+      '
+      ;;
+    *)
+      echo "unsupported os: $os_name"
+      ;;
+  esac
+}
+
 # Wrap ssh in an alias to change the terminal color scheme.
 # Supported terminals:
 # - konsole
