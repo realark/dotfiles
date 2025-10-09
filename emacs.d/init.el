@@ -666,7 +666,7 @@ _k_prev      _J_: lower           _>_: base/lower
                                                                                    '("*.git" ".ensime_cache.d" ".gradle"
                                                                                      ".recommenders" ".metadata" "dist"
                                                                                      "*bazel-bin" "*bazel-out" "*bazel-*"
-                                                                                     "*node_modules" "*.venv"
+                                                                                     "*node_modules" "*venv"
                                                                                      "*.aider*")))
                 projectile-globally-ignored-files (remove-duplicates (append projectile-globally-ignored-files
                                                                              '(".ensime" "*.war" "*.jar" "*.zip"
@@ -1884,9 +1884,9 @@ position of the outside of the paren.  Otherwise return nil."
               (prettify-symbols-mode -1)
               (cond
                ((and (ignore-errors (projectile-project-root))
-                     (file-directory-p (concatenate 'string (projectile-project-root) ".venv")))
-                (pyvenv-activate (concatenate 'string (projectile-project-root) ".venv")))
-               ((file-directory-p ".venv") (pyvenv-activate ".venv")))))
+                     (file-directory-p (concatenate 'string (projectile-project-root) "venv")))
+                (pyvenv-activate (concatenate 'string (projectile-project-root) "venv")))
+               ((file-directory-p "venv") (pyvenv-activate "venv")))))
 
   (use-package lsp-pyright
     :hook (python-ts-mode . (lambda ()
@@ -1969,7 +1969,7 @@ position of the outside of the paren.  Otherwise return nil."
                                           "[/\\\\]target$"
                                           "[/\\\\]\\.ccls-cache$"
                                           ;; python venv
-                                          "[/\\\\]\\.venv$"
+                                          "[/\\\\]\\venv$"
                                           ;; Autotools output
                                           "[/\\\\]\\.deps$"
                                           "[/\\\\]build-aux$"
