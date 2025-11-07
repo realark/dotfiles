@@ -423,3 +423,7 @@ source_if_exists ${ASDF_DATA_DIR:-$HOME/.asdf}/plugins/golang/set-env.zsh
 if [ -d "${ASDF_DATA_DIR:-$HOME/.asdf}/shims" ] ; then
   export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 fi
+
+if [ -f "$HOME/.local/bin/mise" ]; then
+  eval "$($HOME/.local/bin/mise activate zsh)"
+fi
