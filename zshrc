@@ -427,3 +427,7 @@ fi
 if [ -f "$HOME/.local/bin/mise" ]; then
   eval "$($HOME/.local/bin/mise activate zsh)"
 fi
+
+if [ -d "$HOME/.dotnet/tools" ] ; then
+  export PATH="$HOME/.dotnet/tools:$PATH"
+fi
