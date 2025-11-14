@@ -932,9 +932,9 @@ EOF"
 (use-package treesit-auto
   :demand t
   :init
-  (setq-default treesit-auto-install 'prompt)
+  ;; (setq-default treesit-auto-install 'prompt)
+  (setq-default treesit-auto-install 'no-error)
   :config
-  ;; 'all breaks as of emacs 30
   ;; (treesit-auto-add-to-auto-mode-alist 'all)
   (treesit-auto-add-to-auto-mode-alist
    '(typescript
@@ -945,6 +945,7 @@ EOF"
      json
      yaml
      proto
+     bash
      markdown))
   (global-treesit-auto-mode))
 
