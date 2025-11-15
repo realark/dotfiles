@@ -9,6 +9,7 @@
   news = log -p HEAD@{1}..HEAD@{0}
   rh = reset --hard
   rs1 = reset --soft HEAD~1
+  forcepull = !git fetch --all && git reset --hard origin/$(git branch --show-current)
   ignore=!echo "$2" >>.gitignore
   co = checkout
   diffword = diff --color-words
