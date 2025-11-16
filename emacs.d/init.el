@@ -1413,6 +1413,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (hl-todo ((t (:inherit hl-todo :italic t))))
   :hook ((prog-mode . hl-todo-mode)))
 
+(use-package csv-mode)
+
 ;; Org mode
 (use-package org
   :mode ("\\.org$" . org-mode)
