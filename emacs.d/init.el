@@ -1122,7 +1122,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
 ;; IDE hydra
 (progn
-  (defvar my-lsp-modes '(java-mode go-mode python-ts-mode python-mode js-ts-mode)
+  (defvar my-lsp-modes '(java-mode go-mode python-ts-mode python-mode js-ts-mode csharp-mode csharp-ts-mode)
     "modes which use LSP to achieve IDE functionality")
 
   (defmacro mode-case (&rest body)
@@ -1840,14 +1840,23 @@ position of the outside of the paren.  Otherwise return nil."
   (use-package lsp-mode
     :demand t
     :init
-    (setq-default lsp-prefer-flymake nil)
 
     (setenv "GO111MODULE" "on")
     (setenv "GOPATH" (concat (getenv "HOME") "/go"))
     (setenv "GOBIN" (concat (getenv "HOME") "/go/bin"))
     :config
     (add-hook 'lsp-mode-hook #'lsp-ui-mode)
-    (add-hook 'js-ts-mode-hook #'lsp))
+    (add-hook 'js-ts-mode-hook #'lsp)
+    (setq-default
+     lsp-prefer-flymake nil
+     lsp-file-watch-ignored
+     (remove-duplicates (concatenate 'list
+                                     (mapcar (lambda (ignore)
+                                               (concatenate 'string "**/*" ignore "$"))
+                                             '("public" "build" "bin" ".gradle" "bazel-bin" "bazel-out" "bazel-testlogs" "node_modules" "venv"))
+                                     ;; keep lsp-mode defaults
+                                     lsp-file-watch-ignored)
+                        :test #'equal)))
 
   ;; removed from melpa?
   ;; (use-package company-lsp
@@ -1910,79 +1919,27 @@ position of the outside of the paren.  Otherwise return nil."
   :demand t
   ;; :hook ((java-mode . lsp))
   :after lsp-mode
-  ;; :init
-  ;; (defun jmi/java-mode-config ()
-  ;;   (setq-local tab-width 4
-  ;;               c-basic-offset 4)
-  ;;   (toggle-truncate-lines 1)
-  ;;   (setq-local tab-width 4)
-  ;;   (setq-local c-basic-offset 4)
-  ;;   (lsp))
-  ;; :hook (java-mode   . jmi/java-mode-config)
   :config
-  ;; dap busted as of emacs 30
-  ;; Enable dap-java
-  ;; (require 'dap-java)
+  (defvar my-java-location
+    (concat (getenv "HOME")
+            "/.sdkman/candidates/java/21.0.9-tem/bin/java"))
+  (unless (file-exists-p my-java-location)
+    (error (concat "java not found: " my-java-location)))
 
-  ;; (setenv "JAVA_HOME"  "/usr/lib/jvm/default-java")
+  (defvar my-lombok-jar-location
+    (concat (getenv "HOME")
+            "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.38/57f8f5e02e92a30fd21b80cbd426a4172b5f8e29/lombok-1.18.38.jar"))
+  (unless (file-exists-p my-lombok-jar-location)
+    (error (concat "lombok jar not found: " my-lombok-jar-location)))
 
-  (setq lsp-java-vmargs
+  (setq lsp-java-java-path my-java-location
+        lsp-java-vmargs
         (list "-noverify"
               "-Xmx2G"
               "-XX:+UseG1GC"
               "-XX:+UseStringDeduplication"
-              (concat "-javaagent:"
-                      (getenv "HOME")
-                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.18/481f5bfed3ae29f656eedfe9e98c8365b8ba5c57/lombok-1.18.18.jar")
-              (concat "-Xbootclasspath/a:"
-                      (getenv "HOME")
-                      "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.18/481f5bfed3ae29f656eedfe9e98c8365b8ba5c57/lombok-1.18.18.jar")
-              ;; (concat "-javaagent:" jmi/lombok-jar)
-              ;; (concat "-Xbootclasspath/a:" jmi/lombok-jar)
-              )
-        ;; lsp-java-java-path "/usr/lib/jvm/default-java/bin/java"
-        ;; lsp-java-import-gradle-java-home "/usr/lib/jvm/default-java/bin/java"
-        ;; lsp-java-configuration-runtimes '[(:name "JavaSE-11"
-        ;;                                          :path "/usr/lib/jvm/default-java"
-        ;;                                          :default t)]
-        lsp-file-watch-ignored
-        (remove-duplicates (concatenate 'list
-                                        (mapcar (lambda (ignore)
-                                                  (concatenate 'string "**/*" ignore "$"))
-                                                '("public" "build" "bin" ".gradle" "bazel-bin" "bazel-oak" "bazel-out" "bazel-testlogs" "node_modules"))
-
-                                        ;; keep lsp-mode defaults
-                                        '(     ; SCM tools
-                                          "[/\\\\]\\.git$"
-                                          "[/\\\\]\\.hg$"
-                                          "[/\\\\]\\.bzr$"
-                                          "[/\\\\]_darcs$"
-                                          "[/\\\\]\\.svn$"
-                                          "[/\\\\]_FOSSIL_$"
-                                          ;; IDE tools
-                                          "[/\\\\]\\.idea$"
-                                          "[/\\\\]\\.ensime_cache$"
-                                          "[/\\\\]\\.eunit$"
-                                          "[/\\\\]node_modules$"
-                                          "[/\\\\]\\.fslckout$"
-                                          "[/\\\\]\\.tox$"
-                                          "[/\\\\]\\.stack-work$"
-                                          "[/\\\\]\\.bloop$"
-                                          "[/\\\\]\\.metals$"
-                                          "[/\\\\]target$"
-                                          "[/\\\\]\\.ccls-cache$"
-                                          ;; python venv
-                                          "[/\\\\]\\venv$"
-                                          ;; Autotools output
-                                          "[/\\\\]\\.deps$"
-                                          "[/\\\\]build-aux$"
-                                          "[/\\\\]autom4te.cache$"
-                                          "[/\\\\]\\.reference$"))
-                           :test #'equal)
-        ;; Don't organize imports on save
-        ;; Formatter profile
-        ;; lsp-java-format-settings-url
-        ;; (concat "file://" jmi/java-format-settings-file)
+              (concat "-javaagent:" my-lombok-jar-location)
+              (concat "-Xbootclasspath/a:" my-lombok-jar-location))
         lsp-java-import-gradle-enabled t
         lsp-java-import-gradle-offline-enabled t
         lsp-java-save-action-organize-imports nil)
@@ -1995,8 +1952,18 @@ position of the outside of the paren.  Otherwise return nil."
       (setq lsp-java-import-gradle-offline-enabled (not lsp-java-import-gradle-offline-enabled )))
     (if lsp-java-import-gradle-offline-enabled
         (message "...Gradle Offline...")
-        (message "!!!Gradle Online!!!"))
+      (message "!!!Gradle Online!!!"))
     lsp-java-import-gradle-offline-enabled))
+
+(progn ; csharp
+  (add-to-list 'auto-mode-alist '("\\.sln\\'" . conf-mode))
+  (add-to-list 'auto-mode-alist '("\\.csproj\\'" . nxml-mode))
+  (add-hook 'csharp-ts-mode-hook #'lsp-deferred)
+
+  (use-package csharp-mode
+    :config
+    (add-hook 'csharp-mode-hook 'hs-minor-mode)
+    (add-hook 'csharp-mode-hook #'lsp-deferred)))
 
 (progn ; glsl-mode
   (use-package glsl-mode)
