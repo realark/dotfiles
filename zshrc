@@ -174,13 +174,20 @@ update_everything() {
         flatpak update -y
         fwupdmgr refresh --force
         fwupdmgr upgrade -y
-      '
+
+        for cmd in "$@"; do
+          eval "$cmd"
+        done
+      ' bash "$@"
       ;;
     *)
       echo "unsupported os: $os_name"
       ;;
   esac
 }
+
+alias update-everything-and-reboot="update_everything reboot"
+alias update-everything-and-poweroff="update_everything poweroff"
 
 # Wrap ssh in an alias to change the terminal color scheme.
 # Supported terminals:
