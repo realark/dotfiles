@@ -438,3 +438,11 @@ fi
 if [ -d "$HOME/.dotnet/tools" ] ; then
   export PATH="$HOME/.dotnet/tools:$PATH"
 fi
+
+if [ -s "/Users/ark/.bun/_bun" ] ; then
+  # completions
+  source "/Users/ark/.bun/_bun"
+  # exe
+  export BUN_INSTALL="$HOME/.bun"
+  export PATH="$BUN_INSTALL/bin:$PATH"
+fi
