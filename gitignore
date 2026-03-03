@@ -20,3 +20,4 @@ arkdev/*
 arkdev
 .aider*
 .idea/
+.claude/
