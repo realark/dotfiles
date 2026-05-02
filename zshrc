@@ -446,3 +446,7 @@ if [ -s "/Users/ark/.bun/_bun" ] ; then
   export BUN_INSTALL="$HOME/.bun"
   export PATH="$BUN_INSTALL/bin:$PATH"
 fi
+
+if [ -d /home/ark/.opencode/bin ]; then
+  export PATH=/home/ark/.opencode/bin:$PATH
+fi
