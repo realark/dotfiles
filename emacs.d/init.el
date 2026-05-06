@@ -666,8 +666,7 @@ _k_prev      _J_: lower           _>_: base/lower
                                                                                    '("*.git" ".ensime_cache.d" ".gradle"
                                                                                      ".recommenders" ".metadata" "dist"
                                                                                      "*bazel-bin" "*bazel-out" "*bazel-*"
-                                                                                     "*node_modules" "*venv"
-                                                                                     "*.aider*")))
+                                                                                     "*node_modules" "*venv")))
                 projectile-globally-ignored-files (remove-duplicates (append projectile-globally-ignored-files
                                                                              '(".ensime" "*.war" "*.jar" "*.zip"
                                                                                "*.png" "*.gif" "*.vsd" "*.svg"
@@ -1074,8 +1073,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
               (list "groovye-mode" "inferior-groovy-mode" #'run-groovy)
               (list "java-mode" "inferior-groovy-mode" #'run-groovy)
               (list "js-ts-mode" "js-comint-mode" #'js-comint-start-or-switch-to-repl)
-              (list "sql-mode" "sql-interactive-mode" (lambda() (call-interactively #'sql-connect)))
-              (list "markdown-mode" "gptel" (lambda () (call-interactively #'gptel)))))
+              (list "sql-mode" "sql-interactive-mode" (lambda() (call-interactively #'sql-connect)))))
 
   (defun toggle-or-start-interaction (interactive-mode launch-interaction-fn)
     (let ((interactive-buffers (list)))
@@ -1619,35 +1617,26 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (add-to-list auto-mode-alist '("\\.post\\'" . markdown-mode))
   (setq-default markdown-command "multimarkdown"))
 
-(use-package gptel
+(use-package agent-shell
   :demand t
   :general
-  (general-define-key
-   :states '(normal visual insert emacs)
-   "C-x l"
-   (defhydra hydra-gptel (:color blue :hint nil)
-     "
-     ~~~ GPTEL (%s(format \"%s\" gptel-model)) ~~~
- _l_: Open dedicated chat
- _m_: Menu (prompt, context, etc)
-
-"
-     ("l" gptel)
-     ("m" gptel-menu)
-     ("q" nil "Cancel" :color red)))
+  (general-def 'insert agent-shell-mode-map
+    "RET" #'newline
+    "C-<return>" #'comint-send-input)
+  (general-def 'normal agent-shell-mode-map
+    "RET" #'comint-send-input)
   :config
-  (setq-default
-   gptel-api-key (getenv "OPENAI_API_KEY")
-   gptel--system-message "You are a large language model living in Emacs. Respond concisely. Ask questions if additional context would help you perform better. Tell the truth no matter what."
-   gptel-model 'claude-3-7-sonnet-20250219
-   gptel-backend (gptel-make-anthropic "Claude"
-                   :stream t :key (getenv "ANTHROPIC_API_KEY"))))
-
-(progn ; aider
-  (unless (package-installed-p 'aider)
-    (package-vc-install '(aider :url "https://github.com/tninja/aider.el" :tag "v0.5.5")))
-  ;; (global-set-key (kbd "C-c a") 'aider-transient-menu)
-  (setq aider-args '("--model" "sonnet")))
+  ;; OpenCode handles its own auth (via `opencode auth login')
+  (setq agent-shell-opencode-authentication
+        (agent-shell-opencode-make-authentication :none t))
+  (agent-shell-make-environment-variables
+   "ANTHROPIC_API_KEY" (getenv "ANTHROPIC_API_KEY")
+   "OPENAI_API_KEY" (getenv "OPENAI_API_KEY"))
+  ;; Set OpenCode as the default agent
+  (setq agent-shell-preferred-agent-config
+        (agent-shell-opencode-make-agent-config))
+  ;; Prevent aggressive-indent-mode from interfering with agent edits
+  (setopt agent-shell-write-inhibit-minor-modes '(aggressive-indent-mode)))
 
 (use-package yaml-mode
   :init
