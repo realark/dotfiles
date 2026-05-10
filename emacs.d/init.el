@@ -1625,18 +1625,54 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     "C-<return>" #'comint-send-input)
   (general-def 'normal agent-shell-mode-map
     "RET" #'comint-send-input)
+
   :config
-  ;; OpenCode handles its own auth (via `opencode auth login')
+  ;; ----------------------------
+  ;; OpenCode config
+  ;; ----------------------------
   (setq agent-shell-opencode-authentication
         (agent-shell-opencode-make-authentication :none t))
-  (agent-shell-make-environment-variables
-   "ANTHROPIC_API_KEY" (getenv "ANTHROPIC_API_KEY")
-   "OPENAI_API_KEY" (getenv "OPENAI_API_KEY"))
-  ;; Set OpenCode as the default agent
+
+  ;; ----------------------------
+  ;; Claude / Anthropic config
+  ;; ----------------------------
+  (setq agent-shell-anthropic-authentication
+        (agent-shell-anthropic-make-authentication
+         :api-key
+         (lambda () (getenv "ANTHROPIC_API_KEY"))))
+
+  ;; Shared env vars
+  (setq agent-shell-anthropic-claude-environment
+        (agent-shell-make-environment-variables
+         "ANTHROPIC_API_KEY" (getenv "ANTHROPIC_API_KEY")
+         "OPENAI_API_KEY" (getenv "OPENAI_API_KEY")))
+
+  ;; ----------------------------
+  ;; Set default agent
+  ;; ----------------------------
   (setq agent-shell-preferred-agent-config
+        ;; claude code
+        ;; (agent-shell-anthropic-make-claude-code-config)
+        ;; opencode
         (agent-shell-opencode-make-agent-config))
-  ;; Prevent aggressive-indent-mode from interfering with agent edits
-  (setopt agent-shell-write-inhibit-minor-modes '(aggressive-indent-mode)))
+
+  ;; Prevent aggressive-indent-mode from interfering
+  (setopt agent-shell-write-inhibit-minor-modes
+          '(aggressive-indent-mode))
+
+  ;; Use session/load on resume so prior turns are replayed into the buffer.
+  (setq agent-shell-prefer-session-resume nil)
+
+  ;; Kill the buffer when the agent shell process exits
+  (defun my/agent-shell-kill-buffer-on-exit ()
+    (let ((proc (get-buffer-process (current-buffer))))
+      (when proc
+        (set-process-sentinel
+         proc
+         (lambda (p _event)
+           (when (eq (process-status p) 'exit)
+             (kill-buffer (process-buffer p))))))))
+  (add-hook 'agent-shell-mode-hook #'my/agent-shell-kill-buffer-on-exit))
 
 (use-package yaml-mode
   :init
