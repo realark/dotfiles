@@ -1432,6 +1432,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (defhydra hydra-orgmode (:color amaranth :columns 1)
     "Org Mode"
     ("a"  (org-agenda) "Agenda" :exit t)
+    ("A"  (org-agenda-list 10) "Agenda (14 days)" :exit t)
     ("c"  (progn
             (cfw:open-calendar-buffer
              :contents-sources
