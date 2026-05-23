@@ -182,7 +182,7 @@ update_everything() {
       ;;
     bazzite)
       sudo bash -c '
-        ujust update
+        rpm-ostree upgrade -r
 
         for cmd in "$@"; do
           eval "$cmd"
