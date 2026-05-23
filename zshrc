@@ -180,6 +180,15 @@ update_everything() {
         done
       ' bash "$@"
       ;;
+    bazzite)
+      sudo bash -c '
+        ujust update
+
+        for cmd in "$@"; do
+          eval "$cmd"
+        done
+      ' bash "$@"
+      ;;
     *)
       echo "unsupported os: $os_name"
       ;;
