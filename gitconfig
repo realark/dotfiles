@@ -70,6 +70,8 @@
   prune = true
   pruneTags = true
   recurseSubmodules = true
+[remote "origin"]
+	tagOpt = --tags
 # path specific overrides
 [includeIf "gitdir:~/braintrust/"]
   path = ~/braintrust/.gitconfig-braintrust
