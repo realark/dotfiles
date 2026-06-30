@@ -1653,6 +1653,8 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   ;; ----------------------------
   (setq agent-shell-preferred-agent-config
         ;; claude code
+        ;; brew install claude-code
+        ;; npm install -g @agentclientprotocol/claude-agent-acp
         ;; (agent-shell-anthropic-make-claude-code-config)
         ;; opencode
         (agent-shell-opencode-make-agent-config))
@@ -1673,7 +1675,102 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
          (lambda (p _event)
            (when (eq (process-status p) 'exit)
              (kill-buffer (process-buffer p))))))))
-  (add-hook 'agent-shell-mode-hook #'my/agent-shell-kill-buffer-on-exit))
+  (add-hook 'agent-shell-mode-hook #'my/agent-shell-kill-buffer-on-exit)
+
+  ;; ----------------------------------------------------------------
+  ;; OpenCode model/mode switching.
+  ;;
+  ;; opencode's ACP responses expose models/modes under a `configOptions'
+  ;; array instead of the top-level `models'/`modes' fields agent-shell's
+  ;; `agent-shell-set-session-model' expects, so the built-in C-c C-v
+  ;; reports "No session models available".
+  ;;
+  ;; We do two small things:
+  ;;   1. A lightweight advice captures `configOptions' from session
+  ;;      responses into a buffer-local var (no response rewriting).
+  ;;   2. A custom command reads that, prompts, and sends
+  ;;      `session/set_config_option'.
+  ;; ----------------------------------------------------------------
+  (defvar-local my/opencode-config-options nil
+    "Most recent opencode `configOptions' for this shell buffer.")
+
+  (defun my/agent-shell--capture-config-options-advice (orig-fn &rest args)
+    "Capture opencode `configOptions' from session responses into a buffer-local."
+    (let* ((request (plist-get args :request))
+           (method (map-elt request :method))
+           (buffer (plist-get args :buffer))
+           (on-success-pos (cl-position :on-success args :test #'eq)))
+      (if (and on-success-pos
+               (member method '("session/new" "session/load"
+                                "session/resume" "session/fork"
+                                "session/set_config_option")))
+          (let* ((orig-on-success (nth (1+ on-success-pos) args))
+                 (wrapped (lambda (acp-response)
+                            (when-let ((opts (map-elt acp-response 'configOptions)))
+                              (when (buffer-live-p buffer)
+                                (with-current-buffer buffer
+                                  (setq my/opencode-config-options opts))))
+                            (when orig-on-success
+                              (funcall orig-on-success acp-response)))))
+            (apply orig-fn (append (seq-subseq args 0 (1+ on-success-pos))
+                                   (list wrapped)
+                                   (seq-subseq args (+ on-success-pos 2)))))
+        (apply orig-fn args))))
+
+  (advice-add 'agent-shell--send-request :around
+              #'my/agent-shell--capture-config-options-advice)
+
+  (defun my/agent-shell-opencode-set-config-option (config-id prompt)
+    "Set opencode CONFIG-ID (e.g. \"model\" or \"mode\") via completing-read PROMPT."
+    (unless (derived-mode-p 'agent-shell-mode)
+      (user-error "Not in an agent-shell buffer"))
+    (let* ((state (agent-shell--state))
+           (session-id (map-nested-elt state '(:session :id))))
+      (unless session-id
+        (user-error "No active session"))
+      (let* ((opt (seq-find (lambda (o)
+                              (equal (format "%s" (map-elt o 'id)) config-id))
+                            my/opencode-config-options))
+             (_ (unless opt
+                  (user-error "No %s options available (start sending a prompt first)"
+                              config-id)))
+             (current (map-elt opt 'currentValue))
+             (choices (mapcar (lambda (o)
+                                (cons (format "%s%s"
+                                              (map-elt o 'name)
+                                              (if (equal (map-elt o 'value) current)
+                                                  " (current)" ""))
+                                      (map-elt o 'value)))
+                              (map-elt opt 'options)))
+             (selection (completing-read prompt (mapcar #'car choices) nil t))
+             (value (cdr (assoc selection choices))))
+        (unless value
+          (user-error "Unknown selection: %s" selection))
+        (agent-shell--send-request
+         :state state
+         :client (map-elt state :client)
+         :request (acp-make-session-set-config-option-request
+                   :session-id session-id
+                   :config-id config-id
+                   :value value)
+         :buffer (current-buffer)
+         :on-success (lambda (_resp) (message "opencode %s: %s" config-id value))
+         :on-failure (lambda (err &rest _) (message "Failed to set %s: %s" config-id err))))))
+
+  ;; Override the built-in model/mode commands (which don't work with
+  ;; opencode's configOptions) in all states.
+  ;; (define-key agent-shell-mode-map (kbd "C-c C-v") #'my/agent-shell-opencode-set-model)
+  ;; (define-key agent-shell-mode-map (kbd "C-c C-m") #'my/agent-shell-opencode-set-mode)
+
+  (defun my/agent-shell-opencode-set-model ()
+    "Set the opencode session model."
+    (interactive)
+    (my/agent-shell-opencode-set-config-option "model" "Set model: "))
+
+  (defun my/agent-shell-opencode-set-mode ()
+    "Set the opencode session mode."
+    (interactive)
+    (my/agent-shell-opencode-set-config-option "mode" "Set mode: ")))
 
 (use-package yaml-mode
   :init
