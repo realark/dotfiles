@@ -21,4 +21,5 @@ arkdev
 .aider*
 .idea/
 .claude/
+.opencode/
 /.agent-shell/
