@@ -1420,7 +1420,9 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   :mode ("\\.org$" . org-mode)
   :general
   ("C-x c" #'hydra-orgmode/body
-   "C-x a" #'org-agenda-list)
+   "C-x a" (lambda ()
+             (interactive)
+             (org-agenda-list 3)))
   (:states 'normal :keymaps 'org-agenda-mode-map
            "M-k"     #'org-agenda-drag-line-backward
            "M-j"     #'org-agenda-drag-line-forward
