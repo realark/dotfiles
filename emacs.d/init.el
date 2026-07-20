@@ -1668,6 +1668,9 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   ;; Use session/load on resume so prior turns are replayed into the buffer.
   (setq agent-shell-prefer-session-resume nil)
 
+  ;; Start with an empty prompt, or region if active
+  (setq agent-shell-context-sources '(region))
+
   ;; Kill the buffer when the agent shell process exits
   (defun my/agent-shell-kill-buffer-on-exit ()
     (let ((proc (get-buffer-process (current-buffer))))
