@@ -1654,12 +1654,12 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   ;; Set default agent
   ;; ----------------------------
   (setq agent-shell-preferred-agent-config
+        ;; opencode
+        ;; (agent-shell-opencode-make-agent-config)
         ;; claude code
         ;; brew install claude-code
         ;; npm install -g @agentclientprotocol/claude-agent-acp
-        ;; (agent-shell-anthropic-make-claude-code-config)
-        ;; opencode
-        (agent-shell-opencode-make-agent-config))
+        (agent-shell-anthropic-make-claude-code-config))
 
   ;; Prevent aggressive-indent-mode from interfering
   (setopt agent-shell-write-inhibit-minor-modes
@@ -1680,24 +1680,30 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (add-hook 'agent-shell-mode-hook #'my/agent-shell-kill-buffer-on-exit)
 
   ;; ----------------------------------------------------------------
-  ;; OpenCode model/mode switching.
+  ;; Session model/mode switching via ACP `configOptions'.
   ;;
-  ;; opencode's ACP responses expose models/modes under a `configOptions'
-  ;; array instead of the top-level `models'/`modes' fields agent-shell's
-  ;; `agent-shell-set-session-model' expects, so the built-in C-c C-v
-  ;; reports "No session models available".
+  ;; Both opencode and Claude Code (@agentclientprotocol/claude-agent-acp)
+  ;; expose models/modes/effort under a `configOptions' array rather than
+  ;; the top-level `models'/`modes' fields agent-shell's built-in
+  ;; `agent-shell-set-session-model' (C-c C-v) expects -- so the built-in
+  ;; reports "No session models available" for both agents.  (Claude Code's
+  ;; adapter docs note model selection "moved entirely into
+  ;; SessionConfigOption (category \"model\")".)
   ;;
-  ;; We do two small things:
+  ;; The mechanism is identical across agents, so these helpers are
+  ;; backend-agnostic.  We do two small things:
   ;;   1. A lightweight advice captures `configOptions' from session
   ;;      responses into a buffer-local var (no response rewriting).
   ;;   2. A custom command reads that, prompts, and sends
   ;;      `session/set_config_option'.
+  ;;
+  ;; Config-option ids seen in the wild: "model", "mode", "effort", "agent".
   ;; ----------------------------------------------------------------
-  (defvar-local my/opencode-config-options nil
-    "Most recent opencode `configOptions' for this shell buffer.")
+  (defvar-local my/agent-shell-config-options nil
+    "Most recent ACP `configOptions' for this shell buffer.")
 
   (defun my/agent-shell--capture-config-options-advice (orig-fn &rest args)
-    "Capture opencode `configOptions' from session responses into a buffer-local."
+    "Capture ACP `configOptions' from session responses into a buffer-local."
     (let* ((request (plist-get args :request))
            (method (map-elt request :method))
            (buffer (plist-get args :buffer))
@@ -1711,7 +1717,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                             (when-let ((opts (map-elt acp-response 'configOptions)))
                               (when (buffer-live-p buffer)
                                 (with-current-buffer buffer
-                                  (setq my/opencode-config-options opts))))
+                                  (setq my/agent-shell-config-options opts))))
                             (when orig-on-success
                               (funcall orig-on-success acp-response)))))
             (apply orig-fn (append (seq-subseq args 0 (1+ on-success-pos))
@@ -1722,8 +1728,10 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   (advice-add 'agent-shell--send-request :around
               #'my/agent-shell--capture-config-options-advice)
 
-  (defun my/agent-shell-opencode-set-config-option (config-id prompt)
-    "Set opencode CONFIG-ID (e.g. \"model\" or \"mode\") via completing-read PROMPT."
+  (defun my/agent-shell-set-config-option (config-id prompt)
+    "Set ACP CONFIG-ID (e.g. \"model\" or \"mode\") via completing-read PROMPT.
+Works with any agent-shell backend that exposes `configOptions'
+\(opencode, Claude Code, ...)."
     (unless (derived-mode-p 'agent-shell-mode)
       (user-error "Not in an agent-shell buffer"))
     (let* ((state (agent-shell--state))
@@ -1732,7 +1740,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
         (user-error "No active session"))
       (let* ((opt (seq-find (lambda (o)
                               (equal (format "%s" (map-elt o 'id)) config-id))
-                            my/opencode-config-options))
+                            my/agent-shell-config-options))
              (_ (unless opt
                   (user-error "No %s options available (start sending a prompt first)"
                               config-id)))
@@ -1756,23 +1764,28 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                    :config-id config-id
                    :value value)
          :buffer (current-buffer)
-         :on-success (lambda (_resp) (message "opencode %s: %s" config-id value))
+         :on-success (lambda (_resp) (message "agent %s: %s" config-id value))
          :on-failure (lambda (err &rest _) (message "Failed to set %s: %s" config-id err))))))
 
   ;; Override the built-in model/mode commands (which don't work with
-  ;; opencode's configOptions) in all states.
-  ;; (define-key agent-shell-mode-map (kbd "C-c C-v") #'my/agent-shell-opencode-set-model)
-  ;; (define-key agent-shell-mode-map (kbd "C-c C-m") #'my/agent-shell-opencode-set-mode)
+  ;; configOptions-based agents) in all states.
+  ;; (define-key agent-shell-mode-map (kbd "C-c C-v") #'my/agent-shell-set-model)
+  ;; (define-key agent-shell-mode-map (kbd "C-c C-m") #'my/agent-shell-set-mode)
 
-  (defun my/agent-shell-opencode-set-model ()
-    "Set the opencode session model."
+  (defun my/agent-shell-set-model ()
+    "Set the agent-shell session model."
     (interactive)
-    (my/agent-shell-opencode-set-config-option "model" "Set model: "))
+    (my/agent-shell-set-config-option "model" "Set model: "))
 
-  (defun my/agent-shell-opencode-set-mode ()
-    "Set the opencode session mode."
+  (defun my/agent-shell-set-mode ()
+    "Set the agent-shell session mode."
     (interactive)
-    (my/agent-shell-opencode-set-config-option "mode" "Set mode: ")))
+    (my/agent-shell-set-config-option "mode" "Set mode: "))
+
+  (defun my/agent-shell-set-effort ()
+    "Set the agent-shell session effort level (Claude Code)."
+    (interactive)
+    (my/agent-shell-set-config-option "effort" "Set effort: ")))
 
 (use-package yaml-mode
   :init
