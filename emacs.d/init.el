@@ -1790,6 +1790,21 @@ Works with any agent-shell backend that exposes `configOptions'
     (interactive)
     (my/agent-shell-set-config-option "effort" "Set effort: ")))
 
+(use-package agent-shell-manager
+  :vc (:url "https://github.com/jethrokuan/agent-shell-manager")
+  :demand t
+  :after agent-shell
+  :commands (agent-shell-manager-toggle))
+
+(use-package agent-shell-pet
+  :vc (:url "https://github.com/lgmoneda/agent-shell-pet")
+  :demand t
+  :after agent-shell
+  :config
+  (setq-default agent-shell-pet-renderer 'macos-native
+                agent-shell-pet-speech-bubble-theme 'dark
+                agent-shell-pet-size 'medium))
+
 (use-package yaml-mode
   :init
   :general
