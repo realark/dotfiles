@@ -1640,15 +1640,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   ;; Claude / Anthropic config
   ;; ----------------------------
   (setq agent-shell-anthropic-authentication
-        (agent-shell-anthropic-make-authentication
-         :api-key
-         (lambda () (getenv "ANTHROPIC_API_KEY"))))
-
-  ;; Shared env vars
-  (setq agent-shell-anthropic-claude-environment
-        (agent-shell-make-environment-variables
-         "ANTHROPIC_API_KEY" (getenv "ANTHROPIC_API_KEY")
-         "OPENAI_API_KEY" (getenv "OPENAI_API_KEY")))
+        (agent-shell-anthropic-make-authentication :login t))
 
   ;; ----------------------------
   ;; Set default agent
@@ -2223,8 +2215,6 @@ position of the outside of the paren.  Otherwise return nil."
   :config
   ;; (when (memq window-system '(mac ns x)))
   (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-env "OPENAI_API_KEY")
-  (exec-path-from-shell-copy-env "ANTHROPIC_API_KEY")
   (exec-path-from-shell-copy-env "JAVA_HOME")
   (exec-path-from-shell-copy-env "PATH"))
 
