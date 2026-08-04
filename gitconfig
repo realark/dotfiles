@@ -75,3 +75,5 @@
 # path specific overrides
 [includeIf "gitdir:~/braintrust/"]
   path = ~/braintrust/.gitconfig-braintrust
+[url "git@github.com:realark/"]
+	insteadOf = https://github.com/realark/
