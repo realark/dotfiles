@@ -2072,7 +2072,7 @@ position of the outside of the paren.  Otherwise return nil."
   :config
   (defvar my-java-location
     (concat (getenv "HOME")
-            "/.sdkman/candidates/java/21.0.9-tem/bin/java"))
+            "/.sdkman/candidates/java/21-tem/bin/java"))
   (unless (file-exists-p my-java-location)
     (error (concat "java not found: " my-java-location)))
 
