@@ -74,12 +74,16 @@
 ;; https://www.reddit.com/r/emacs/comments/1gjlv1z/why_is_emacs_grep_command_pinging_external_servers/
 (setq ffap-machine-p-known 'reject)
 
+(defvar *my-gc-cons-threshold* (* 100 1024 1024))
+
+(setq gc-cons-threshold *my-gc-cons-threshold*)
+
 (defun my-minibuffer-setup-hook ()
   "Disable GC in the minibuffer."
   (setq gc-cons-threshold most-positive-fixnum))
 (defun my-minibuffer-exit-hook ()
   "Re-enable GC after minibuffer exit."
-  (setq gc-cons-threshold 800000))
+  (setq gc-cons-threshold *my-gc-cons-threshold*))
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
