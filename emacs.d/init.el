@@ -1621,7 +1621,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
     "TAB" #'markdown-cycle)
   :init
   ;; coleslaw blogging
-  (add-to-list auto-mode-alist '("\\.post\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.post\\'" . markdown-mode))
   (setq-default markdown-command "multimarkdown"))
 
 (use-package agent-shell
