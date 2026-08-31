@@ -1616,7 +1616,45 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
 (use-package agent-shell
   :demand t
+  :preface
+  (defvar ark/agent-shell-display-action
+    '((display-buffer-reuse-window display-buffer-in-direction)
+      (direction . right)
+      (window-width . 0.5))
+    "`display-buffer' action placing the agent shell in a right-hand split.")
+
+  (defun ark/agent-shell-window ()
+    "Return a window in the selected frame showing an agent shell, if any."
+    (seq-find (lambda (window)
+                (with-current-buffer (window-buffer window)
+                  (derived-mode-p 'agent-shell-mode
+                                  'agent-shell-viewport-view-mode
+                                  'agent-shell-viewport-edit-mode)))
+              (window-list nil 'never)))
+
+  (defun ark/toggle-agent-shell ()
+    "Toggle agent-shell in a vertical split window.
+
+When an agent shell is visible in the current frame, delete its window
+\(the buffer and its session are left alone).  Otherwise show this
+project's most recent agent shell -- starting one if there is none -- in
+a split on the right."
+    (interactive)
+    (if-let* ((window (ark/agent-shell-window)))
+        (if (one-window-p 'never)
+            (switch-to-prev-buffer window 'bury)
+          (delete-window window))
+      (if-let* ((buffer (or (seq-first (agent-shell-project-buffers))
+                            (seq-first (agent-shell-buffers)))))
+          (select-window (display-buffer buffer ark/agent-shell-display-action))
+        (let ((agent-shell-display-action ark/agent-shell-display-action))
+          (agent-shell-start :config (or (agent-shell--auto-preferred-config)
+                                         (agent-shell-select-config
+                                          :prompt "Start new agent: ")
+                                         (error "No agent config found")))))))
+
   :general
+  ("S-<f9>" #'ark/toggle-agent-shell)
   (general-def 'insert agent-shell-mode-map
     "RET" #'newline
     "C-<return>" #'comint-send-input)
