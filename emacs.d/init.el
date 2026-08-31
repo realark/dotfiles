@@ -935,21 +935,22 @@ EOF"
 (use-package treesit-auto
   :demand t
   :init
-  ;; (setq-default treesit-auto-install 'prompt)
-  (setq-default treesit-auto-install 'no-error)
+  (setq-default treesit-auto-install 'prompt)
   :config
-  ;; (treesit-auto-add-to-auto-mode-alist 'all)
-  (treesit-auto-add-to-auto-mode-alist
-   '(typescript
-     javascript
-     html
-     css
-     python
-     json
-     yaml
-     proto
-     bash
-     markdown))
+  (defvar ark/treesit-available-cache (make-hash-table :test #'eq))
+  (define-advice treesit-language-available-p (:around (orig lang &optional detail) ark/memoize)
+    (if detail
+        (funcall orig lang detail)
+      (let ((hit (gethash lang ark/treesit-available-cache 'miss)))
+        (if (eq hit 'miss)
+            (puthash lang (funcall orig lang) ark/treesit-available-cache)
+          hit))))
+  (define-advice treesit-install-language-grammar (:after (&rest _) ark/flush)
+    (clrhash ark/treesit-available-cache))
+
+  ;; `all' rather than an explicit list: unlisted languages never routed to a
+  ;; ts-mode, so they never triggered the install prompt. Costs nothing now.
+  (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
 (progn ; folding
