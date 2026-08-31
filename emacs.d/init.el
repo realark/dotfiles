@@ -1829,6 +1829,25 @@ Works with any agent-shell backend that exposes `configOptions'
                 agent-shell-pet-speech-bubble-theme 'dark
                 agent-shell-pet-size 'medium))
 
+(use-package agent-shell-hq
+  :init
+  ;; The peek posframe installs `agent-shell-hq-peek-map' with
+  ;; `use-local-map', but evil's state keymaps live in
+  ;; `emulation-mode-map-alists' and shadow the local map entirely: the
+  ;; buffer lands in normal state, so j/k just moved point and q ran our
+  ;; global normal-state `widen-or-quit-window' (which quit the posframe
+  ;; window).  Start the peek buffer in emacs state so its own map wins.
+  (with-eval-after-load 'evil
+    (add-to-list 'evil-buffer-regexps '("\\` \\*agent-shell-hq-peek\\*" . emacs)))
+  :general
+  ("S-<f8>" #'agent-shell-hq-peek)
+  (:keymaps 'agent-shell-hq-peek-map
+            "j"     #'agent-shell-hq-peek-next
+            "k"     #'agent-shell-hq-peek-prev
+            "q"   #'agent-shell-hq-peek-quit)
+  :after agent-shell
+  :vc (:url "https://github.com/SreenivasVRao/agent-shell-hq"
+       :rev "ffe644a05de365623364ae8abeb5aab34b5279f7"))
 
 (use-package highlight-indentation
   ;; yaml-ts-mode has no indent-offset var for
