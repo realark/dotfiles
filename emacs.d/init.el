@@ -202,18 +202,7 @@
           (progn
             (replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ start) end)
             (downcase-region start (cdr (bounds-of-thing-at-point 'symbol))))))
-      (goto-char start)))
-
-  ;; https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
-  (defun aj-toggle-fold ()
-    "Toggle fold all lines larger than indentation on current line"
-    (interactive)
-    (let ((col 1))
-      (save-excursion
-        (back-to-indentation)
-        (setq col (+ 1 (current-column)))
-        (set-selective-display
-         (if selective-display nil (or col 1)))))))
+      (goto-char start))))
 
 ;; Customize scratch buffer
 (progn
@@ -955,7 +944,7 @@ EOF"
 
 (progn ; folding
   (general-def
-    :states 'normal :keymaps 'prog-mode-map
+    :states 'normal :keymaps '(prog-mode-map yaml-ts-mode-map)
     "<tab>" (lambda ()
               (interactive)
               (cond
@@ -1802,16 +1791,12 @@ Works with any agent-shell backend that exposes `configOptions'
                 agent-shell-pet-speech-bubble-theme 'dark
                 agent-shell-pet-size 'medium))
 
-(use-package yaml-mode
-  :init
-  :general
-  (general-def 'normal yaml-mode-map
-    "TAB" #'aj-toggle-fold)
-  :mode (("\\.yaml\\'" . yaml-mode)
-         ("\\.yml\\'" . yaml-mode)))
 
 (use-package highlight-indentation
-  :hook ((yaml-mode . highlight-indentation-current-column-mode)))
+  ;; yaml-ts-mode has no indent-offset var for
+  ;; `highlight-indentation-guess-offset' to find, so pin the fallback to 2.
+  :init (setq highlight-indentation-offset 2)
+  :hook ((yaml-ts-mode . highlight-indentation-current-column-mode)))
 
 (use-package graphviz-dot-mode
   :mode ("\\.dot$" . graphviz-dot-mode))
