@@ -1404,7 +1404,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
 
 (use-package hl-todo
   :custom-face
-  (hl-todo ((t (:inherit hl-todo :italic t))))
+  (hl-todo ((t (:bold t :foreground "#cc9393" :italic t))))
   :hook ((prog-mode . hl-todo-mode)))
 
 (use-package csv-mode)
