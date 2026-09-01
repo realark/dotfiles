@@ -1,4 +1,4 @@
-;;; sticky-windows.el --- Make windows stay visible
+;;; sticky-windows.el --- Make windows stay visible  -*- lexical-binding: t; -*-
 ;;;
 ;;; Commentary:
 ;;;

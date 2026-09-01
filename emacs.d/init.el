@@ -239,28 +239,8 @@
                  "http://melpa.org/packages/"))
   (package-initialize)
 
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name
-          "straight/repos/straight.el/bootstrap.el"
-          (or (bound-and-true-p straight-base-dir)
-              user-emacs-directory)))
-        (bootstrap-version 7)
-        ;; master as of 2025-03-30
-        (straight-version "483b205efb2eaa6be7c0dc7078b8c9dafcffb318"))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           (concatenate 'string
-                        "https://raw.githubusercontent.com/radian-software/straight.el/"
-                        straight-version
-                        "/install.el")
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-
-  (straight-use-package 'use-package)
+  ;; use-package is bundled with Emacs since 29.1.
+  (require 'use-package)
 
   (setq-default use-package-always-defer t
                 use-package-always-ensure t))
@@ -284,9 +264,10 @@
     (delight 'auto-revert-mode nil 'autorevert))
 
   ;; Theme. For ideas: https://emacsthemes.com/popular/index.html
-  (defadvice load-theme (before theme-dont-propagate activate)
-    "Reset to standard theme before switching to a new one"
+  (defun theme-dont-propagate (&rest _)
+    "Reset to standard theme before switching to a new one."
     (mapc #'disable-theme custom-enabled-themes))
+  (advice-add 'load-theme :before #'theme-dont-propagate)
 
   (use-package moe-theme
     :ensure :defer
@@ -964,9 +945,8 @@ EOF"
 
   (use-package treesit-fold
     :demand t
-    :straight (treesit-fold :type git :host github
-                            :repo "emacs-tree-sitter/treesit-fold"
-                            :commit "54d6b693780b64d4a0d491e25463d7059fcef483")
+    :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
+         :rev "54d6b693780b64d4a0d491e25463d7059fcef483")
     :hook ((python-ts-mode . treesit-fold-mode)))
 
   (use-package hideshow
@@ -1741,7 +1721,7 @@ a split on the right."
                                 "session/set_config_option")))
           (let* ((orig-on-success (nth (1+ on-success-pos) args))
                  (wrapped (lambda (acp-response)
-                            (when-let ((opts (map-elt acp-response 'configOptions)))
+                            (when-let* ((opts (map-elt acp-response 'configOptions)))
                               (when (buffer-live-p buffer)
                                 (with-current-buffer buffer
                                   (setq my/agent-shell-config-options opts))))
