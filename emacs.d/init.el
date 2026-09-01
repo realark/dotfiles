@@ -74,7 +74,9 @@
 ;; https://www.reddit.com/r/emacs/comments/1gjlv1z/why_is_emacs_grep_command_pinging_external_servers/
 (setq ffap-machine-p-known 'reject)
 
-(defvar *my-gc-cons-threshold* (* 100 1024 1024))
+(defvar *my-gc-cons-threshold*
+  (* 512 1024 1024) ; leading number is mb
+  "custom gc cons threshold")
 
 (setq gc-cons-threshold *my-gc-cons-threshold*)
 
@@ -756,6 +758,13 @@ _k_prev      _J_: lower           _>_: base/lower
 
 (use-package flyspell-correct
   :after flyspell)
+
+(use-package flyspell-lazy
+  :after flyspell
+  :config
+  (setq flyspell-lazy-idle-seconds 1
+        flyspell-lazy-window-idle-seconds 3)
+  (flyspell-lazy-mode 1))
 
 (use-package frog-menu
   :after flyspell-correct
@@ -1509,14 +1518,38 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
                   (:auto-category t))))
 
 (progn ;breadcrumbs for org files
+  (defvar my/org-breadcrumb-idle-delay 1.5
+    "Idle seconds before the org breadcrumb header is recomputed.")
+  (defvar my/org-breadcrumb--timer nil
+    "Pending debounce timer for the org breadcrumb header.")
+  (defvar-local my/org-breadcrumb--last-heading nil
+    "Position of the heading the breadcrumb was last computed for.")
+
   (defun my/org-breadcrumb-header ()
+    "Recompute the breadcrumb header, but only if the heading changed.
+This is the expensive part (walks the outline path + refontifies the
+header line), so it is guarded and only runs from an idle timer."
     (when (derived-mode-p 'org-mode)
       (ignore-errors ; to prevent issues if you're before the first header
-        (setq header-line-format
-              (org-format-outline-path (org-get-outline-path t) 80)))))
+        (let ((heading (save-excursion
+                         (unless (org-before-first-heading-p)
+                           (org-back-to-heading t)
+                           (point)))))
+          (unless (eql heading my/org-breadcrumb--last-heading)
+            (setq my/org-breadcrumb--last-heading heading)
+            (setq header-line-format
+                  (org-format-outline-path (org-get-outline-path t) 80)))))))
+
+  (defun my/org-breadcrumb-schedule ()
+    "Debounce: (re)arm the idle timer instead of recomputing now."
+    (when (timerp my/org-breadcrumb--timer)
+      (cancel-timer my/org-breadcrumb--timer))
+    (setq my/org-breadcrumb--timer
+          (run-with-idle-timer my/org-breadcrumb-idle-delay nil
+                               #'my/org-breadcrumb-header)))
 
   (defun my/org-setup-breadcrumbs ()
-    (add-hook 'post-command-hook #'my/org-breadcrumb-header nil t))
+    (add-hook 'post-command-hook #'my/org-breadcrumb-schedule nil t))
 
   (add-hook 'org-mode-hook #'my/org-setup-breadcrumbs))
 
