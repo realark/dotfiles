@@ -1855,9 +1855,10 @@ Works with any agent-shell backend that exposes `configOptions'
   :general
   ("S-<f8>" #'agent-shell-hq-peek)
   (:keymaps 'agent-shell-hq-peek-map
-            "j"     #'agent-shell-hq-peek-next
-            "k"     #'agent-shell-hq-peek-prev
-            "q"   #'agent-shell-hq-peek-quit)
+            "j"        #'agent-shell-hq-peek-next
+            "k"        #'agent-shell-hq-peek-prev
+            "S-<f8>"   #'agent-shell-hq-peek-quit
+            "q"        #'agent-shell-hq-peek-quit)
   :after agent-shell
   :vc (:url "https://github.com/SreenivasVRao/agent-shell-hq"
        :rev "ffe644a05de365623364ae8abeb5aab34b5279f7"))
