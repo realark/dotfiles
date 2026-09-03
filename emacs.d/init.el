@@ -1407,16 +1407,111 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
              (interactive)
              (org-agenda-list 3)))
   (:states 'normal :keymaps 'org-agenda-mode-map
-           "M-k"     #'org-agenda-drag-line-backward
-           "M-j"     #'org-agenda-drag-line-forward
+           "M-k"     #'my/org-agenda-move-up
+           "M-j"     #'my/org-agenda-move-down
            "L"     #'org-agenda-do-date-later
            "H"     #'org-agenda-do-date-earlier
+           "G"     #'org-agenda-redo-all
            "x" (lambda ()
                  (interactive)
                  (org-agenda-todo "DONE"))
            "D"     #'org-agenda-kill)
   :delight org-indent-mode nil org-indent
   :init
+  ;;;;;; org agenda moving utils
+  (defun my/org-agenda-entry-marker ()
+    "Return the Org source marker for the current agenda line."
+    (or (org-get-at-bol 'org-marker)
+        (org-get-at-bol 'org-hd-marker)))
+
+  (defun my/org-agenda-neighbor-marker (direction)
+    "Find the nearest agenda entry in DIRECTION, either 1 or -1."
+    (save-excursion
+      (let (marker)
+        (while (and (not marker)
+                    (= (forward-line direction) 0))
+          (setq marker (my/org-agenda-entry-marker)))
+        marker)))
+
+  (defun my/org-marker-heading-info (marker)
+    "Return (BUFFER POSITION LEVEL PARENT-POSITION) for MARKER."
+    (org-with-point-at marker
+      (org-back-to-heading t)
+      (list (current-buffer)
+            (point)
+            (org-outline-level)
+            (save-excursion
+              (when (org-up-heading-safe)
+                (point))))))
+
+  (defun my/org-agenda-move-relative (direction)
+    "Move agenda task across its visible neighbor in DIRECTION.
+
+DIRECTION should be -1 for upward and 1 for downward."
+    (let* ((selected-marker (my/org-agenda-entry-marker))
+           (neighbor-marker
+            (my/org-agenda-neighbor-marker direction)))
+
+      (unless selected-marker
+        (user-error "Current agenda line is not an Org task"))
+
+      (unless neighbor-marker
+        (user-error "No agenda task in that direction"))
+
+      ;; Copies remain usable while subtrees are moved.
+      (setq selected-marker (copy-marker selected-marker)
+            neighbor-marker (copy-marker neighbor-marker))
+
+      (let* ((selected-info
+              (my/org-marker-heading-info selected-marker))
+             (neighbor-info
+              (my/org-marker-heading-info neighbor-marker))
+             (selected-buffer (nth 0 selected-info))
+             (neighbor-buffer (nth 0 neighbor-info))
+             (selected-level (nth 2 selected-info))
+             (neighbor-level (nth 2 neighbor-info))
+             (selected-parent (nth 3 selected-info))
+             (neighbor-parent (nth 3 neighbor-info)))
+
+        ;; Perform every validation before changing the source file.
+        (unless (and (eq selected-buffer neighbor-buffer)
+                     (= selected-level neighbor-level)
+                     (equal selected-parent neighbor-parent))
+          (user-error "Agenda tasks are not siblings in the same Org tree"))
+
+        (when (= (marker-position selected-marker)
+                 (marker-position neighbor-marker))
+          (user-error "Both agenda entries refer to the same task"))
+
+        (org-with-point-at selected-marker
+          (org-back-to-heading t)
+
+          (if (< direction 0)
+              ;; Keep moving until selected is immediately above neighbor.
+              (while (> (point) (marker-position neighbor-marker))
+                (org-move-subtree-up 1)
+                (org-back-to-heading t))
+
+            ;; Keep moving until selected is immediately below neighbor.
+            (while (< (point) (marker-position neighbor-marker))
+              (org-move-subtree-down 1)
+              (org-back-to-heading t)))
+
+          (save-buffer)))
+
+      (set-marker selected-marker nil)
+      (set-marker neighbor-marker nil)
+      (org-agenda-redo)))
+
+  (defun my/org-agenda-move-up ()
+    (interactive)
+    (my/org-agenda-move-relative -1))
+
+  (defun my/org-agenda-move-down ()
+    (interactive)
+    (my/org-agenda-move-relative 1))
+  ;;;;;;
+
   (defhydra hydra-orgmode (:color amaranth :columns 1)
     "Org Mode"
     ("a"  (org-agenda) "Agenda" :exit t)
