@@ -1782,19 +1782,31 @@ a split on the right."
   ;; ----------------------------
   ;; Claude / Anthropic config
   ;; ----------------------------
+  ;; npm install -g @agentclientprotocol/claude-agent-acp
   (setq agent-shell-anthropic-authentication
         (agent-shell-anthropic-make-authentication :login t))
+
+  ;; ----------------------------
+  ;; Pi coding agent config
+  ;; ----------------------------
+  ;; npm install -g pi-acp
+  (setq agent-shell-pi-acp-command '("pi-acp"))
+
+  ;; ----------------------------
+  ;; Oh My Pi config
+  ;; ----------------------------
+  ;; bun install -g @oh-my-pi/pi-coding-agent
+  (setq agent-shell-omp-acp-command '("omp" "acp"))
 
   ;; ----------------------------
   ;; Set default agent
   ;; ----------------------------
   (setq agent-shell-preferred-agent-config
-        ;; opencode
-        ;; (agent-shell-opencode-make-agent-config)
-        ;; claude code
-        ;; brew install claude-code
-        ;; npm install -g @agentclientprotocol/claude-agent-acp
-        (agent-shell-anthropic-make-claude-code-config))
+        (or ;; first wins
+         (agent-shell-omp-make-agent-config)
+         (agent-shell-pi-make-agent-config)
+         (agent-shell-anthropic-make-claude-code-config)
+         (agent-shell-opencode-make-agent-config)))
 
   ;; Prevent aggressive-indent-mode from interfering
   (setopt agent-shell-write-inhibit-minor-modes
