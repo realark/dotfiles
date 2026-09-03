@@ -1411,6 +1411,9 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
            "M-j"     #'org-agenda-drag-line-forward
            "L"     #'org-agenda-do-date-later
            "H"     #'org-agenda-do-date-earlier
+           "x" (lambda ()
+                 (interactive)
+                 (org-agenda-todo "DONE"))
            "D"     #'org-agenda-kill)
   :delight org-indent-mode nil org-indent
   :init
@@ -1430,7 +1433,7 @@ The first two elements must be a 1:1 unique mapping of major-modes.")
   :config
   (setq-default
    org-agenda-show-future-repeats nil
-   org-todo-keywords '("TODO(t)" "DOING(o)" "|" "DONE(d!)" "SKIP(s!)")
+   org-todo-keywords '((sequence "TODO(t)" "DOING(o)" "|" "DONE(d)" "SKIP(s)"))
    org-startup-indented t
    ;; fontify code in code blocks
    org-src-fontify-natively t
