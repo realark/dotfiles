@@ -160,6 +160,23 @@
             (set-visited-file-name new-name)
             (set-buffer-modified-p nil))))))
 
+  (defun delete-file-and-buffer ()
+    "Delete the current buffer's file and kill the buffer.
+Always ask for confirmation, noting any unsaved changes in the prompt."
+    (interactive)
+    (let ((filename (buffer-file-name)))
+      (unless filename
+        (user-error "Buffer '%s' is not visiting a file" (buffer-name)))
+      (when (yes-or-no-p
+             (format "Delete %s%s? "
+                     (abbreviate-file-name filename)
+                     (if (buffer-modified-p)
+                         " (buffer has unsaved changes)"
+                       "")))
+        (delete-file filename)
+        (set-buffer-modified-p nil)
+        (kill-buffer (current-buffer)))))
+
   (defun revert-all-buffers ()
     "Refreshes all open buffers from their respective files."
     (interactive)
