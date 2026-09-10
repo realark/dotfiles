@@ -1979,6 +1979,24 @@ Works with any agent-shell backend that exposes `configOptions'
   ;; window).  Start the peek buffer in emacs state so its own map wins.
   (with-eval-after-load 'evil
     (add-to-list 'evil-buffer-regexps '("\\` \\*agent-shell-hq-peek\\*" . emacs)))
+  (defun ark/agent-shell-hq-peek--restore-origin-focus (&rest _)
+    "Restore native focus to the origin frame after dismissing peek."
+    (when-let* ((win agent-shell-hq-peek--origin-window)
+                ((window-live-p win))
+                (frame (window-frame win))
+                ((frame-live-p frame))
+                ((display-graphic-p frame))
+                ((not (get-buffer agent-shell-hq-peek--buffer-name))))
+      (select-window win)
+      ;; With only one frame left, `select-frame-set-input-focus' does not
+      ;; call `x-focus-frame', leaving macOS's native window inactive.
+      (select-frame-set-input-focus frame)
+      (x-focus-frame frame)))
+  (with-eval-after-load 'agent-shell-hq-peek
+    (advice-add #'agent-shell-hq-peek-quit :after
+                #'ark/agent-shell-hq-peek--restore-origin-focus)
+    (advice-add #'agent-shell-hq-peek-select :after
+                #'ark/agent-shell-hq-peek--restore-origin-focus))
   :general
   ("S-<f8>" #'agent-shell-hq-peek)
   (:keymaps 'agent-shell-hq-peek-map
