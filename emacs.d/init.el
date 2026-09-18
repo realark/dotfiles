@@ -1782,6 +1782,7 @@ a split on the right."
                                          (error "No agent config found")))))))
 
   :general
+  ("C-<f9>" #'agent-shell-new-shell)
   ("S-<f9>" #'ark/toggle-agent-shell)
   (general-def 'insert agent-shell-mode-map
     "RET" #'newline
