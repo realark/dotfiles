@@ -648,6 +648,9 @@ _k_prev      _J_: lower           _>_: base/lower
 (use-package noflet
   :commands (noflet))
 
+(use-package rg
+  :commands rg-run)
+
 ;; Projectile
 (use-package projectile
   :demand t
@@ -655,11 +658,12 @@ _k_prev      _J_: lower           _>_: base/lower
   (projectile-mode)
   :config
   (setq-default projectile-completion-system 'ivy
+                projectile-search-backend 'ripgrep
                 projectile-globally-ignored-directories (remove-duplicates (append projectile-globally-ignored-directories
                                                                                    '("*.git" ".ensime_cache.d" ".gradle"
                                                                                      ".recommenders" ".metadata" "dist"
                                                                                      "*bazel-bin" "*bazel-out" "*bazel-*"
-                                                                                     "*node_modules" "*venv")))
+                                                                                     "*node_modules" "*venv" ".agent-shell")))
                 projectile-globally-ignored-files (remove-duplicates (append projectile-globally-ignored-files
                                                                              '(".ensime" "*.war" "*.jar" "*.zip"
                                                                                "*.png" "*.gif" "*.vsd" "*.svg"
@@ -719,7 +723,7 @@ _k_prev      _J_: lower           _>_: base/lower
 ----------------------------------------------------------------------------------
  _f_: file find         _t_: test project     _k_: Kill all buffers
  _T_: find (c)tag       _c_: command run
- _g_: grep all files
+ _g_: ripgrep search
  _r_: replace
  _R_: replace regex
 
@@ -732,7 +736,7 @@ _k_prev      _J_: lower           _>_: base/lower
               ;; https://stackoverflow.com/questions/2580313/ctags-doesnt-understand-e-option-no-exuberant-tags-option
               (my/bypass-confirmation #'projectile-regenerate-tags)
               (projectile-find-tag)))
-     ("g"   projectile-grep)
+     ("g"   projectile-ripgrep)
      ("r"   projectile-replace)
      ("R"   projectile-replace-regexp)
      ("t"   projectile-test-project)
