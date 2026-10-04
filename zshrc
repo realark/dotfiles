@@ -169,7 +169,7 @@ update_everything() {
         apt autoremove -y
         flatpak uninstall --unused -y
         apt update -y
-        apt upgrade -y
+        apt full-upgrade -y
         snap refresh
         flatpak update -y
         fwupdmgr refresh --force
