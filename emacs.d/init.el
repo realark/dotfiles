@@ -145,6 +145,16 @@
     "Non-nil if the mode specified by MODE-NAME is active."
     `(and (boundp (quote ,mode-name)) ,mode-name))
 
+  (defun copy-buffer-file-path ()
+    "Copy the current buffer's full file path to the clipboard and kill ring.
+Signal a user error if the buffer is not visiting a file."
+    (interactive)
+    (unless buffer-file-name
+      (user-error "Buffer '%s' is not visiting a file" (buffer-name)))
+    (let ((select-enable-clipboard t))
+      (kill-new buffer-file-name))
+    (message "Copied: %s" buffer-file-name))
+
   (defun rename-file-and-buffer (new-name)
     "Renames both current buffer and file it's visiting to NEW-NAME."
     (interactive "sNew name: ")
