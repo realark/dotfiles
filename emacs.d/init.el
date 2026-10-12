@@ -2286,45 +2286,33 @@ position of the outside of the paren.  Otherwise return nil."
     ;;               dap-print-io t)
     ))
 
-(use-package lsp-java
-  :demand t
-  ;; :hook ((java-mode . lsp))
-  :after lsp-mode
+(use-package exec-path-from-shell
+  :ensure t
+  :defer nil
   :config
-  (defvar my-java-location
-    (concat (getenv "HOME")
-            "/.sdkman/candidates/java/21-tem/bin/java"))
-  (unless (file-exists-p my-java-location)
-    (error (concat "java not found: " my-java-location)))
+  ;; Import before Java startup; initialize also synchronizes PATH/exec-path.
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-envs '("JAVA_HOME" "GRADLE_USER_HOME")))
 
-  (defvar my-lombok-jar-location
-    (concat (getenv "HOME")
-            "/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.38/57f8f5e02e92a30fd21b80cbd426a4172b5f8e29/lombok-1.18.38.jar"))
-  (unless (file-exists-p my-lombok-jar-location)
-    (error (concat "lombok jar not found: " my-lombok-jar-location)))
-
-  (setq lsp-java-java-path my-java-location
-        lsp-java-vmargs
-        (list "-noverify"
-              "-Xmx2G"
-              "-XX:+UseG1GC"
-              "-XX:+UseStringDeduplication"
-              (concat "-javaagent:" my-lombok-jar-location)
-              (concat "-Xbootclasspath/a:" my-lombok-jar-location))
-        lsp-java-import-gradle-enabled t
-        lsp-java-import-gradle-offline-enabled t
-        lsp-java-save-action-organize-imports nil)
-
-  (cl-defun my-lsp-gradle-offline-toggle  (&optional (offline-p nil supplied-p))
-    "Set gradle offline mode to OFFLINE-P. If OFFLINE-P is not provided, toggle the current offline value"
-    (interactive)
-    (if supplied-p
-        (setq lsp-java-import-gradle-offline-enabled offline-p)
-      (setq lsp-java-import-gradle-offline-enabled (not lsp-java-import-gradle-offline-enabled )))
-    (if lsp-java-import-gradle-offline-enabled
-        (message "...Gradle Offline...")
-      (message "!!!Gradle Online!!!"))
-    lsp-java-import-gradle-offline-enabled))
+;; Native Gradle source sets and project annotation processors (including Lombok),
+;; rather than Eclipse's merged project classpath or a global Lombok agent.
+;; First Java buffer installs the pinned server automatically if missing.
+;; A JDK 21+ must already be installed; no manual LSP installation is needed.
+;; Import executes the project's Gradle build scripts; only open trusted builds.
+;; JAVA_HOME/PATH select installed JDKs; my-java-lsp-java-home overrides the
+;; server runtime without changing the project's Gradle environment/toolchains.
+;; M-x lsp-workspace-restart reimports; also restart after first generating
+;; sources that contain their own nested build descriptors.
+(add-to-list 'load-path
+             (file-name-directory (file-truename (or load-file-name buffer-file-name))))
+(use-package my-java-lsp
+  :ensure nil
+  :demand t
+  :after lsp-mode
+  :hook ((java-mode . my-java-lsp-start)
+         (java-ts-mode . my-java-lsp-start))
+  :config
+  (add-to-list 'lsp-disabled-clients 'jdtls))
 
 (progn ; csharp
   (add-to-list 'auto-mode-alist '("\\.sln\\'" . conf-mode))
@@ -2429,15 +2417,6 @@ position of the outside of the paren.  Otherwise return nil."
   (defun my-terraform-mode-init ()
     (outline-minor-mode 1))
   (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
-
-(use-package exec-path-from-shell
-  :ensure t
-  :defer nil
-  :config
-  ;; (when (memq window-system '(mac ns x)))
-  (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-env "JAVA_HOME")
-  (exec-path-from-shell-copy-env "PATH"))
 
 ;; start the emacs daemon
 (server-start)

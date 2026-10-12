@@ -1,0 +1,14 @@
+// Editor metadata only: no plugins, source rewriting, or compilation tasks.
+// Disable configuration caching when invoking this script so this event runs.
+import groovy.json.JsonOutput
+
+gradle.projectsEvaluated {
+    def projects = gradle.rootProject.allprojects.collect { project ->
+        def sourceSets = project.extensions.findByName('sourceSets')
+        [directory: project.projectDir.canonicalPath,
+         sources: sourceSets == null ? [] : sourceSets.collectMany { sourceSet ->
+             sourceSet.allSource.srcDirs.collect { it.canonicalPath }
+         }.unique()]
+    }
+    println('EMACS_JAVA_SOURCE_ROOTS=' + JsonOutput.toJson(projects))
+}
