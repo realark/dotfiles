@@ -134,6 +134,8 @@ alias open='xdg-open'
 
 alias histgrep="grep '$1' /home/ark/.zsh_history"
 alias grep="grep --color=auto"
+# Keep grep compatible; lowercase rg patterns ignore case, uppercase ones don't.
+alias rg='rg --smart-case'
 
 #alias engage="play -n -c1 synth whitenoise band -n 100 20 band -n 50 20 gain +25 fade h 1 864000 1"
 alias rsync="rsync -p -rh --partial --progress"
@@ -444,14 +446,10 @@ if [ -d "$HOME/.dotnet/tools" ] ; then
   export PATH="$HOME/.dotnet/tools:$PATH"
 fi
 
-if [ -s "/Users/ark/.bun/_bun" ] ; then
+if [ -s "$HOME/.bun/_bun" ] ; then
   # completions
-  source "/Users/ark/.bun/_bun"
+  source "$HOME/.bun/_bun"
   # exe
   export BUN_INSTALL="$HOME/.bun"
   export PATH="$BUN_INSTALL/bin:$PATH"
-fi
-
-if [ -d "$HOME/.opencode/bin" ]; then
-  export PATH="$HOME/.opencode/bin:$PATH"
 fi
