@@ -243,6 +243,30 @@ export PATH=~/scripts:$PATH:/snap/bin:~/bin:~/.roswell/bin:~/.local/bin:~/.cargo
 
 ##############Custom Functions
 
+# Follow the previous command's last argument without re-running shell expansions.
+# Usage: run mkdir -p "some directory", then follow at the next prompt.
+# Zsh's $_ preserves spaces and substitutions, but precedes glob expansion.
+alias follow='_follow "$_"'
+function _follow() {
+  emulate -L zsh
+  local previous
+  local -a words
+  previous=$(fc -ln -1 2>/dev/null)
+  words=(${(z)previous})
+  if (( ${#words} < 2 )); then
+    print -u2 -r -- "follow: previous command had no arguments"
+    return 1
+  fi
+  if [[ ! -d "$1" ]]; then
+    print -u2 -r -- "follow: not a directory: $1"
+    return 1
+  fi
+  # Prefix relative paths to bypass CDPATH and special cd operands such as '-'.
+  local directory=$1
+  [[ $directory = /* ]] || directory=./$directory
+  builtin cd -- "$directory"
+}
+
 function lecho() {
   echo > $1 && less $1
 }
