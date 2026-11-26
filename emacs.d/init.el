@@ -1758,6 +1758,9 @@ header line), so it is guarded and only runs from an idle timer."
 
 (use-package agent-shell
   :demand t
+  :init
+  ;; Let explicit suspend and lid-close actions work while an agent is busy.
+  (setq agent-shell-inhibit-system-sleep nil)
   :preface
   (defvar ark/agent-shell-display-action
     '((display-buffer-reuse-window display-buffer-in-direction)
