@@ -162,6 +162,11 @@ echo -e "\n--- GPU ---" && lspci | grep -i vga && \
 echo -e "\n--- STORAGE ---" && df -h /'
 alias update-everything="update_everything"
 update_everything() {
+  # Update the user-installed omp before any system update can reboot.
+  if command -v omp >/dev/null 2>&1; then
+    omp update || return
+  fi
+
   os_name="$(. /etc/os-release && echo "$ID")"
 
   case "$os_name" in
